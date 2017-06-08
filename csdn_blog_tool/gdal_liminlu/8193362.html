@@ -1,0 +1,1655 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/8193362"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>使用GDAL工具对OrbView-3数据进行正射校正 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="本文原文地址：http://gis-lab.info/qa/orbview3-ortho-gdal.html，借助于Google Translate工具翻译整理了一下。下文中的命令行截图是我本机测试的截图。一、简介本文将探讨使用GDAL来对OrbView-3卫星影像进行正射校正。卫星图像来自免费的OrbView-3航天器，可以通过OrbView-3来了解更多信息。然而，在最原始的数据中" />
+
+    <meta name="keywords" content="" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=%e4%bd%bf%e7%94%a8GDAL%e5%b7%a5%e5%85%b7%e5%af%b9OrbView-3%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e6%ad%a3%e5%b0%84%e6%a0%a1%e6%ad%a3&u=http://blog.csdn.net/liminlu0314/article/details/8193362"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Translated"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/8193362">
+        使用GDAL工具对OrbView-3数据进行正射校正            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_r">
+            <span class="link_postdate">2012-11-17 12:28</span>
+            <span class="link_view" title="阅读次数">4979人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(11)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('%e4%bd%bf%e7%94%a8GDAL%e5%b7%a5%e5%85%b7%e5%af%b9OrbView-3%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e6%ad%a3%e5%b0%84%e6%a0%a1%e6%ad%a3','8193362');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(8193362,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('777646','liminlu0314','top','8193362');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">GDAL<em>（119）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777646"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777646">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p align="left"></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>本文原文地址：<a href="http://gis-lab.info/qa/orbview3-ortho-gdal.html">http://gis-lab.info/qa/orbview3-ortho-gdal.html</a>，借助于Google Translate工具翻译整理了一下。下文中的命令行截图是我本机测试的截图。</span></p>
+<p align="left"><span style="font-size:14px"><strong><span style="color:#3D5DA7">一、</span><span style="color:rgb(61,93,167)">简介</span></strong></span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>本文将探讨使用<u><span style="color:blue"><a href="http://gdal.org/">GDAL</a></span></u>来对OrbView-3卫星影像进行正射校正。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>卫星图像来自免费的OrbView-3航天器，可以通过<a href="http://wiki.gis-lab.info/w/%D0%9A%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_OrbView-3">OrbView-3</a>来了解更多信息。然而，在最原始的数据中，卫星图像是用没有地理位置的Tiff&#26684;式存储的。这里就不做详细的介绍了，就是原始的数据不是GeoTIFF&#26684;式，就是普通的TIFF&#26684;式。但是，下载的原始数据中同时包含了用于正射校正所有必要的元数据。如何利用它进行正射校正，将在稍后进行说明。</span></p>
+<p align="left"><span style="font-size:14px"><strong><span style="color:#3D5DA7">二、</span><span style="color:rgb(61,93,167)">软件和数据</span></strong></span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>准备要进行正射校正的卫星图像：</span></p>
+<p align="left"></p>
+<ol>
+<li><span style="font-size:14px">免费软件，全部是GDAL的工具，用到的有</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gdal.org/gdalwarp.html">gdalwarp</a></span></u></span><span style="font-size:14px">，</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gdal.org/gdalbuildvrt.html">gdalbuildvrt</a></span></u></span><span style="font-size:14px">和</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gdal.org/gdal_translate.html">gdal_translate</a></span></u></span><span style="font-size:14px">。要获得该软件，你可以去这个去</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries">链接</a></span></u></span><span style="font-size:14px">下载。</span></li><li><span style="font-size:14px">Orb-View3的卫星图像。可以先从这个</span><a href="http://wiki.gis-lab.info/w/%D0%9A%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_OrbView-3" style="font-size:14px">链接</a><span style="font-size:14px">查找大概的区域。</span></li><li><span style="font-size:14px">用于正射校正的DEM数据（数字高程模型）。</span></li></ol>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>目前可用于正射校正的DEM数据有：<u><span style="color:blue"><a href="http://gis-lab.info/qa/srtm.html">SRTM</a></span></u>，<u><span style="color:blue"><a href="http://gis-lab.info/qa/aster-gdem.html">ASTER
+ GDEM</a></span></u>，这两种DEM的下载地址分别是：</span></p>
+<ul>
+<li><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/srtm-tif">SRTM</a></span><span style="color:blue">（</span><span style="color:blue">http://gis-lab.info/data/srtm-tif/</span><span style="color:blue">）</span></u></span></li><li><span style="font-size:14px"><u><span style="color:blue"><a href="http://www.gdem.aster.ersdac.or.jp/index.jsp">ASTER GDEM</a></span><span style="color:blue">（</span><span style="color:blue">http://www.gdem.aster.ersdac.or.jp/index.jsp</span><span style="color:blue">）</span></u></span></li></ul>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>为了演示使用GDAL进行正射校正，选择使用的数据集（图像和DEM）是<u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/">白俄罗斯共和国</a></span></u>和<u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/kursk/">库尔斯克地区</a></span></u>（点击各自的链接会到各自的示例数据目录）。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>库尔斯克地区的数据集，包括：</span></p>
+<table border="1" cellspacing="0" cellpadding="0" style="width:600px">
+<tbody>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">&nbsp;</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">文件名</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">说明</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">1</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">3V050401P0000692211A520018202082M_001639429.ZIP</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">OrbView-3w卫星数据包</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">2</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">3v050401p0000692211a520018202082m_001639429_ortho.img</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">ERDAS IMAGINE的正射校正结果的&#26684;式</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">3</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">3v050401p0000692211a520018202082m_001639429_ortho.img.aux.xml</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">辅助文件</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">4</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">3v050401p0000692211a520018202082m_001639429_ortho.rrd</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">金字塔文件</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">5</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">dem.tfw</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">DEM坐标</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">6</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">dem.tif</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">DEM</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">7</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">dem.tif.aux.xml</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">DEM辅助数据</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">8</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">dem.tif.ovr</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">DEM金字塔</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">9</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">dem.tif.xml</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">DEM辅助数据</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">10</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">kursk_ortho.7z</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">使用GDAL正射校正结果</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style1">
+<p align="left"><span style="font-size:14px">11</span></p>
+</td>
+<td valign="top" class="style4">
+<p align="left"><span style="font-size:14px">kursk_ortho_envi_orbview.7z</span></p>
+</td>
+<td valign="top" class="style2">
+<p align="left"><span style="font-size:14px">使用ENVI正射校正结果</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>白俄罗斯共和国的数据集，包括：</span></p>
+<table border="1" cellspacing="0" cellpadding="0" style="width:600px">
+<tbody>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">&nbsp;</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">文件名</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">描述</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">1</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">3v050909p0000897861a520004700712m_001631680.zip</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">OrbView-3w卫星数据包</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">2</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">aster_gdem.tif</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">Aster的DEM数据</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">3</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">ov3-check.7z</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">地面实测的GPS点</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">4</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">result_envi.tif</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">ENVI-EX正射结果</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">5</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">result_gdal.7z</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">GDAL正射结果</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">6</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">result_gdal_geoid_corrected.7z</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">经过大地水准面修正的GDAL正射结果</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" class="style3">
+<p align="left"><span style="font-size:14px">7</span></p>
+</td>
+<td valign="top" class="style5">
+<p align="left"><span style="font-size:14px">tracks.7z</span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="font-size:14px">地面实测GPS点轨迹</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p align="left"><span style="font-size:14px"><strong><span style="color:#3D5DA7">三、</span><span style="color:rgb(61,93,167)">准备正射校正必要的数据</span></strong></span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>在这篇文章中，所有的例子中使用的数据是上面白俄罗斯共和国一组数据。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>首先，考虑OrbView-3的数据是ZIP压缩&#26684;式（3V050909P0000897861A520004700712M_001631680.ZIP）。所以先要对其进行解压：</span></p>
+<p align="left"><span style="font-size:14px">UNIX系统：</span></p>
+<pre name="code" class="plain">$ ls -13V050909P0000897861A520004700712M_001631680*</pre><span style="font-size:14px">Windows系统：</span><pre name="code" class="plain">&gt;dir * /B</pre>
+<p></p>
+<p align="left"><span style="font-size:14px">执行完上面的命令，会输出：</span></p>
+<p align="left"></p>
+<pre name="code" class="plain">3v050909p0000897861a520004700712m_001631680_aoi.dbf
+3v050909p0000897861a520004700712m_001631680_aoi.prj
+3v050909p0000897861a520004700712m_001631680_aoi.shp
+3v050909p0000897861a520004700712m_001631680_aoi.shx
+3v050909p0000897861a520004700712m_001631680.att
+3v050909p0000897861a520004700712m_001631680.dbf
+3v050909p0000897861a520004700712m_001631680.eph
+3v050909p0000897861a520004700712m_001631680.jgw
+3v050909p0000897861a520004700712m_001631680.jpg
+3v050909p0000897861a520004700712m_001631680.prj
+3v050909p0000897861a520004700712m_001631680.pvl
+3v050909p0000897861a520004700712m_001631680_rpc.txt
+3v050909p0000897861a520004700712m_001631680.shp
+3v050909p0000897861a520004700712m_001631680.shx
+3v050909p0000897861a520004700712m_001631680_src.dbf
+3v050909p0000897861a520004700712m_001631680_src.prj
+3v050909p0000897861a520004700712m_001631680_src.shp
+3v050909p0000897861a520004700712m_001631680_src.shx
+3v050909p0000897861a520004700712m_001631680.tif</pre>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>在解压之后我们可以看到，里面有Shapefile&#26684;式的落图文件以及jpg&#26684;式的快视图数据，一个存储实际数据的TIFF文件，卫星参数参数文件，RPC系数文件（scene_rpc.txt）以及其他的一些描述文件。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>如果直接用QGIS打开TIFF文件，由于TIFF文件没有投影信息，所以显示的坐标是行列号。可以用gdalinfo工具来查看详细信息：</span></p>
+<p align="left"><span style="font-size:14px">&nbsp;<span style="white-space:pre"> </span>
+UNIX系统：</span></p>
+<pre name="code" class="plain">$ gdalinfo 3v050909p0000897861a520004700712m_001631680.tif</pre><span style="font-size:14px">Windows系统：<br>
+</span>
+<p align="left"></p>
+<pre name="code" class="plain">&gt;C:\warmerda\bld\bin&gt;gdalinfo.exe3v050909p0000897861a520004700712m_001631680.tif</pre>
+<p></p>
+<p align="left">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="font-size:14px">执行完上面的命令，会输出：</span></p>
+<p align="left"></p>
+<pre name="code" class="plain">Driver: GTiff/GeoTIFF
+Files: E:\GDAL正射\3v050909p0000897861a520004700712m_001631680\3v050909p0000897861a520004700712m_001631680.tif
+       E:\GDAL正射\3v050909p0000897861a520004700712m_001631680\3v050909p0000897861a520004700712m_001631680_rpc.txt
+Size is 8016, 25600
+Coordinate System is `'
+Metadata:
+  TIFFTAG_MAXSAMPLEVALUE=2047
+  TIFFTAG_MINSAMPLEVALUE=0
+Image Structure Metadata:
+  INTERLEAVE=BAND
+RPC Metadata:
+  HEIGHT_OFF= +0179.000 meters
+  HEIGHT_SCALE= +0300.000 meters
+  LAT_OFF= +55.02030000 degrees
+  LAT_SCALE= +00.12380000 degrees
+  LINE_DEN_COEFF= +1.000000000000000E+00  -5.006651300000000E-04  -1.457830900000000E-03  +6.037474400000000E-04  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00
+  LINE_NUM_COEFF= -2.104832000000000E-03  -1.642616000000000E-02  -1.027459000000000E+00  +4.182002500000000E-03  -1.902795200000000E-03  +1.614313300000000E-05  +4.786355800000000E-04  -2.127866900000000E-04  +6.958830700000000E-03  -2.260572200000000E-06  -2.225955200000000E-07  -3.746937200000000E-07  +4.648645700000000E-04  -1.801288800000000E-08  +5.140758300000000E-06  +7.566147900000000E-04  -5.452440900000000E-07  +1.394079900000000E-07  -1.828159600000000E-05  +2.421558100000000E-09
+  LINE_OFF= +012800.00 pixels
+  LINE_SCALE= +012800.00 pixels
+  LONG_OFF= +027.04780000 degrees
+  LONG_SCALE= +000.06850000 degrees
+  SAMP_DEN_COEFF= +1.000000000000000E+00  -6.035266200000000E-04  +6.161647000000000E-03  +6.386015900000000E-04  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00
+  SAMP_NUM_COEFF= +3.145351000000000E-04  +1.023427000000000E+00  -3.439455200000000E-03  +1.730013100000000E-02  +5.102439600000000E-03  +1.245288300000000E-03  -1.578704500000000E-03  -2.939111200000000E-03  -2.317010900000000E-04  +2.847267800000000E-05  +2.422610700000000E-05  +6.633964600000000E-06  -1.694999000000000E-03  +6.913555700000000E-07  +1.531221300000000E-04  +1.486522300000000E-05  +1.555096200000000E-07  -5.617327200000000E-06  -2.950330800000000E-05  +1.262439900000000E-08
+  SAMP_OFF= +004008.00 pixels
+  SAMP_SCALE= +004008.00 pixels
+Corner Coordinates:
+Upper Left  (   0.0,    0.0)
+Lower Left  (   0.0,25600.0)
+Upper Right ( 8016.0,    0.0)
+Lower Right ( 8016.0,25600.0)
+Center      ( 4008.0,12800.0)
+Band 1 Block=8016x1Type=UInt16, ColorInterp=Gray</pre><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="font-size:14px">正如预期的那样，该文件不包含数据的投影和坐标。但是，GDAL读取了数据有理多项式系数（RPC）。如果想知道更多的信息，可以在使用RPC正射</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://wiki.gis-lab.info/w/%D0%9E%D1%80%D1%82%D0%BE%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%86%D0%B8%D1%8F_%D0%BA%D0%BE%D1%81%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85_%D1%81%D0%BD%D0%B8%D0%BC%D0%BA%D0%BE%D0%B2_%D1%81_%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%D0%BC_RPC">卫星影像正射校正的</a></span></u></span><span style="font-size:14px">
+ “ </span><span style="font-size:14px"><u><span style="color:blue"><a href="http://wiki.gis-lab.info/w/%D0%9E%D1%80%D1%82%D0%BE%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%86%D0%B8%D1%8F_%D0%BA%D0%BE%D1%81%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D1%85_%D1%81%D0%BD%D0%B8%D0%BC%D0%BA%D0%BE%D0%B2_%D1%81_%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%D0%BC_RPC">RPC</a></span></u></span><span style="font-size:14px">
+ “，以及在</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/forum/viewtopic.php?p=27889#p27889">相应的论坛主题</a></span></u></span><span style="font-size:14px">找到更多的信息【这三个链接的内容比较丰富，尤其是关于RPC的介绍的比较详细，当然也是俄语的】。</span>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>如果使用gdalinfo发现输出的元数据中没有RPC信息，请确保你的GDAL版本，至少要GDAL1.8.1以上的版本。</span><span style="font-size:14px">【这段谷歌翻译的受不了，一点点都看不懂啥意思，只好自己猜了，囧……】应该可以从文件3v050909p0000897861a520004700712m_001631680.pvl中得到图像的四角经纬度坐标，该坐标系是</span><span style="font-size:14px"><strong>WGS
+ 84 / UTM区35N</strong></span><span style="font-size:14px">或</span><span style="font-size:14px"><strong>EPSG：32635</strong></span><span style="font-size:14px">。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>接下来获取必要的数据就是地形数据，下面以<strong>SRTM</strong>数据作为例子。获取DEM数据的步骤如下：</span></p>
+<p align="left"></p>
+<ol>
+<li><span style="font-size:14px">在</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://srtm.csi.cgiar.org/SELECTION/inputCoord.asp">SRTM数据选择选项</a></span></u></span><span style="font-size:14px">填写待校正影像所在区域的行和列的数目。</span></li><li><span style="font-size:14px">下载</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/srtm-tif">http://gis-lab.info/data/srtm-tif</a></span></u></span><span style="font-size:14px">选定的压缩文件。</span></li><li><span style="font-size:14px">&nbsp;解压缩（UNIX系统命令）,Windows下自己肯定会解压吧。</span></li></ol>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">for i in srtm*zip; doyes|unzip $i; done</pre><br>
+<span style="font-size:14px; white-space:pre"></span><span style="font-size:14px">4.&nbsp;</span><span style="font-size:14px">将所有文件SRTM的GeoTIFF&#26684;式转换成一个单一的虚拟文件。使用的工具是gdalbuildvrt。命令是（第一行是UNIX命令，第二行是Windows命令）：</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">$gdalbuildvrt srtm.vrt SRTMTIF
+&gt;gdalbuildvrt.exe srtm.vrtSRTM TIF</pre><br>
+<span style="font-size:14px; white-space:pre"></span><span style="font-size:14px">如果要下载ASTER的DEM文件，访问</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://www.gdem.aster.ersdac.or.jp/index.jsp">ASTER GDEM网站</a></span></u></span><span style="font-size:14px">，进行搜索查找。选择“选择分块shape文件”，下载文件覆盖scene.shp，下载并解压。一般下载的文件名称类&#20284;ASTGTM2_N55E026_dem.tif这样的，对于一个区域，可能需要多块数据。可以使用gdal_merge.py把所有的tif文件合并为一个GeoTIFF&#26684;式的文件，命令如下：</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">$ Gda​​l_merge.py-ODEM_merged.tif ASTGTM2_N5 [45] E02 [67] / * _dem.tif
+&gt; python gdal_merge.py -ODEM_merged.tif ASTGTM2_N5 [45] E02 [67] / * _dem.tif
+ 
+0 ... 10 ... 20 ... 30 ... 40... 50 ... 60 ... 70 ... 80 ... 90 ... 100 - done.</pre><br>
+<span style="font-size:14px"><strong><span style="color:#3D5DA7">四、&nbsp;</span></strong></span><span style="font-size:14px"><strong><span style="color:rgb(61,93,167)">正射校正</span></strong></span>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>对OrbView-3卫星影像进​​行正射校正使用下面的命令：</span></p>
+<p align="left"><span style="font-size:14px"></span></p>
+<pre name="code" class="plain">&gt; gdalwarp -dstnodata 0 -srcnodata 0-overwrite -t_srs epsg:32635 -wo &quot;INIT_DEST=NO_DATA&quot; -rpc -to&quot;RPC_DEM=D:\temp\rb\DEM_merged.tif&quot;</pre>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>点击这个<u><span style="color:blue"><a href="http://gdal.org/gdalwarp.html">链接</a></span></u>，可以查看gdalwarp工具的详细参数和帮助。如果该命令执行失败，首先检查GDAL是否安装成功，然后检查GDAL版本是否支持RPC校正，如果这两个都正常，结果还是失败，那么就是设置的图像输出坐标系有关系。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>解决上面的第一个方法就是减少指定的参数​。除了指定使用RPC校正之后，其余均使用默认参数，如下：</span></p>
+<p align="left"></p>
+<pre name="code" class="plain">$ gdalwarp -rpc3v050909p0000897861a520004700712m_001631680.tif test.tif
+Warning 1:TIFFReadDirectory:Unknown field with tag 34000 (0x84d0) encountered
+Creating output file that is12925P x 23537L.
+Warning 1:TIFFReadDirectory:Unknown field with tag 34000 (0x84d0) encountered
+Processing input file3v050909p0000897861a520004700712m_001631680.tif.
+0...10...20...30...40...50...60...70...80...90...100- done.</pre><br>
+<span style="font-size:14px">&nbsp; &nbsp; &nbsp; 然后使用gdalinfo查看输出的结果，命令以及输出信息如下：</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">$ gdalinfo test.tif
+Driver: GTiff/GeoTIFF
+Files: test.tif
+       test_rpc.txt
+Size is 12925, 23537
+Coordinate System is:
+GEOGCS[&quot;WGS 84&quot;,
+    DATUM[&quot;WGS_1984&quot;,
+        SPHEROID[&quot;WGS84&quot;,6378137,298.257223563,
+           AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],
+        AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],
+    PRIMEM[&quot;Greenwich&quot;,0],
+   UNIT[&quot;degree&quot;,0.0174532925199433],
+   AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]
+Origin =(26.981501010426538,55.143013345911761)
+Pixel Size =(0.000010399352347,-0.000010399352347)
+Metadata:
+  AREA_OR_POINT=Area
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  ( 26.9815010,  55.1430133) (26d58'53.40&quot;E, 55d 8'34.85&quot;N)
+Lower Left  ( 26.9815010,  54.8982438) (26d58'53.40&quot;E, 54d53'53.68&quot;N)
+Upper Right (  27.1159126, 55.1430133) ( 27d 6'57.29&quot;E, 55d 8'34.85&quot;N)
+Lower Right (  27.1159126, 54.8982438) ( 27d 6'57.29&quot;E, 54d53'53.68&quot;N)
+Center      ( 27.0487068,  55.0206286) ( 27d2'55.34&quot;E, 55d 1'14.26&quot;N)
+Band 1 Block=12925x1Type=UInt16, ColorInterp=Gray</pre>
+<p></p>
+<div style="text-align:center"><img src="http://img.my.csdn.net/uploads/201211/17/1353126573_8978.png" alt=""></div>
+<span style="font-size:14px">&nbsp; &nbsp; &nbsp; 第二个方法是指定图像的坐标系和四个角点的坐标。查看图像的四个角点坐标，可以在文件scene.pvl中进行查找。然后使用gdal_translate工具进行转换处理，命令如下：</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">&gt; gdal_translate -a_srsepsg:32635 -gcp 0.5 0.5 498793 6.11075e+006 173.385 -gcp 8015.5 0.5 5073456.11027e+006 187.386 -gcp 8015.5 25599.5 507347 6.08351e+006 204.881
+-gcp 0.5 25599.5 4987586.08385e+006 213.12D:\temp\rb\3V050909P0000897861A520004700712M_001631680\3v050909p0000897861a520004700712m_001631680.tif
+D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tif
+Input file size is 8016,25600                             
+0...10...20...30...40...50...60...70...80...90...100- done.
+ 
+&gt; copyD:\temp\rb\3V050909P0000897861A520004700712M_001631680\3v050909p0000897861a520004700712m_001631680_rpc.txt
+D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org_rpc.txt</pre>
+<p></p>
+<div style="text-align:center"><img src="http://img.my.csdn.net/uploads/201211/17/1353126578_8690.png" alt=""></div>
+&nbsp; &nbsp; &nbsp;&nbsp;<span style="white-space:pre"> </span><span style="font-size:14px">然后再使用gdalinfo查看输出文件中的信息：</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain">&gt; gdalinfoD:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tif
+Driver: GTiff/GeoTIFF                                                           
+Files:D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tif         
+      D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org_rpc.txt   
+Size is 8016, 25600                                                             
+Coordinate System is `'                                                           
+GCP Projection =                                                               
+PROJCS[&quot;WGS 84 / UTMzone 35N&quot;,                                 
+    GEOGCS[&quot;WGS 84&quot;,                                            
+        DATUM[&quot;WGS_1984&quot;,                                        
+            SPHEROID[&quot;WGS84&quot;,6378137,298.257223563,           
+               AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],                        
+           AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],                            
+        PRIMEM[&quot;Greenwich&quot;,0],                                    
+       UNIT[&quot;degree&quot;,0.0174532925199433],                         
+       AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]],                                
+   PROJECTION[&quot;Transverse_Mercator&quot;],                            
+    PARAMETER[&quot;latitude_of_origin&quot;,0],                               
+   PARAMETER[&quot;central_meridian&quot;,27],                              
+   PARAMETER[&quot;scale_factor&quot;,0.9996],                              
+   PARAMETER[&quot;false_easting&quot;,500000],                             
+   PARAMETER[&quot;false_northing&quot;,0],                                 
+    UNIT[&quot;metre&quot;,1,                                                 
+       AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],                                
+   AUTHORITY[&quot;EPSG&quot;,&quot;32635&quot;]]                                   
+GCP[  0]: Id=1, Info=                                                
+          (0.5,0.5) -&gt;(498793,6110750,173.385)                         
+GCP[  1]: Id=2, Info=                                                   
+          (8015.5,0.5) -&gt;(507345,6110270,187.386)                      
+GCP[  2]: Id=3, Info=                                                   
+          (8015.5,25599.5) -&gt;(507347,6083510,204.881)                  
+GCP[  3]: Id=4, Info=                                                                                     (0.5,25599.5)-&gt; (498758,6083850,213.12)                                           Metadata:                                                                                   
+  AREA_OR_POINT=Area                                                                    
+  TIFFTAG_MAXSAMPLEVALUE=2047                                                        
+  TIFFTAG_MINSAMPLEVALUE=0                                                            
+Image StructureMetadata:                                                                    
+  INTERLEAVE=BAND                                                                       
+RPC Metadata:                                                                              
+  HEIGHT_OFF= +0179.000 meters                                                           
+  HEIGHT_SCALE= +0300.000 meters                                                         
+  LAT_OFF= +55.02030000 degrees                                                           
+  LAT_SCALE= +00.12380000 degrees                                                        
+  LINE_DEN_COEFF= +1.000000000000000E+00  -5.006651300000000E-04  -1.457830900000000E-03  +6.037474400000000E-04  +0.000000000000000E+00  +0.000000000000000E+00 +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00 +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00               
+  LINE_NUM_COEFF= -2.104832000000000E-03  -1.642616000000000E-02  -1.027459000000000E+00  +4.182002500000000E-03  -1.902795200000000E-03  +1.614313300000000E-05 +4.786355800000000E-04  -2.127866900000000E-04  +6.958830700000000E-03  -2.260572200000000E-06  -2.225955200000000E-07  -3.746937200000000E-07  +4.648645700000000E-04  -1.801288800000000E-08+5.140758300000000E-06 +7.566147900000000E-04 -5.452440900000000E-07 +1.394079900000000E-07 -1.828159600000000E-05 +2.421558100000000E-09                 
+  LINE_OFF= +012800.00 pixels                                                               
+  LINE_SCALE= +012800.00 pixels                                                        
+  LONG_OFF= +027.04780000 degrees                                                        
+  LONG_SCALE= +000.06850000 degrees                                                      
+  SAMP_DEN_COEFF= +1.000000000000000E+00  -6.035266200000000E-04  +6.161647000000000E-03  +6.386015900000000E-04  +0.000000000000000E+00  +0.000000000000000E+00+0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00 +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00  +0.000000000000000E+00               
+  SAMP_NUM_COEFF= +3.145351000000000E-04  +1.023427000000000E+00  -3.439455200000000E-03  +1.730013100000000E-02  +5.102439600000000E-03  +1.245288300000000E-03-1.578704500000000E-03 -2.939111200000000E-03 -2.317010900000000E-04 +2.847267800000000E-05 +2.422610700000000E-05 +6.633964600000000E-06 -1.694999000000000E-03 +6.913555700000000E-07 +1.531221300000000E-04  +1.486522300000000E-05  +1.555096200000000E-07  -5.617327200000000E-06  -2.950330800000000E-05  +1.262439900000000E-08                  
+  SAMP_OFF= +004008.00 pixels                                                             
+  SAMP_SCALE= +004008.00 pixels                                                           
+Corner Coordinates:                                                                           
+Upper Left  (   0.0,    0.0)                                                                 
+Lower Left  (   0.0,25600.0)                                                                 
+Upper Right ( 8016.0,    0.0)                                                                 
+Lower Right (8016.0,25600.0)                                                                 
+Center      ( 4008.0,12800.0)                                                                 
+Band 1 Block=8016x1Type=UInt16, ColorInterp=Gray</pre>
+<p></p>
+<div style="text-align:center"><img src="http://img.my.csdn.net/uploads/201211/17/1353126582_9569.png" alt=""></div>
+<span style="font-size:14px; white-space:pre"></span><span style="font-size:14px">现在，您可以重复执行该正射校正命令，得到新的图像文件。</span>
+<p></p>
+<p align="left"></p>
+<pre name="code" class="plain"> &gt; gdalwarp -dstnodata 0 -srcnodata 0-overwrite -t_srs epsg:32635 -wo &quot;INIT_DEST=NO_DATA&quot; -rpc -to&quot;RPC_DEM=D:\temp\rb\DEM_merged.tif&quot;
+  D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tifD:\temp\rb\3v050909p0000897861a520004700712m_001631680.rec.tif</pre><br>
+<span style="font-size:14px; white-space:pre"></span><span style="font-size:14px">RPC模型使用的坐标系是WGS84和数字高程数据（DEM），使用相对的大地水准面，这个&#20540;与真正的大地水准有一定的高差，而在正射校正是需要解决这种差异。如何确定这个高程差，一般使用的是采取图像的中心点的图像坐标（27D 2'550.34“Ë，55D 1'140.26”Ñ），并上传到这个在线</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://www.unavco.org/community_science/science-support/geoid/geoid.html">资源，</a></span></u></span><span style="font-size:14px">或者这个在线</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://geographiclib.sourceforge.net/cgi-bin/GeoidEval">资源</a></span></u></span><span style="font-size:14px">（此计算可以借助的网上资源，也可以使用的软件，如，proj4等）进行计算得到。此处的结果是</span><span style="font-size:14px"><strong>22.0157米</strong></span><span style="font-size:14px">，在EGM96模型上。</span>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>对于使用消除大地水准面高差进行正射校正的命令如下：</span></p>
+<p align="left"><span style="font-size:14px"></span></p>
+<pre name="code" class="plain">&gt; gdalwarp -dstnodata 0 -srcnodata 0-overwrite -t_srs epsg:32635 -wo &quot;INIT_DEST=NO_DATA&quot; -rpc -to&quot;RPC_DEM=D:\temp\rb\DEM_merged.tif&quot; -to&quot;RPC_HEIGHT=22.0157&quot;
+  D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tifD:\temp\rb\3v050909p0000897861a520004700712m_001631680.rec2.tif</pre>
+<p></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>如果要将结果转换到另一个坐标系统，只需将t_srs参数这是为需要的坐标系即可。如果这时gdalwarp执行失败，很有可能就缺少DEM数据导致，下载相邻的DEM数据试试。</span></p>
+<p align="left"><span style="font-size:14px"><strong><span style="color:#3D5DA7">五、&nbsp;</span><span style="color:rgb(61,93,167)">结论</span></strong></span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>为了评估使用GDAL正射校正的进度，这里利用商业软件ENVI EX同GDAL进行对比。如下图，这里是一个图像在同一地点的，绿色的点是GPS轨迹。</span></p>
+<p align="left" style="text-align:center"><span style="font-size:14px"><img src="http://img.my.csdn.net/uploads/201211/17/1353126588_7215.png" alt=""><br>
+</span></p>
+<p align="left"><span style="font-size:14px"><u><span style="color:blue"><a href="http://wiki.gis-lab.info/w/%D0%A4%D0%B0%D0%B9%D0%BB:Gdal_vs_envi.png"></a></span></u><span style="white-space:pre"></span>在上图中，我们可以看到，当没有使用大地水准面进行正射校正的道路有些偏移。而使用大地水准面的高差进行正射的结果同时用软件ENVI
+ EX的结果是相同的。</span></p>
+<p align="left"><span style="font-size:14px"><span style="white-space:pre"></span>使用GDAL进行正射校正会出现下图中的横向锯齿问题，但是使用程序wxGIS处理的结果不会出现这样的情况，wxGIS也是基于GDAL库。为了消除这个问题，在命令行上，你需要添加选项-et 0.0。示例命令：</span></p>
+<p align="left"></p>
+<pre name="code" class="plain"> &gt; gdalwarp -dstnodata 0 -srcnodata 0 -overwrite-t_srs epsg:32635 -wo &quot;INIT_DEST=NO_DATA&quot; -et 0.0 -rpc -to&quot;RPC_DEM=D:\temp\rb\DEM_merged.tif&quot; -to&quot;RPC_HEIGHT=22.0157&quot;
+  D:\temp\rb\3v050909p0000897861a520004700712m_001631680.org.tifD:\temp\rb\3v050909p0000897861a520004700712m_001631680.rec2.tif</pre><br>
+<span style="font-size:14px; white-space:pre"></span><span style="font-size:14px">下面是另外一组GPS轨迹与处理结果叠加以及GDAL处理的横向锯齿问题。</span>
+<p></p>
+<p align="left"><u><span style="color:blue"><span style="font-size:14px"><a href="http://wiki.gis-lab.info/w/%D0%A4%D0%B0%D0%B9%D0%BB:Gdal_ortho_paradox.png"></a></span></span></u></p>
+<p align="left" style="text-align:center"><span style="font-size:14px"><img src="http://img.my.csdn.net/uploads/201211/17/1353126596_1167.png" alt=""><br clear="ALL">
+</span></p>
+<p align="left" style="text-align:center"><span style="font-size:14px"><img src="http://img.my.csdn.net/uploads/201211/17/1353126601_8823.png" alt=""><br>
+</span></p>
+<p align="left"><span style="font-size:14px"><strong><span style="color:#3D5DA7">六、</span><span style="color:rgb(61,93,167)">数据下载</span></strong></span></p>
+<p align="left"></p>
+<ul>
+<li><span style="font-size:14px">原始数据3v050909p0000897861a520004700712m_001631680可以通过EarthSat（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/3v050909p0000897861a520004700712m_001631680.zip">下载</a></span></u></span><span style="font-size:14px">）</span></li><li><span style="font-size:14px">ASTER GDEM数据用于正射校正（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/DEM_merged.tif">下载</a></span></u></span><span style="font-size:14px">）</span></li><li><span style="font-size:14px">GPS点轨迹数据（GPX）检查结果（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/tracks.7z">下载</a></span></u></span><span style="font-size:14px">和</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/ov3-check.7z">下载</a></span></u></span><span style="font-size:14px">）</span></li><li><span style="font-size:14px">ENVI EX正射结果（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/result_envi.tif">下载</a></span></u></span><span style="font-size:14px">）</span></li><li><span style="font-size:14px">GDAL的正射纠正结果（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/result_gdal.7z">下载</a></span></u></span><span style="font-size:14px">）</span></li><li><span style="font-size:14px">GDAL调整大地水准面后的正射纠正结果（</span><span style="font-size:14px"><u><span style="color:blue"><a href="http://gis-lab.info/data/orbview-3/samples/rb/result_gdal_geoid_corrected.7z">下载</a></span></u></span><span style="font-size:14px">）</span></li></ul>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.14-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="8193362" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>3</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>1</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/8138382';">上一篇</span><a href="/liminlu0314/article/details/8138382" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">GDAL插值使用示例</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/8227518';">下一篇</span><a href="/liminlu0314/article/details/8227518" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">代码的核心定义文件</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/8272307" title="使用GDAL工具对卫星数据进行影像配准" strategy="recommend_sim_0" target="_blank" style="width: 290px;">使用GDAL工具对卫星数据进行影像配准</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/9181959" title="使用GDAL工具对FY3系列卫星数据进行校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">使用GDAL工具对FY3系列卫星数据进行校正</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/esricd/article/details/8529867" title="ENVI下DOM数据生产专题之正射校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">ENVI下DOM数据生产专题之正射校正</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/8629298" title="使用GDAL对HDF数据进行geoloc校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">使用GDAL对HDF数据进行geoloc校正</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/8623607" title="使用GDAL对HDF数据进行校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">使用GDAL对HDF数据进行校正</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/whudqm/article/details/2076992" title="使用GDAL进行栅格数据读取示例" strategy="recommend_sim_0" target="_blank" style="width: 290px;">使用GDAL进行栅格数据读取示例</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/zhouxuguang236/article/details/39253121" title="基于GPU的高分一号影像正射校正的设计与实现" strategy="recommend_sim_0" target="_blank" style="width: 290px;">基于GPU的高分一号影像正射校正的设计与实现</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Icesteam/article/details/66973793" title="辐射定标、辐射校正、大气校正、正射校正等相关概念" strategy="recommend_sim_0" target="_blank" style="width: 290px;">辐射定标、辐射校正、大气校正、正射校正等相关概念</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/esricd/article/details/7530953" title="自定义RPC文件的影像正射校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">自定义RPC文件的影像正射校正</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/arcgis_all/article/details/8239443" title="【技术类】ArcGIS 也能做正射校正" strategy="recommend_sim_0" target="_blank" style="width: 290px;">【技术类】ArcGIS 也能做正射校正</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/8193362",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "8193362",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '8193362';
+    var commentscount = 11;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='使用GDAL工具对OrbView-3数据进行正射校正';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847254次</span></li>
+    <li>积分：<span>10753</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10753 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

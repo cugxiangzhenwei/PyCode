@@ -1,0 +1,1169 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/17400075"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>QGIS编译 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="一、准备工作1、下载QGIS源码最新版本的QGIS源码需要从git上下载。最新的发布版是2.0，下载地址见下。https://github.com/qgis/QGIS/tree/release-2_0。打开网页，在右侧有个Download ZIP即可下载2.0的源码zip包，选择一个地方保存即可，如下图。&#160;2、下载、安装和编译QGIS的依赖库这里只说明安装QGIS必须的依赖库，其他的可选的这里都不" />
+
+    <meta name="keywords" content="" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=QGIS%e7%bc%96%e8%af%91&u=http://blog.csdn.net/liminlu0314/article/details/17400075"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/17400075">
+        QGIS编译            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_r">
+            <span class="link_postdate">2013-12-18 19:36</span>
+            <span class="link_view" title="阅读次数">12119人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(79)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('QGIS%e7%bc%96%e8%af%91','17400075');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(17400075,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('777648','liminlu0314','top','17400075');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">QGIS<em>（4）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777648"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777648">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label  onclick="GetCategoryArticles('1632225','liminlu0314','top','17400075');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">编译<em>（1）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/1632225"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1632225">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+<h2>一、准备工作</h2><p><span style="font-size:14px;color:#000099;">1、下载QGIS源码</span></p><p><span style="font-size:14px;color:#000099;">最新版本的QGIS源码需要从git上下载。最新的发布版是2.0，下载地址见下。</span><span style="font-size:14px;color:#000099;"><a target=_blank target="_blank" href="https://github.com/qgis/QGIS/tree/release-2_0">https://github.com/qgis/QGIS/tree/release-2_0</a>。</span><span style="color: rgb(0, 0, 153);font-size:14px;">打开网页，在右侧有个Download ZIP即可下载2.0的源码zip包，选择一个地方保存即可，如下图。</span></p><p align="center"></p><p style="text-align: center;"><span style="font-size:14px;color:#000099;">&nbsp;<img src="http://img.blog.csdn.net/20131218191846203?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></span></p><p><span style="font-size:14px;color:#000099;">2、下载、安装和编译QGIS的依赖库</span></p><p><span style="font-size:14px;color:#000099;">这里只说明安装QGIS必须的依赖库，其他的可选的这里都不说明。</span><span style="color: rgb(0, 0, 153);font-size:14px;">首先是编译所需的工具：</span></p><p><span style="font-size:14px;color:#000099;">CMake &gt;= 2.8.0</span></p><p><span style="font-size:14px;color:#000099;">Flex</span></p><p><span style="font-size:14px;color:#000099;">Bison &gt;= 2.4</span></p><p><span style="font-size:14px;color:#000099;">上面三个工具安装的时候务必安装在没有空格，没有中文的路径里面，然后将安装之后的bin目录添加到环境变量里面，要不然，后面有你受的。不过也没关系，后面有解决方案。</span><span style="color: rgb(0, 0, 153);font-size:14px;">接下来是必须要的第三方库：</span></p><p><span style="font-size:14px;color:#000099;">Qt &gt;= 4.5.0</span></p><p><span style="font-size:14px;color:#000099;">Proj &gt;= 4.4.x</span></p><p><span style="font-size:14px;color:#000099;">GEOS &gt;= 3.0</span></p><p><span style="font-size:14px;color:#000099;">Sqlite3 &gt;= 3.0.0</span></p><p><span style="font-size:14px;color:#000099;">GDAL/OGR &gt;= 1.4.x</span></p><p><span style="font-size:14px;color:#000099;">Qwt &gt;= 5.0 &amp; (&lt; 6.1 with internalQwtPolar)</span></p><p><span style="font-size:14px;color:#000099;">expat &gt;= 1.95</span></p><p><span style="font-size:14px;color:#000099;">下载地址就不列了，Google搜索，基本上第一个进去就是官网，然后点击下载就可以了。</span></p><h2>二、CMAKE配置</h2><p><span style="font-size:14px;color:#000099;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 下载后解压QGIS-final-2_0_1的压缩包，然后在同级目录新建一个Build目录，用于保存CMake生成的工程文件和编译后的可执行文件。如下图所示。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192123156?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来打开CMake的GUI程序来配置QGIS的工程文件。先将QGIS的源码目录和上面创建的Build目录选进去，如下图所示。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192153359?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="431" /></p><p><span style="font-size:14px;color:#000099;">接下来点击Configure按钮，弹出要生成的工程文件类型，我的电脑安装的是VS2008，所以选择Visual Studio 9 2008，如果是其他的，选择对应的即可，如下图。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192439875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">点击Finish即可开始配置，接下来就会弹出一些错误信息，来告诉你需要设置QGIS所依赖的第三方库的路径等等。如下图：</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192457640?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="431" /></p><p><span style="font-size:14px;color:#000099;">点击确定之后，发现有很多底色是红色的配置项，这些就是我们需要修改的。</span></p><p><span style="font-size:14px;color:#000099;">由于这里只编译最基础的QGIS可执行程序，所以其他的插件全部不进行编译，所以我们将分组中的WITH修改为如下图所示。如果你需要编译插件的话，就勾上，同时后面需要设置插件所依赖的第三方库。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192517015?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">接下来，点击Configure按钮，会在最下面的窗口中以红色的字体提示需要设置那些库，比如首先就会提示要设置Flex库的路径。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192533546?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">设置完Flex的路径之后点击Configure，又会提示Bison没有找到，依次设置完，按照这个步骤设置完所有需要设置的第三方库。</span></p><p><span style="font-size:14px;color:#000099;">接下来提示设置PROJ和GEOS库</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192550875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">接下来是GDAL</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192605062?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">点击完Configure之后会出现一大片的红色，如下图所示。不要恐惧，其实里面大多数都是可以不用设置的。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192622781?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="319" /></p><p><span style="font-size:14px;color:#000099;">设置SQLite3和spatialindex库的路径</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192638640?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="96" /></p><p><span style="font-size:14px;color:#000099;">点击Configure后设置Expat的库</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192656906?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">点击Configure后设置QWT的库</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192712156?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">接下来点击Configure后提示要设置SetupAPI库的路径，这个库在程序安装目录的Windows SDKs目录里面，如我本机的为“C:/ProgramFiles/Microsoft SDKs/Windows/v6.0A/Lib/SetupAPI.Lib”。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192730078?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="343" /></p><p><span style="font-size:14px;color:#000099;">接下来点击Configure会提示SPATIALITE错误，如果你有这个库的话，将路径填进去，如果没有，直接将后面的值删除，留空即可（留空的话后面需要修改一部分源代码）。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192752593?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">接下来再点击Configure按钮，如果正常的话，应该就没有错误提示了，输出窗口会输出如下图所示的信息。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192811718?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="211" /></p><p><span style="font-size:14px;color:#000099;">然后接下来点击Generate按钮，生成工程文件。这时在输出窗口会输出信息，如果输出信息里面没有错误就说明没问题，警告信息不属于错误信息，最后出现Generate done的字样就说明生成成功。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192828781?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="659" /></p><p><span style="font-size:14px;color:#000099;">然后打开Build目录，你会看到生成的sln文件以及其他的工程文件，至此，QGIS编译之前的配置就到此结束。如下图所示。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192848156?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="329" /></p><h2>三、编译</h2><p><span style="font-size:14px;color:#000099;">双击Build目录下的qgis2.0.1.sln或者用VS打开该sln文件，等待VS将整个解决方案加载进来。如下图所示。一共由139个项目组成。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192905921?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">接下来就是编译了，整个编译的过程肯定非常的漫长（我没试过）。首先在qgis的工程右键，打开项目依赖项，如下图所示，将与前面打勾的项目流下来，其他的全部卸载掉。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218192925468?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">有个快速的方法就是，首先把所有的工程都先卸载掉，然后加载QGIS依赖的几个就可以了，这样编译起来时间比较少，如果你时间比较多就全部编译吧。</span></p><p><span style="font-size:14px;color:#000099;">我大概筛选了下，qgis依赖的几个工程如下：</span></p><table border="1" cellspacing="0" cellpadding="0"> <tbody><tr>  <td valign="top"><p>名称</p></td>  <td valign="top"><p>说明</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>qgis</p></td>  <td valign="top"><p>QGIS可执行程序</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>qgis_analysis</p></td>  <td valign="top"><p>依赖项</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>qgis_core</p></td>  <td valign="top"><p>依赖项，QGIS核心库</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>qgis_gui</p></td>  <td valign="top"><p>依赖项，QGIS界面库</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>ui</p></td>  <td valign="top"><p>QGIS所有的界面</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>gdalprovider</p></td>  <td valign="top"><p>读取栅格数据驱动</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr> <tr>  <td valign="top"><p>ogrprovider</p></td>  <td valign="top"><p>读取矢量数据驱动</p></td>  <td valign="top"><p>&nbsp;</p></td> </tr></tbody></table><p>&nbsp;<span style="color: rgb(0, 0, 153); font-size: 14px;">接下来直接在QGIS工程右键编译即可。正常情况下VS会自动先编译QGIS依赖的几个工程，最后编译QGIS。由于两个provider工程，QGIS是通过插件的形式加载的，不会直接依赖，所以需要最后手动编译。</span></p><p><span style="font-size: 14px; color: rgb(0, 0, 153);">&nbsp;</span><span style="font-size: 14px;"><span style="color:#ff0000;">注意：在编译的时候如果没有将GNU的几个软件安装到没有空格的路径中，或者没有加入环境变量path中，很有可能编译出错，错误信息一般如下：</span></span></p><p style="text-align: center;"><img src="http://img.blog.csdn.net/20131218193038656?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size: 14px; color: rgb(0, 0, 153);">下面我们就通过手动的方式来解决这个问题，首先在工程中找到编译出错的文件。首先来看qgis_core的错误，</span></p><p></p><pre code_snippet_id="118131" snippet_file_name="blog_20131218_1_8948421"  code_snippet_id="118131" snippet_file_name="blog_20131218_1_8948421" name="code" class="plain">1&gt;Generating qgsexpressionparser.cpp
+1&gt;E:\QGIS\GnuWin32\bin\bison.exe: m4: No such fileor directory
+1&gt;Project : error PRJ0019: 某个工具从以下位置返回了错误代码:&quot;Generating qgsexpressionparser.cpp&quot;
+1&gt;生成日志保存在file://e:\QGIS2\Build\src\core\qgis_core.dir\Debug\BuildLog.htm</pre><br /><span style="font-size:14px;color:#000099;">我们打开上面的BuildLog.htm，会发现下面的文字：</span><p></p><p align="center"><img src="http://img.blog.csdn.net/20131218193106187?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="456" /></p><p><span style="font-size:14px;color:#000099;">出错的就是上面选中的那句执行的时候出错了，由于bison所在的目录没有安装到环境变量path里面导致的，我们将上面的这句话复制下，然后打开一个cmd命令行窗口，cd到bison的目录，如下图：</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218193123437?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size:14px;color:#000099;">然后在窗口中执行上面的那句话，</span><span style="color: rgb(0, 0, 153); font-size: 14px;">如果没有输出任何信息就说明OK了，然后回到VS中，继续点击生成即可，其他的flex错误类似这样解决即可。</span></p><p align="center"><img src="http://img.blog.csdn.net/20131218193158421?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p><span style="font-size: 14px; color: rgb(0, 0, 153);">然后由于之前没有配置SPATIALITE，所以我们需要修改源代码，编译的时候提示spatialite.h文件找不到的，将include“spatialite.h”注释掉，然后再次编译会提示有函数spatialite_init、spatialite_version、spatial_ref_sys_init找不到的，将该行注释掉，然后编译即可。</span></p><p><span style="font-size:14px;color:#000099;">&nbsp;</span><span style="color: rgb(0, 0, 153); font-size: 14px;">所有的工程编译完之后，会在Build目录下面的output\bin\debug\目录生成dll和exe，然后只需要将QGIS所有依赖的dll拷贝过来就可以双击qgis.exe运行了。依赖的dll主要有gdal、geos、proj、qt、qwt等。需要注意的是，要把gdalprovider.dll和ogrprovider.dll放到exe目录的plugins目录，否则不能打开数据。目录结构如下图。</span></p><p style="text-align: center;"><img src="http://img.blog.csdn.net/20131218193206984?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="357" /></p><p><span style="font-size: 14px; color: rgb(0, 0, 153);">下面是编译完启动的界面。如果想要界面汉化的话，使用QT提供的Linguist（语言家）工具，打开QGIS源码目录下的i18n目录下面的qgis_zh_CN.ts，然后点击文件菜单下面的发布为，将存储为一个qgis_zh_CN.qm的文件，最后将这个qm文件放到qgis.exe所在目录中新建一个i18n的目录，放到里面重新启动qgis就可以看到界面汉化了。</span></p><p align="center"></p><p align="center"><img src="http://img.blog.csdn.net/20131218193227406?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" height="441" />&nbsp;</p><p align="right">李民录2013-12-18</p>   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.11-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="17400075" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/17357499';">上一篇</span><a href="/liminlu0314/article/details/17357499" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">CSDN2013年度博客之星评选</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/18270629';">下一篇</span><a href="/liminlu0314/article/details/18270629" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">扩展GDAL，支持CNSDTF格式（一）</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/octdream/article/details/70332428" title="QGIS2.18.4+QT5.7.1+VS2015编译方法" strategy="recommend_sim_0" target="_blank" style="width: 290px;">QGIS2.18.4+QT5.7.1+VS2015编译方法</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liukangshiwo/article/details/7890060" title="整理【编译QGIS】" strategy="recommend_sim_0" target="_blank" style="width: 290px;">整理【编译QGIS】</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/bjlqw/article/details/25045293" title="QGIS2.3+VS2008+Win7编译（更新2014-5-5）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">QGIS2.3+VS2008+Win7编译（更新2014-5-5）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/ChuQiDeCha/article/details/51693213" title="QGIS在windows下的编译" strategy="recommend_sim_0" target="_blank" style="width: 290px;">QGIS在windows下的编译</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/look1021/article/details/51481599" title="Windows7下编译QGis源码" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Windows7下编译QGis源码</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yilintiandi/article/details/39400585" title="QGIS2.3+VS2010+Win7编译" strategy="recommend_sim_0" target="_blank" style="width: 290px;">QGIS2.3+VS2010+Win7编译</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/deirjie/article/details/48216773" title="QGis2.9在windows下的编译以及二次开发包下载" strategy="recommend_sim_0" target="_blank" style="width: 290px;">QGis2.9在windows下的编译以及二次开发包下载</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/jia_zhengshen/article/details/43240669" title="qgis二次开发之编译" strategy="recommend_sim_0" target="_blank" style="width: 290px;">qgis二次开发之编译</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/qpeity/article/details/45973095" title="Win7下用VS2010编译QGIS2.9.0" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Win7下用VS2010编译QGIS2.9.0</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u012016149/article/details/51813403" title="基于Qt5的QGIS编译" strategy="recommend_sim_0" target="_blank" style="width: 290px;">基于Qt5的QGIS编译</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/17400075",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "17400075",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '17400075';
+    var commentscount = 79;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='QGIS编译';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847194次</span></li>
+    <li>积分：<span>10752</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10752 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

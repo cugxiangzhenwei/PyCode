@@ -1,0 +1,1790 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/38100695"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>Swift源码分析----swift-proxy与swift-object(2) - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！如果转载，请保留作者信息。博客地址：http://blog.csdn.net/gaoxingnengjisuan邮箱地址：dong.liu@siat.ac.cnPS：最近没有登录博客，很多朋友的留言没有看见，这里道歉！还有就是本人较少上QQ，可以邮件交流。接续上一篇博客" />
+
+    <meta name="keywords" content="OpenStack,swift,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=Swift%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90----swift-proxy%e4%b8%8eswift-object(2)&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/38100695"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/38100695">
+        Swift源码分析----swift-proxy与swift-object(2)            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/swift' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">swift</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2014-07-25 00:56</span>
+            <span class="link_view" title="阅读次数">2676人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(2)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('Swift%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90----swift-proxy%e4%b8%8eswift-object(2)','38100695');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(38100695,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[{&quot;name&quot;:&quot;Swift知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/1?source=blogtop&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1452496101906_906.jpg&quot;}]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1494765','gaoxingnengjisuan','top','38100695');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-SWIFT<em>（29）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1494765"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1494765">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:rgb(51,102,255)">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！</span></span></strong></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:rgb(51,102,255)">如果转载，请保留作者信息。</span><br style="color:rgb(51,102,255)">
+<span style="color:rgb(51,102,255)">博客地址：http://blog.csdn.net/gaoxingnengjisuan</span><br style="color:rgb(51,102,255)">
+<span style="color:rgb(51,102,255)">邮箱地址：dong.liu@siat.ac.cn</span></span></strong></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:rgb(51,102,255)">PS：最近没有登录博客，很多朋友的留言没有看见，这里道歉！还有就是本人较少上QQ，可以邮件交流。</span></span></strong></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:rgb(51,102,255)"><br>
+</span></span></strong></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong>接续上一篇博客：</strong></span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong><br>
+</strong></span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; line-height:26px">
+<span style="font-family:KaiTi_GB2312"><strong><span style="font-size:24px">PUT</span></strong></span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong>/swift/proxy/controllers/obj.py----class ContainerController(Controller)----def PUT<br>
+</strong></span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_1_2999943"  code_snippet_id="434735" snippet_file_name="blog_20140725_1_2999943" name="code" class="python">def PUT(self, req):
+    &quot;&quot;&quot;
+    处理HTTP协议PUT请求；
+    &quot;&quot;&quot;
+    ......
+
+    # 容器全局数据；
+    container_info = self.container_info(self.account_name, self.container_name, req)
+    container_partition = container_info[&#39;partition&#39;]
+    containers = container_info[&#39;nodes&#39;]
+    req.acl = container_info[&#39;write_acl&#39;]
+    req.environ[&#39;swift_sync_key&#39;] = container_info[&#39;sync_key&#39;]
+    object_versions = container_info[&#39;versions&#39;]
+
+     ......
+
+
+    # 获取对象的分区号和所有副本节点；
+    partition, nodes = self.app.object_ring.get_nodes(self.account_name, self.container_name, self.object_name)
+
+     ......
+        
+    pile = GreenPile(len(nodes))
+
+     ......
+
+    outgoing_headers = self._backend_requests(
+        req, len(nodes), container_partition, containers,
+        delete_at_container, delete_at_part, delete_at_nodes)
+
+    # _connect_put_node：实现了PUT方法到各个节点的连接和推送；
+    for nheaders in outgoing_headers:
+        # RFC2616:8.2.3 disallows 100-continue without a body
+        if (req.content_length &gt; 0) or chunked:
+            nheaders[&#39;Expect&#39;] = &#39;100-continue&#39;
+        pile.spawn(self._connect_put_node, node_iter, partition,
+                   req.swift_entity_path, nheaders,
+                   self.app.logger.thread_locals)
+
+    # 获取到各个节点的所有的连接；
+    conns = [conn for conn in pile if conn]
+     ......
+     
+    bytes_transferred = 0
+    try:
+        with ContextPool(len(nodes)) as pool:
+            for conn in conns:
+                conn.failed = False
+                conn.queue = Queue(self.app.put_queue_depth)
+                pool.spawn(self._send_file, conn, req.path)
+            while True:
+                 with ChunkReadTimeout(self.app.client_timeout):
+                    try:
+                        chunk = next(data_source)
+                    except StopIteration:
+                        if chunked:
+                            for conn in conns:
+                                conn.queue.put(&#39;0\r\n\r\n&#39;)
+                        break
+                bytes_transferred += len(chunk)
+                if bytes_transferred &gt; MAX_FILE_SIZE:
+                    return HTTPRequestEntityTooLarge(request=req)
+                for conn in list(conns):
+                    if not conn.failed:
+                        conn.queue.put(&#39;%x\r\n%s\r\n&#39; % (len(chunk), chunk) if chunked else chunk)
+                    else:
+                        conns.remove(conn)
+                ......
+
+            for conn in conns:
+                if conn.queue.unfinished_tasks:
+                    conn.queue.join()
+
+        conns = [conn for conn in conns if not conn.failed]
+
+    ......
+        
+    # 获取所有连接的响应信息；
+    statuses, reasons, bodies, etags = self._get_put_responses(req, conns, nodes)
+
+    ......
+
+    # 根据投票机制，根据现实所有响应信息，实现返回通过投票机制的响应信息；
+    resp = self.best_response(req, statuses, reasons, bodies, _(&#39;Object PUT&#39;), etag=etag)
+
+     ......
+      
+    return resp</pre><span style="font-family:KaiTi_GB2312; font-size:18px">注：上述方法为裁剪后剩余关键部分的代码，各部分具体实现已经在代码注释中标注出来；</span>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px">来看方法_connect_put_node的实现：</span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_2_9127702"  code_snippet_id="434735" snippet_file_name="blog_20140725_2_9127702" name="code" class="python">def _connect_put_node(self, nodes, part, path, headers, logger_thread_locals):
+    &quot;&quot;&quot;
+    实现PUT方法的推送；
+    &quot;&quot;&quot;
+    self.app.logger.thread_locals = logger_thread_locals
+    for node in nodes:
+        try:
+            start_time = time.time()
+                
+            with ConnectionTimeout(self.app.conn_timeout):
+                conn = http_connect(node[&#39;ip&#39;], node[&#39;port&#39;], node[&#39;device&#39;], part, &#39;PUT&#39;, path, headers)
+                
+            self.app.set_node_timing(node, time.time() - start_time)
+            with Timeout(self.app.node_timeout):
+                resp = conn.getexpect()
+            if resp.status == HTTP_CONTINUE:
+                conn.resp = None
+                conn.node = node
+                return conn
+            elif is_success(resp.status):
+                conn.resp = resp
+                conn.node = node
+                return conn
+            elif headers[&#39;If-None-Match&#39;] is not None and resp.status == HTTP_PRECONDITION_FAILED:
+                conn.resp = resp
+                conn.node = node
+                return conn
+            elif resp.status == HTTP_INSUFFICIENT_STORAGE:
+                self.app.error_limit(node, _(&#39;ERROR Insufficient Storage&#39;))
+        except (Exception, Timeout):
+            self.app.exception_occurred(node, _(&#39;Object&#39;), _(&#39;Expect: 100-continue on %s&#39;) % path)</pre><br>
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong>/swift/obj/server.py----class ContainerController(object)----def PUT</strong></span><br>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; line-height:26px">
+<strong></strong></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_3_1144806"  code_snippet_id="434735" snippet_file_name="blog_20140725_3_1144806" name="code" class="python" style="font-size: 18px; font-family: KaiTi_GB2312; ">def PUT(self, request):
+    &quot;&quot;&quot;
+    新建（上传数据）/更新一个object对象;，流程如下：
+    1.通过req的头信息明确content-length长度fsize；
+    2.获取对象文件管理类DiskFile的实例化对象；
+    3.获取指定对象的元数据信息；
+    4.为指定对象文件预分配磁盘空间（大小为fsize）；
+    5.按照network_chunk_size（65536比特）接收来自network的chunk，并且检查上传文件的大小；
+    6.根据request.heads中的值新建/更新指定对象的metadata；
+    7.通过file#put方法把更新后的元数据写入磁盘(包括用temp文件改名.data文件和写入metadata)；
+    8.通过file#unlinkold方法实现删除较早版本object文件；
+    9.调用container_update通知container更新信息；
+    &quot;&quot;&quot;
+    # 根据request.path获取device、partition、account、container、obj等参数；
+    device, partition, account, container, obj = split_and_validate_path(request, 5, 5, True)
+
+    if &#39;x-timestamp&#39; not in request.headers or not check_float(request.headers[&#39;x-timestamp&#39;]):
+         return HTTPBadRequest(body=&#39;Missing timestamp&#39;, request=request, content_type=&#39;text/plain&#39;)
+        
+    # 检测确认要建立对象的一切都已经准备好；
+    error_response = check_object_creation(request, obj)
+        
+    if error_response:
+        return error_response
+        
+    new_delete_at = int(request.headers.get(&#39;X-Delete-At&#39;) or 0)
+    if new_delete_at and new_delete_at &lt; time.time():
+        return HTTPBadRequest(body=&#39;X-Delete-At in past&#39;, request=request, content_type=&#39;text/plain&#39;)
+        
+    # 通过req的头信息明确content-length长度；
+    try:
+        fsize = request.message_length()
+    except ValueError as e:
+        return HTTPBadRequest(body=str(e), request=request, content_type=&#39;text/plain&#39;)
+
+    # 获取对象文件管理类DiskFile的实例化对象；
+    # 这个类实现了应用POSIX-compliant格式的文件系统管理对象文件；
+    try:
+        disk_file = self.get_diskfile(device, partition, account, container, obj)
+    except DiskFileDeviceUnavailable:
+        return HTTPInsufficientStorage(drive=device, request=request)
+        
+    # 获取对象的元数据信息；
+    try:
+        orig_metadata = disk_file.read_metadata()
+    except (DiskFileNotExist, DiskFileQuarantined):
+        orig_metadata = {}
+
+    # Checks for If-None-Match
+    if request.if_none_match is not None and orig_metadata:
+        if &#39;*&#39; in request.if_none_match:
+            # File exists already so return 412
+            return HTTPPreconditionFailed(request=request)
+        if orig_metadata.get(&#39;ETag&#39;) in request.if_none_match:
+            # The current ETag matches, so return 412
+            return HTTPPreconditionFailed(request=request)
+
+    orig_timestamp = orig_metadata.get(&#39;X-Timestamp&#39;)
+    if orig_timestamp and orig_timestamp &gt;= request.headers[&#39;x-timestamp&#39;]:
+        return HTTPConflict(request=request)
+        
+    orig_delete_at = int(orig_metadata.get(&#39;X-Delete-At&#39;) or 0)
+    upload_expiration = time.time() + self.max_upload_time
+    etag = md5()
+    elapsed_time = 0
+        
+    try:
+        # create：为文件预分配磁盘空间（大小为size）；
+        # 按照network_chunk_size接收来自network的chunk，并且检查上传文件的大小；
+        # 根据request.heads中的值新建/更新file.metadata；
+        # 通过file#put方法把更新后的元数据写入磁盘(包括用temp文件改名.data文件和写入metadata)；
+            
+        # 为文件预分配磁盘空间（大小为size）；
+        with disk_file.create(size=fsize) as writer:
+            upload_size = 0
+            def timeout_reader():
+                with ChunkReadTimeout(self.client_timeout):
+                    return request.environ[&#39;wsgi.input&#39;].read(self.network_chunk_size)
+
+            # 按照network_chunk_size接收来自network的chunk；
+            try:
+                for chunk in iter(lambda: timeout_reader(), &#39;&#39;):
+                    start_time = time.time()
+                    if start_time &gt; upload_expiration:
+                        self.logger.increment(&#39;PUT.timeouts&#39;)
+                        return HTTPRequestTimeout(request=request)
+                    etag.update(chunk)
+                    upload_size = writer.write(chunk)
+                    elapsed_time += time.time() - start_time
+            except ChunkReadTimeout:
+                return HTTPRequestTimeout(request=request)
+            if upload_size:
+                self.logger.transfer_rate(&#39;PUT.&#39; + device + &#39;.timing&#39;, elapsed_time, upload_size)
+                
+            # 并且检查上传文件的大小；
+            # 如果接收到的文件大小和request.head中声明的一致，并且etag也与heads中的&#39;etag&#39;一致时，说明文件接收成功；
+            if fsize is not None and fsize != upload_size:
+                return HTTPClientDisconnect(request=request)
+            etag = etag.hexdigest()
+            if &#39;etag&#39; in request.headers and request.headers[&#39;etag&#39;].lower() != etag:
+                return HTTPUnprocessableEntity(request=request)
+                
+            # 根据request.heads中的值新建/更新file.metadata；
+            metadata = {
+                    &#39;X-Timestamp&#39;: request.headers[&#39;x-timestamp&#39;],
+                    &#39;Content-Type&#39;: request.headers[&#39;content-type&#39;],
+                    &#39;ETag&#39;: etag,
+                    &#39;Content-Length&#39;: str(upload_size),
+                }
+            metadata.update(val for val in request.headers.iteritems() if is_user_meta(&#39;object&#39;, val[0]))
+            for header_key in (
+                    request.headers.get(&#39;X-Backend-Replication-Headers&#39;) or
+                    self.allowed_headers):
+                if header_key in request.headers:
+                    header_caps = header_key.title()
+                    metadata[header_caps] = request.headers[header_key]
+                
+            # 通过file#put方法把更新后的元数据写入磁盘(包括用temp文件改名.data文件和写入metadata)；
+            writer.put(metadata)
+    except DiskFileNoSpace:
+        return HTTPInsufficientStorage(drive=device, request=request)
+
+    # 通过file#unlinkold删除较早版本object文件；
+    if orig_delete_at != new_delete_at:
+        if new_delete_at:
+            self.delete_at_update(&#39;PUT&#39;, new_delete_at, account, container, obj, request, device)
+        if orig_delete_at:
+            self.delete_at_update(&#39;DELETE&#39;, orig_delete_at, account, container, obj, request, device)
+
+    # 调用container_update通知container更新信息；
+    self.container_update(
+            &#39;PUT&#39;, account, container, obj, request,
+            HeaderKeyDict({
+                &#39;x-size&#39;: metadata[&#39;Content-Length&#39;],
+                &#39;x-content-type&#39;: metadata[&#39;Content-Type&#39;],
+                &#39;x-timestamp&#39;: metadata[&#39;X-Timestamp&#39;],
+                &#39;x-etag&#39;: metadata[&#39;ETag&#39;]}),
+            device)
+        
+    return HTTPCreated(request=request, etag=etag)</pre><br>
+<span style="font-size:24px"><span style="font-family:KaiTi_GB2312">DELETE</span></span>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-size:14px; line-height:26px">
+<span style="font-size:18px"><strong><span style="font-family:KaiTi_GB2312">/swift/proxy/controllers/obj.py----class ContainerController(Controller)----def DELETE</span><br>
+</strong></span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_4_861399"  code_snippet_id="434735" snippet_file_name="blog_20140725_4_861399" name="code" class="python">def DELETE(self, req):
+    &quot;&quot;&quot;
+    处理HTTP协议DELETE请求；
+    &quot;&quot;&quot;       
+    container_info = self.container_info(self.account_name, self.container_name, req)
+
+        
+    container_partition = container_info[&#39;partition&#39;]
+    containers = container_info[&#39;nodes&#39;]
+    req.acl = container_info[&#39;write_acl&#39;]
+    req.environ[&#39;swift_sync_key&#39;] = container_info[&#39;sync_key&#39;]
+    object_versions = container_info[&#39;versions&#39;]
+        
+    if object_versions:
+        # this is a version manifest and needs to be handled differently
+        object_versions = unquote(object_versions)
+        lcontainer = object_versions.split(&#39;/&#39;)[0]
+        prefix_len = &#39;%03x&#39; % len(self.object_name)
+        lprefix = prefix_len + self.object_name + &#39;/&#39;
+        last_item = None
+        try:
+            for last_item in self._listing_iter(lcontainer, lprefix, req.environ):
+                pass
+        except ListingIterNotFound:
+            # no worries, last_item is None
+            pass
+        except ListingIterNotAuthorized as err:
+            return err.aresp
+        except ListingIterError:
+            return HTTPServerError(request=req)
+            
+        if last_item:
+            # there are older versions so copy the previous version to the
+            # current object and delete the previous version
+            orig_container = self.container_name
+            orig_obj = self.object_name
+            self.container_name = lcontainer
+            self.object_name = last_item[&#39;name&#39;].encode(&#39;utf-8&#39;)
+            copy_path = &#39;/v1/&#39; + self.account_name + &#39;/&#39; + self.container_name + &#39;/&#39; + self.object_name
+                
+            # 拷贝的目标文件：/self.container_name/self.object_name
+            copy_headers = {&#39;X-Newest&#39;: &#39;True&#39;, &#39;Destination&#39;: orig_container + &#39;/&#39; + orig_obj}
+            copy_environ = {&#39;REQUEST_METHOD&#39;: &#39;COPY&#39;, &#39;swift_versioned_copy&#39;: True}
+            # 根据给定的参数建立一个新的请求对象；
+            creq = Request.blank(copy_path, headers=copy_headers, environ=copy_environ)
+            copy_resp = self.COPY(creq)
+                
+            if is_client_error(copy_resp.status_int):
+                # some user error, maybe permissions
+                return HTTPPreconditionFailed(request=req)
+            elif not is_success(copy_resp.status_int):
+                # could not copy the data, bail
+                return HTTPServiceUnavailable(request=req)
+                
+            # reset these because the COPY changed them
+            self.container_name = lcontainer
+            self.object_name = last_item[&#39;name&#39;].encode(&#39;utf-8&#39;)
+            new_del_req = Request.blank(copy_path, environ=req.environ)
+            container_info = self.container_info(self.account_name, self.container_name, req)
+            container_partition = container_info[&#39;partition&#39;]
+            containers = container_info[&#39;nodes&#39;]
+            new_del_req.acl = container_info[&#39;write_acl&#39;]
+            new_del_req.path_info = copy_path
+            req = new_del_req
+            # remove &#39;X-If-Delete-At&#39;, since it is not for the older copy
+            if &#39;X-If-Delete-At&#39; in req.headers:
+                del req.headers[&#39;X-If-Delete-At&#39;]
+    if &#39;swift.authorize&#39; in req.environ:
+        aresp = req.environ[&#39;swift.authorize&#39;](req)
+        if aresp:
+            return aresp
+        
+    if not containers:
+        return HTTPNotFound(request=req)
+        
+    # 获取指定对象的分区号和所有副本节点；
+    partition, nodes = self.app.object_ring.get_nodes(self.account_name, self.container_name, self.object_name)
+    # Used by container sync feature
+    if &#39;x-timestamp&#39; in req.headers:
+        try:
+            req.headers[&#39;X-Timestamp&#39;] = normalize_timestamp(req.headers[&#39;x-timestamp&#39;])
+        except ValueError:
+            return HTTPBadRequest(request=req, content_type=&#39;text/plain&#39;,
+                    body=&#39;X-Timestamp should be a UNIX timestamp float value; &#39;
+                    &#39;was %r&#39; % req.headers[&#39;x-timestamp&#39;])
+    else:
+        req.headers[&#39;X-Timestamp&#39;] = normalize_timestamp(time.time())
+
+    headers = self._backend_requests(req, len(nodes), container_partition, containers)
+        
+    # 发送一个HTTP请求到多个节点，并汇聚所有返回的响应信息；
+    # 根据投票机制，根据现实所有响应信息，返回通过投票机制的响应信息（因为是获取多个节点的响应信息）；
+    resp = self.make_requests(req, self.app.object_ring,
+                              partition, &#39;DELETE&#39;, req.swift_entity_path,
+                              headers)
+        
+    return resp</pre><br>
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong>/swift/obj/server.py----class ContainerController(object)----def DELETE</strong></span><br>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_5_9465175"  code_snippet_id="434735" snippet_file_name="blog_20140725_5_9465175" name="code" class="python">def DELETE(self, request):
+    &quot;&quot;&quot;
+    实现删除指定对象文件，并删除较早版本的object文件；
+    当object更新后，也要更新container，当object删除后进行更新所属container；
+    &quot;&quot;&quot;
+    device, partition, account, container, obj = split_and_validate_path(request, 5, 5, True)
+        
+    if &#39;x-timestamp&#39; not in request.headers or not check_float(request.headers[&#39;x-timestamp&#39;]):
+        return HTTPBadRequest(body=&#39;Missing timestamp&#39;, request=request, content_type=&#39;text/plain&#39;)
+        
+    try:
+        disk_file = self.get_diskfile(device, partition, account, container, obj)
+    except DiskFileDeviceUnavailable:
+        return HTTPInsufficientStorage(drive=device, request=request)
+        
+    # 获取要删除对象的元数据；
+    try:
+        orig_metadata = disk_file.read_metadata()
+
+    except DiskFileExpired as e:
+        orig_timestamp = e.timestamp
+        orig_metadata = e.metadata
+        response_class = HTTPNotFound
+    except DiskFileDeleted as e:
+        orig_timestamp = e.timestamp
+        orig_metadata = {}
+        response_class = HTTPNotFound
+    except (DiskFileNotExist, DiskFileQuarantined):
+        orig_timestamp = 0
+        orig_metadata = {}
+        response_class = HTTPNotFound
+
+        
+    else:
+        orig_timestamp = orig_metadata.get(&#39;X-Timestamp&#39;, 0)
+        if orig_timestamp &lt; request.headers[&#39;x-timestamp&#39;]:
+            response_class = HTTPNoContent
+        else:
+            response_class = HTTPConflict
+        
+    orig_delete_at = int(orig_metadata.get(&#39;X-Delete-At&#39;) or 0)
+    try:
+        req_if_delete_at_val = request.headers[&#39;x-if-delete-at&#39;]
+        req_if_delete_at = int(req_if_delete_at_val)
+    except KeyError:
+        pass
+    except ValueError:
+        return HTTPBadRequest(request=request, body=&#39;Bad X-If-Delete-At header value&#39;)
+    else:
+        if orig_delete_at != req_if_delete_at:
+            return HTTPPreconditionFailed(request=request, body=&#39;X-If-Delete-At and X-Delete-At do not match&#39;)
+        
+    # 当更新object的时候，更新到期的对象所属container；
+    # 经过分析代码，在方法delete_at_update中没有执行任何操作；
+    if orig_delete_at:
+        self.delete_at_update(&#39;DELETE&#39;, orig_delete_at, account, container, obj, request, device)
+    req_timestamp = request.headers[&#39;X-Timestamp&#39;]
+        
+    if orig_timestamp &lt; req_timestamp:
+        # 实现删除比给定时间戳旧的任何对象文件；
+        disk_file.delete(req_timestamp)
+        # 当object更新后，也要更新container，用于当object更新时更新所属container；
+        self.container_update(
+            &#39;DELETE&#39;, account, container, obj, request,
+            HeaderKeyDict({&#39;x-timestamp&#39;: req_timestamp}),
+            device)
+    return response_class(request=request)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">语句disk_file.delete(req_timestamp)实现了删除指定对象，并实现了删除比给定时间戳旧的任何对象文件；</span>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px">来看方法disk_file.delete（）的实现：<br>
+</span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_6_7196901"  code_snippet_id="434735" snippet_file_name="blog_20140725_6_7196901" name="code" class="python">class DiskFile(object)----def delete
+def delete(self, timestamp):
+    &quot;&quot;&quot;
+    实现删除比给定时间戳旧的任何对象文件，并实现更新时间戳；
+    &quot;&quot;&quot;
+    timestamp = normalize_timestamp(timestamp)
+
+    with self.create() as deleter:
+        deleter._extension = &#39;.ts&#39;
+        deleter.put({&#39;X-Timestamp&#39;: timestamp})</pre><span style="font-family:KaiTi_GB2312; font-size:18px">注：具体实现通过分析方法create()和方法put()就可得知和理解，这里不多说了。</span><br>
+<p></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px">再来看方法container_update的实现：<br>
+</span></p>
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; font-family:Arial; font-size:14px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px"><strong></strong></span></p>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_7_7752525"  code_snippet_id="434735" snippet_file_name="blog_20140725_7_7752525" name="code" class="python">def container_update(self, op, account, container, obj, request, headers_out, objdevice):
+    &quot;&quot;&quot;
+    当object更新后，也要更新container；       
+    通过头文件获取所有要实现更新container所属的device和host；
+    通过循环遍历实现发送HTTP请求至所属container，更新container的数据；
+    &quot;&quot;&quot;
+    headers_in = request.headers
+    # 从原始请求的头部信息中获取container的相应的host信息；
+    conthosts = [h.strip() for h in
+                 headers_in.get(&#39;X-Container-Host&#39;, &#39;&#39;).split(&#39;,&#39;)]
+    # 从原始请求的头部信息中获取container的相应的device信息；
+    contdevices = [d.strip() for d in
+                   headers_in.get(&#39;X-Container-Device&#39;, &#39;&#39;).split(&#39;,&#39;)]
+    # 从原始请求的头部信息中获取container的相应的partition信息；
+    contpartition = headers_in.get(&#39;X-Container-Partition&#39;, &#39;&#39;)
+
+    # 如果要改变信息的container所对应的host数目和device数目不同，引发错误声明并返回；
+    if len(conthosts) != len(contdevices):
+        # This shouldn&#39;t happen unless there&#39;s a bug in the proxy,
+        # but if there is, we want to know about it.
+        self.logger.error(_(&#39;ERROR Container update failed: different  &#39;
+                            &#39;numbers of hosts and devices in request: &#39;
+                            &#39;&quot;%s&quot; vs &quot;%s&quot;&#39;) %
+                           (headers_in.get(&#39;X-Container-Host&#39;, &#39;&#39;),
+                            headers_in.get(&#39;X-Container-Device&#39;, &#39;&#39;)))
+        return
+
+    if contpartition:
+        updates = zip(conthosts, contdevices)
+    else:
+        updates = []
+
+    headers_out[&#39;x-trans-id&#39;] = headers_in.get(&#39;x-trans-id&#39;, &#39;-&#39;)
+    headers_out[&#39;referer&#39;] = request.as_referer()
+        
+    # 遍历所有要改变信息container中相对应的host和device，发送更新container信息的请求要求到相应的目标之上；
+    # 调用方法async_update来具体实现发送HTTP请求至所属container，更新container的数据；
+    for conthost, contdevice in updates:
+        self.async_update(op, account, container, obj, conthost,
+                          contpartition, contdevice, headers_out,
+                          objdevice)</pre><br>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_8_3532404"  code_snippet_id="434735" snippet_file_name="blog_20140725_8_3532404" name="code" class="python">def async_update(self, op, account, container, obj, host, partition, contdevice, headers_out, objdevice):
+    &quot;&quot;&quot;
+    发送或者保存一个异步更新；
+    用于当object发生变化时，发送HTTP请求至所属container，更新container的数据；
+    如果请求失败，则将更新序列化写入async_dir的dest文件中,具体路径如下：
+    ASYNCDIR=&#39;async_pending&#39;
+    async_dir=self.devices/objdevice/&lt;ASYNCDIR&gt;
+    hash_path=hash(account,container, obj)
+    dest=&lt;async_dir&gt;/&lt;hash_path&gt;[-3:]/&lt;hash_path&gt;-&lt;timestamp&gt;
+    &quot;&quot;&quot;
+    headers_out[&#39;user-agent&#39;] = &#39;obj-server %s&#39; % os.getpid()
+    # 完整路径；
+    full_path = &#39;/%s/%s/%s&#39; % (account, container, obj)
+    if all([host, partition, contdevice]):
+        try:
+            # 在conn_timeout时间内执行with之下的连接操作，否则引发异常；
+            with ConnectionTimeout(self.conn_timeout):
+                # 从host中解析出来ip和port的值；
+                ip, port = host.rsplit(&#39;:&#39;, 1)
+                # 建立一个HTTPConnection类的对象；
+                # 返回HTTPConnection连接对象；
+                conn = http_connect(ip, port, contdevice, partition, op, full_path, headers_out)
+            # 在node_timeout时间内执行with之下的操作，否则引发异常；
+            with Timeout(self.node_timeout):
+                # 获取来自所属container服务器的响应；
+                response = conn.getresponse()
+                response.read()
+                # 根据连接状态判断连接是否成功，成功则直接返回；
+                if is_success(response.status):
+                    return
+                else:
+                    self.logger.error(_(
+                        &#39;ERROR Container update failed &#39;
+                        &#39;(saving for async update later): %(status)d &#39;
+                        &#39;response from %(ip)s:%(port)s/%(dev)s&#39;),
+                        {&#39;status&#39;: response.status, &#39;ip&#39;: ip, &#39;port&#39;: port,
+                         &#39;dev&#39;: contdevice})
+        except (Exception, Timeout):
+            self.logger.exception(_(
+                &#39;ERROR container update failed with &#39;
+                &#39;%(ip)s:%(port)s/%(dev)s (saving for async update later)&#39;),
+                {&#39;ip&#39;: ip, &#39;port&#39;: port, &#39;dev&#39;: contdevice})
+    data = {&#39;op&#39;: op, &#39;account&#39;: account, &#39;container&#39;: container, &#39;obj&#39;: obj, &#39;headers&#39;: headers_out}
+    timestamp = headers_out[&#39;x-timestamp&#39;]
+    self._diskfile_mgr.pickle_async_update(objdevice, account, container, obj, data, timestamp)</pre><br>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_9_8755873"  code_snippet_id="434735" snippet_file_name="blog_20140725_9_8755873" name="code" class="python">def pickle_async_update(self, device, account, container, obj, data, timestamp):
+    device_path = self.construct_dev_path(device)
+    # 如果请求失败，则将更新序列化写入async_dir的dest文件中,具体路径如下：
+    # ASYNCDIR=&#39;async_pending&#39;
+    # async_dir=self.devices/objdevice/&lt;ASYNCDIR&gt;
+    # hash_path=hash(account,container, obj)
+    # dest=&lt;async_dir&gt;/&lt;hash_path&gt;[-3:]/&lt;hash_path&gt;-&lt;timestamp&gt;
+    async_dir = os.path.join(device_path, ASYNCDIR)
+    # hash_path：根据情况获取account/container/object的哈希值，这里当然是获取object的哈希值啦；
+    ohash = hash_path(account, container, obj)
+    # 确保pickle文件写入到磁盘；
+    # 先写道临时位置，确保它同步到磁盘，然后移动到磁盘上最终的位置；
+    self.threadpools[device].run_in_thread(
+        write_pickle,
+        data,
+        os.path.join(async_dir, ohash[-3:], ohash + &#39;-&#39; + normalize_timestamp(timestamp)),
+        os.path.join(device_path, &#39;tmp&#39;))
+    self.logger.increment(&#39;async_pendings&#39;)</pre><br>
+<pre code_snippet_id="434735" snippet_file_name="blog_20140725_10_5931191"  code_snippet_id="434735" snippet_file_name="blog_20140725_10_5931191" name="code" class="python">def write_pickle(obj, dest, tmp=None, pickle_protocol=0):
+    &quot;&quot;&quot;
+    确保pickle文件写入到磁盘；
+    先写道临时位置，确保它同步到磁盘，然后移动到磁盘上最终的位置；
+    &quot;&quot;&quot;
+    if tmp is None:
+        tmp = os.path.dirname(dest)
+    fd, tmppath = mkstemp(dir=tmp, suffix=&#39;.tmp&#39;)
+    with os.fdopen(fd, &#39;wb&#39;) as fo:
+        pickle.dump(obj, fo, pickle_protocol)
+        fo.flush()
+        os.fsync(fd)
+        renamer(tmppath, dest)</pre>
+<p></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.11-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="38100695" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/38100459';">上一篇</span><a href="/gaoxingnengjisuan/article/details/38100459" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">Swift源码分析----swift-proxy与swift-object(1)</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/41631547';">下一篇</span><a href="/gaoxingnengjisuan/article/details/41631547" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">Ceilometer项目源码分析----ceilometer项目源码结构分析</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Tomstrong_369/article/details/51314279" title="OpenStack Kolla 源码分析 --Ansible" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack Kolla 源码分析 --Ansible</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/qq629290/article/details/69831410" title="Mac实用软件及功能吐血总结" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Mac实用软件及功能吐血总结</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lupengfei1009/article/details/50826442" title="关于代码家(干货集中营)共享android端知识点综合整理" strategy="recommend_sim_new" target="_blank" style="width: 290px;">关于代码家(干货集中营)共享android端知识点综合整理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/cheris_cheris/article/details/53306833" title="Android按键事件传递流程(一)" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Android按键事件传递流程(一)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/hackstoic/article/details/52008307" title="Golang优秀开源项目汇总（持续更新。。。）" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Golang优秀开源项目汇总（持续更新。。。）</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u013510614/article/details/51747308" title="开源公司黄页 关于/ 阿里巴巴的50款开源软件[大部分为Java语言]" strategy="recommend_sim_new" target="_blank" style="width: 290px;">开源公司黄页 关于/ 阿里巴巴的50款开源软件[大部分为Java语言]</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lihongyang1/article/details/70738433" title="关于代码家(干货集中营)共享android端知识点综合整理" strategy="recommend_sim_new" target="_blank" style="width: 290px;">关于代码家(干货集中营)共享android端知识点综合整理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Harrytsz/article/details/58247786" title="码农周刊分类整理" strategy="recommend_sim_new" target="_blank" style="width: 290px;">码农周刊分类整理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/shanandqiu/article/details/70598381" title="golang 开源项目" strategy="recommend_sim_new" target="_blank" style="width: 290px;">golang 开源项目</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yk19851111/article/details/52610099" title="码农周刊分类整理" strategy="recommend_sim_new" target="_blank" style="width: 290px;">码农周刊分类整理</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/38100695",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "38100695",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '38100695';
+    var commentscount = 2;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='Swift源码分析----swift-proxy与swift-object(2)';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466733次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

@@ -1,0 +1,1179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/8761019"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>SURF算法学习心得 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="本文主要内容来自下面两篇博客：http://www.yongblog.com/archives/123.htmlhttp://www.cnblogs.com/blue-lg/archive/2012/07/17/2385755.htmlSURF算法是对SIFT算法的一种改进，主要是在算法的执行效率上，比Sift算法来讲运行更快！参考资料：Surf算法论文及实现源码。SURF (Speeded Up" />
+
+    <meta name="keywords" content="" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=SURF%e7%ae%97%e6%b3%95%e5%ad%a6%e4%b9%a0%e5%bf%83%e5%be%97&u=http://blog.csdn.net/liminlu0314/article/details/8761019"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/8761019">
+        SURF算法学习心得            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_r">
+            <span class="link_postdate">2013-04-05 12:54</span>
+            <span class="link_view" title="阅读次数">3063人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(3)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('SURF%e7%ae%97%e6%b3%95%e5%ad%a6%e4%b9%a0%e5%bf%83%e5%be%97','8761019');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(8761019,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1384693','liminlu0314','top','8761019');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">匹配<em>（2）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/1384693"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1384693">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label>
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">SIFT<em></em></span>                       
+                    </label>      
+                    <label  onclick="GetCategoryArticles('1384709','liminlu0314','top','8761019');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">SURF<em>（1）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/1384709"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1384709">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label  onclick="GetCategoryArticles('1384692','liminlu0314','top','8761019');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">图像<em>（4）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/1384692"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1384692">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+<p style="margin:0cm;margin-bottom:.0001pt;mso-line-height-alt:0pt"><span style="font-size:10.5pt;color:#CC0000">本文主要内容来自下面两篇博客：<span lang="EN-US"><o:p></o:p></span></span></p><p style="margin:0cm;margin-bottom:.0001pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-size:10.5pt;color:#CC0000">http://www.yongblog.com/archives/123.html</span></p><p style="margin:0cm;margin-bottom:.0001pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-size:10.5pt;color:#CC0000">http://www.cnblogs.com/blue-lg/archive/2012/07/17/2385755.html</span></p><p style="margin:0cm;margin-bottom:.0001pt;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="color:#0033CC">SURF</span><span style="color:#0033CC">算法是对<span lang="EN-US">SIFT</span>算法的一种改进，主要是在算法的执行效率上，比<span lang="EN-US">Sift</span>算法来讲运行更快！参考资料：<span lang="EN-US"><a href="http://www.yongblog.com/wp-content/uploads/2011/03/SURF%E7%AE%97%E6%B3%95%E8%AE%BA%E6%96%87%E5%8F%8A%E5%AE%9E%E7%8E%B0%E6%BA%90%E7%A0%81.rar" target="_blank" title="SURF算法论文及实现源码" style="outline: 0px"><span style="color:windowtext;text-decoration:none;text-underline:none">Surf</span><span lang="EN-US" style="color:windowtext;text-decoration:none;text-underline:none"><span lang="EN-US">算法论文及实现源码</span></span></a></span>。<span lang="EN-US"><o:p></o:p></span></span></p><p style="margin:0cm;margin-bottom:.0001pt;text-indent:21.0pt;mso-line-height-alt:0pt"><code><span lang="EN-US" style="color:#0033CC">SURF (Speeded <span class="GramE">Up</span> Robust Feature) is a robust local feature detector, firstpresented by Herbert Bay et al. in 2006, that can be used in computer visiontasks like object recognition or 3D reconstruction. It is partly inspired bythe SIFT descriptor. The standard version of SURF is several times faster thanSIFT and claimed by its authors to be more robust against different imagetransformations than SIFT. SURF is based on sums of 2D <span class="SpellE">Haar</span>wavelet responses and makes an efficient use of integral images.</span></code><span lang="EN-US" style="color:#0033CC"><o:p></o:p></span></p><p style="margin:0cm;margin-bottom:.0001pt;text-indent:21.0pt;mso-line-height-alt:0pt"><span style="color:#0033CC">上</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">面这段文字的大体意思就是说：</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">意指</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> </span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">加速的具有鲁棒性的特征，由</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Bay</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">在</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">2006</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">年首次提出，这项技术可以应用于计算机视觉的物体识别以及</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">3D</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">重构中。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算子由</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算子改进而来，一般来说，标准的</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算子比</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算子快好几倍，并且在多幅图片下具有更好的鲁棒性。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">最大的特征在于采用了</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">HARR</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征以及积分图像</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">integralimage</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的概念，这大大加快了程序的运行时间。</span><span lang="EN-US" style="color:#0033CC"><o:p></o:p></span></p><p style="margin:0cm;margin-bottom:.0001pt;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">提出算法参见</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><a href="http://www.vision.ee.ethz.ch/~surf/papers.html"><span style="color:#0033CC">http://www.vision.ee.ethz.ch/~surf/papers.html</span></a>&nbsp;</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，有</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">paper</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">下载地址。</span><span lang="EN-US" style="color:#0033CC"><o:p></o:p></span></p><p style="margin:0cm;margin-bottom:.0001pt;text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">要理解</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SURF</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算法，要先理解</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算法，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的原理可以参考我上篇转载的博客，下面对其简单说明一下：</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p><h3 style="margin:0cm;margin-bottom:.0001pt;mso-line-height-alt:0pt;outline: 0px"><span style="outline: 0px"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">一、</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">算法简介</span></span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></h3><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:18.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算法是</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">David Lowe</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">于</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">1999</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">年提出的局部特征描述子，并于</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">2004</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">年进行了更深入的发展和完善。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Sift</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征匹配算法可以处理两幅图像之间发生平移、旋转、仿射变换情况下的匹配问题，具有很强的匹配能力。总体来说，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Sift</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算子具有以下特性：</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><div style="outline: 0px" id="_mcePaste"><ol style="margin-top:0cm" start="1" type="1"> <li class="MsoNormal" style="color:#0033CC;mso-line-height-alt:0pt;mso-list:     l2 level1 lfo1;tab-stops:list 36.0pt"><span lang="EN-US" style="font-family:     'Arial','sans-serif'">Sift</span><span style="mso-ascii-font-family:Arial;     mso-hansi-font-family:Arial;mso-bidi-font-family:Arial">特征是图像的局部特征，对平移、旋转、尺度缩放、亮度变化、遮挡和噪声等具有良好的不变性，对视觉变化、仿射变换也保持一定程度的稳定性。</span><span style="font-family:'Arial','sans-serif'"> <span lang="EN-US"><o:p></o:p></span></span></li> <li class="MsoNormal" style="color:#0033CC;mso-line-height-alt:0pt;mso-list:     l2 level1 lfo1;tab-stops:list 36.0pt"><span style="mso-ascii-font-family:     Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial">独特性好，信息量丰富，适用于在海量特征数据库中进行快速、准确的匹配。</span><span style="font-family:'Arial','sans-serif'"> <span lang="EN-US"><o:p></o:p></span></span></li> <li class="MsoNormal" style="color:#0033CC;mso-line-height-alt:0pt;mso-list:     l2 level1 lfo1;tab-stops:list 36.0pt"><span style="mso-ascii-font-family:     Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial">多量性，即使少数的几个物体也可以产生大量</span><span lang="EN-US" style="font-family:'Arial','sans-serif'">Sift</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:     Arial">特征向量。</span><span style="font-family:'Arial','sans-serif'"> <span lang="EN-US"><o:p></o:p></span></span></li> <li class="MsoNormal" style="color:#0033CC;mso-line-height-alt:0pt;mso-list:     l2 level1 lfo1;tab-stops:list 36.0pt"><span style="mso-ascii-font-family:     Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial">速度相对较快，经优化的</span><span lang="EN-US" style="font-family:'Arial','sans-serif'">Sift</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:     Arial">匹配算法甚至可以达到实时的要求。</span><span style="font-family:'Arial','sans-serif'">     <span lang="EN-US"><o:p></o:p></span></span></li> <li class="MsoNormal" style="color:#0033CC;mso-line-height-alt:0pt;mso-list:     l2 level1 lfo1;tab-stops:list 36.0pt"><span style="mso-ascii-font-family:     Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial">可扩展性强，可以很方便的与其他形式的特征向量进行联合。</span><span style="font-family:'Arial','sans-serif'"> <span lang="EN-US"><o:p></o:p></span></span></li></ol></div><span style="outline: 0px;border-spacing: 2px"><span style="outline: 0px;border-spacing: 0px"></span></span><div style="outline: 0px"><p class="MsoNormal" style="mso-line-height-alt:0pt"><span style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">其</span><span lang="EN-US" style="background:#FEFEF2">SIFT</span>算法的三大工序为：<span lang="EN-US"><o:p></o:p></span></p></div><div style="outline: 0px"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(1)</span><span style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">提取关键点；</span><span lang="EN-US"><o:p></o:p></span></p></div><div style="outline: 0px"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(2)</span><span style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">对关键点附加详细的信息（局部特征）也就是所谓的描述器；</span><span lang="EN-US"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(3)</span><span style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">通过两<span class="GramE">方特征</span>点（附带上特征向量的关键点）的两两比较找出相互匹配的若干对特征点，也就建立了景物间的对应关系。</span><span style="color: rgb(0, 51, 204); font-family: 微软雅黑, sans-serif;">&nbsp;</span></p></div><div style="outline: 0px"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="color:#3333ff;"><span style="font-family: 微软雅黑, sans-serif; border: 1pt none windowtext; padding: 0cm;">提取关键点和</span><span style="outline: 0px; border-spacing: 2px;">对关键点附加详细的信息（局部特征）也就是所谓的<span class="GramE">描述器</span></span><span style="font-family: 微软雅黑, sans-serif;">可</span></span><span style="font-family: 微软雅黑, sans-serif;"><span style="color:#3333ff;">以</span><span class="GramE" style="color: rgb(0, 51, 204);">称做</span><span style="color:#0033cc;">是</span><span lang="EN-US" style="color: rgb(0, 51, 204);">Sift</span><span style="color:#0033cc;">特征的生成，即从多幅图像中提取对尺度缩放、旋转、亮度变化无关的特征向量，</span><span lang="EN-US" style="color: rgb(0, 51, 204);">Sift</span><span style="color:#0033cc;">特征的生成一般包括以下几个步骤：</span></span><span style="color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><span style="outline: 0px"></span><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'微软雅黑','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(1)</span><span style="font-family:'微软雅黑','sans-serif';color:#0033CC">、<span style="outline: 0px"><span style="border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">构建尺度空间，检测极值点，获得尺度不变性；</span></span></span><span style="color:#0033CC"><span lang="EN-US"><o:p></o:p></span></span></p></div><p class="MsoNormal" align="center" style="text-align:center;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="514" height="514" id="_x0000_i1036" src="http://www.yongblog.com/wp-content/uploads/2011/03/210.jpg" alt="http://www.yongblog.com/wp-content/uploads/2011/03/210.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><span style="outline: 0px"></span><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.25pt;mso-char-indent-count:1.77;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(2)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">、<span style="border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm"><span style="outline: 0px">特征点过滤并进行精确定位；</span></span></span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><p class="MsoNormal" align="center" style="text-align:center;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="514" height="514" id="_x0000_i1035" src="http://www.yongblog.com/wp-content/uploads/2011/03/39.jpg" alt="http://www.yongblog.com/wp-content/uploads/2011/03/39.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><span style="outline: 0px"></span><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(3)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">、<span style="border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm"><span style="outline: 0px">为特征<span class="GramE">点分配</span>方向值；</span></span></span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><p class="MsoNormal" align="center" style="text-align:center;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="514" height="514" id="_x0000_i1034" src="http://www.yongblog.com/wp-content/uploads/2011/03/44.jpg" alt="http://www.yongblog.com/wp-content/uploads/2011/03/44.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><span style="outline: 0px"></span><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">(4)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">、<span style="border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm"><span style="outline: 0px">生成特征描述子。</span></span></span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">以特征点为中心取</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">16*16</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的邻域作为采样窗口，将采样点与特征点的相对方向通过高斯加权后归入包含</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">bin</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的方向直方图，最后获得</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4*4*8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">128</span><span class="GramE"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">维特征</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">描述子。示意图如下：</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><p class="MsoNormal" align="center" style="text-align:center;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="471" height="220" id="_x0000_i1033" src="http://www.yongblog.com/wp-content/uploads/2011/03/56.jpg" alt="http://www.yongblog.com/wp-content/uploads/2011/03/56.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">当两幅图像的</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;background:#FEFEF2">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征向量生成以后，下一步就可以采用关键点特征向量的欧式距离<span class="GramE">来作</span>为两幅图像中关键点的相似性判定度量。取图</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">1</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的某个关键点，通过遍历找到图像</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">2</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">中的距离最近的两个关键点。在这两个关键点中，如果次近距离除以最近距离小于某个阙值，则判定为一对匹配点。</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><div style="outline: 0px" id="_mcePaste"><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">对于</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">SIFT</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算法，找到的误匹配的点还是比较多，后续需要用</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">RANSAC</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">等算法进行剔除。</span><span style="font-family:'Arial','sans-serif';color:#0033CC"> <span lang="EN-US"><o:p></o:p></span></span></p></div><h3 style="margin:0cm;margin-bottom:.0001pt;mso-line-height-alt:0pt;outline: 0px"><span style="outline: 0px"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">2</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">、</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;border:none windowtext 1.0pt;mso-border-alt:none windowtext 0cm;padding:0cm">SURF</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">算法原理</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></h3><h3 style="margin:0cm;margin-bottom:.0001pt;text-indent:18.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal">SURF</span><span style="font-size:12.0pt;mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;font-weight:normal">算法的步骤与</span><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal">SIFT</span><span style="font-size:12.0pt;mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;font-weight:normal">算法类似，下面是</span><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal">SURF</span><span style="font-size:12.0pt;mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;font-weight:normal">算法的大致流程。</span><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal"><o:p></o:p></span></h3><h3 style="margin:0cm;margin-bottom:.0001pt;text-indent:18.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal">1.</span><span style="font-size:12.0pt;mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC;font-weight:normal">特征点的提取</span><span lang="EN-US" style="font-size:12.0pt;font-family:'Arial','sans-serif';color:#0033CC;font-weight:normal"><o:p></o:p></span></h3><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">1</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）利用</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Hessian</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">矩阵，计算特征值</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">α<o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="324" height="64" id="_x0000_i1032" src="http://images.cnblogs.com/cnblogs_com/blue-lg/341091/r_hessian.jpg" alt="Hessian矩阵" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">其中</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Lxx</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">(x, σ)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">是高斯滤波后图像</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">g(σ)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的在</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">x</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">方向的二阶导数</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">,</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">其他的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Lyy</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">(x, σ)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">、</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Lxy</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">(x, σ)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">都是</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">g(σ)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的二阶导数。为了减小计算量，原文使用了一个简单的方法，并利用了积分图像的优势（大大的减少计算量），方法其实很简单就是在模糊的基础上将原本的模块近似下。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">总所周知，一般计算图像的二阶导时，利用下面的公式</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">d2f(x)/dx2=(f(x+1)-f(x))-(f(x)-f(x-1))=-2*f(x)+f(x+1)+f(x-1)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">。以</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">9X9</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">滤波器为例，如下图所示，左边两幅<span class="GramE">图分别</span>为灰度图像在中心点（黑色点）处的二阶导数</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">d2f(x)/dx2</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">d2f(x)/<span class="SpellE">dxdy</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的模板对应的值</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">, </span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">近似后变成右边的两幅图，图中灰色部分<span class="GramE">像素值</span>为</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">0</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">。可是这样计算特征值不是也很复杂么？当然，所以作者提供了一种新思路</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">--</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">使用积分图像。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="781" height="173" id="_x0000_i1031" src="http://pic002.cnblogs.com/images/2012/321675/2012071623041153.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071623041153.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">积分图像，顾名思义，即指当前像素点所在位置距原点（</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">0,0</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）所包围面的所有灰度之<span class="GramE">和</span>。下图绿色的部分为当前像素点，红色为积分区域。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="191" height="185" id="_x0000_i1030" src="http://pic002.cnblogs.com/images/2012/321675/2012071623183565.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071623183565.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">这样计算图像中任意一块矩形区域的灰度之和</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Sx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">只需要利用矩形</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个顶点</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">(<span class="SpellE">Xi,Yi</span>)(<span class="SpellE">i</span>=1,2,3,4<span style="mso-spacerun:yes">? </span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">顺序为从上之下，先左后右</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">)</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的积分值</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">S</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">（</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">x,y</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）即可。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Sx</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">=S(X1<span class="GramE">,Y1</span>)+S(X4,Y4)-S(X2,Y2)-S(X3,Y3) <o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">至此，大家应该知道<span class="GramE">近似二</span>阶导数的高斯模板并引入积分图像的好处了吧，只需要在函数定义之前计算各个坐标点的积分图像，然后就能方便的求出</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">hessian</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的特征值。不过由于函数模板的近似，这里需要修正下特征值</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">α</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">的求解公式：</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="342" height="34" id="_x0000_i1029" src="http://pic002.cnblogs.com/images/2012/321675/2012071623262915.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071623262915.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">这里</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Dxx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Dxy</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">就是根据图一得到的，而</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Dyy</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Dxx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">类似，只需要导致一下模板即可。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">2</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）根据是否<span class="GramE">为领域</span>极大值判断特征点</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">这里要引入图像堆的概念，说简单点，就是一组大小相同的图像，这些图像都是根据不同大小高斯滤波二阶导模板。按照模板大小从小到大将</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Pi</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">沿</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">z</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">轴方向排布，这样中间层的每个像素点的领域就为</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">3X3X3</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">（包括上下两层）。若该点的特征值</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">α</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">为这</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">27</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个点中的最大值，那么可以认为该点为</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">Feature points--</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征点（图像依据这些特征点的匹配进行更多的操作，比如拼接，比较相似性等等）。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="color:#0033CC">2.</span><span style="color:#0033CC">特征点的匹配</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">1</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）寻找特征向量</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">欲进行特征点的匹配，必须提取<span class="GramE">出特征</span>点的特征向量再利用两个向量的相似程度认为两个点是否为两幅图像相互对应的点。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">第一步：计算特征点的主方向</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">以特征点为圆心半径为</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">6</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">像素建立圆领域，计算得出里面有</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">109</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个像素点。计算这些点的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harr</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">。那么该怎样计算任意一点的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harr</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">特征值？</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="354" height="213" id="_x0000_i1028" src="http://pic002.cnblogs.com/images/2012/321675/2012071712201857.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071712201857.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">选取</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">edge features</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">前两个作为</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">值，这个方向有些类似与梯度方向，不过这里的领域显然更广。至于计算么，依旧是利用积分图像。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"> <o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">对这</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">109</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个像素点分别求出各自的向量的方向</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">angle=<span class="SpellE">acrtan</span>(harry/<span class="SpellE">harrx</span>) </span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，根据最近邻原则将这些</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"> angle</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">划分到</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">60</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">120</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">...</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">300</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">360</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">等</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">6</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个值上。划分在同一范围上的像素点分别将他们的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">相加即可。不过为了体现相邻像素点的更大影响，还需要考虑高斯权重系数。这样得到最大的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和最大的</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry,</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">组成了主方向向量。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">第二步</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">.</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">提取特征描述符</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="191" height="185" id="_x0000_i1027" src="http://pic002.cnblogs.com/images/2012/321675/2012071700253570.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071700253570.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">图中红色箭头为上面计算出来的主方向，按上图所示选取该红色特征点的</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">8X8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">邻域（紫色边框内部）</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"> <o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">计算得到</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4X4</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个像素块的梯度大小和方向（可以利用上面已经计算的</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">），将</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">8X8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">区域分割为</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">2X2</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个区域</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">T1,2,3,4</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">，这样每个区域就包括了</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个更小的由</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个像素点组成的区域</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">. <o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span class="GramE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">x1</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"> <span style="mso-tab-count:1">? </span>x2 <o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span class="GramE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">x3</span></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"> <span style="mso-tab-count:1">? </span>x4<o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="191" height="185" id="_x0000_i1026" src="http://pic002.cnblogs.com/images/2012/321675/2012071700460825.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071700460825.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">和</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harry</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">就是利用白色部分像素灰度值减去黑色部分像素灰度值即可得到（</span><span class="SpellE"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">harrx,harry</span></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）方向向量。这样的向量一共有</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">16</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个，将这些方向向量的方向角归并到上下左右斜上下</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个方向上，并在</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">T<sub>1,2,3,4</sub></span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">中计算这</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">8</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">个方向的值。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" align="center" style="text-align:center;text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC;mso-no-proof:yes"><img border="0" width="837" height="378" id="_x0000_i1025" src="http://pic002.cnblogs.com/images/2012/321675/2012071714335822.jpg" alt="http://pic002.cnblogs.com/images/2012/321675/2012071714335822.jpg" /></span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">那么这个</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">4X8=32</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">维向量即为所求的特征描述符。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><span style="mso-spacerun:yes">? </span><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC">3</span><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">）特征点的匹配</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:21.0pt;mso-line-height-alt:0pt"><span style="mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;color:#0033CC">采用最简单的两向量内积最大值为最匹配的点，设定<span class="GramE">一</span>阈值，只有当这个最大值大于该阈值方可认为<span class="GramE">两特征</span>点匹配。</span><span lang="EN-US" style="font-family:'Arial','sans-serif';color:#0033CC"><o:p></o:p></span></p>   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="8761019" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>1</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/8761015';">上一篇</span><a href="/liminlu0314/article/details/8761015" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">SIFT算法学习心得</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/8761127';">下一篇</span><a href="/liminlu0314/article/details/8761127" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">GDAL中的SURF算法</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sunminmin2011/article/details/8130117" title="Surf算法学习心得(二)——源码简析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(二)——源码简析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sunminmin2011/article/details/8130139" title="Surf算法学习心得(三)——Demo分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(三)——Demo分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sunminmin2011/article/details/8130110" title="Surf算法学习心得(一)——算法原理" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(一)——算法原理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u014035838/article/details/31781343" title="Surf算法学习心得(一)——算法原理" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(一)——算法原理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/jacke121/article/details/54898458" title="Surf算法学习心得(一)——算法原理" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(一)——算法原理</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dadaadao/article/details/7275544" title="Surf算法学习心得(三)——Demo分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(三)——Demo分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/chenbang110/article/details/7545249" title="Surf算法学习心得(三)——Demo分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(三)——Demo分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/chenbang110/article/details/7541164" title="Surf算法学习心得(二)——源码简析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(二)——源码简析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dadaadao/article/details/7275488" title="Surf算法学习心得(二)——源码简析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(二)——源码简析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/alec1987/article/details/6881717" title="Surf算法学习心得(一)——算法原理" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Surf算法学习心得(一)——算法原理</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/8761019",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "8761019",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '8761019';
+    var commentscount = 3;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='SURF算法学习心得';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847173次</span></li>
+    <li>积分：<span>10752</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10752 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

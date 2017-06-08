@@ -1,0 +1,1852 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/15734437"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>OpenStack Nova-scheduler组件的源码解析（2） - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="这篇博客中，我会针对建立虚拟机实例的请求，来解析Nova调度器选取最优主机节点的过程。首先来看方法/nova/scheduler/manager.py----def run_instance:def run_instance(self, context, request_spec, admin_password,            injected_files, requeste" />
+
+    <meta name="keywords" content="OpenStack,nova,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=OpenStack+Nova-scheduler%e7%bb%84%e4%bb%b6%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%882%ef%bc%89&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/15734437"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/15734437">
+        OpenStack Nova-scheduler组件的源码解析（2）            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/nova' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">nova</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-11-12 23:40</span>
+            <span class="link_view" title="阅读次数">7282人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(12)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('OpenStack+Nova-scheduler%e7%bb%84%e4%bb%b6%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%882%ef%bc%89','15734437');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(15734437,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1461395','gaoxingnengjisuan','top','15734437');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-NOVA<em>（35）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1461395"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1461395">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这篇博客中，我会针对建立虚拟机实例的请求，来解析Nova调度器选取最优主机节点的过程。</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">首先来看方法/nova/scheduler/manager.py----def run_instance:</span></p>
+<p></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_1_7314937"  name="code" class="python">def run_instance(self, context, request_spec, admin_password,
+            injected_files, requested_networks, is_first_time,
+            filter_properties):
+        &quot;&quot;&quot;
+        在驱动上尝试调用schedule_run_instance；
+        当引发异常的时候设置实例vm_state为ERROR；
+        context：上下文信息；
+        request_spec：请求规范；
+        admin_password：admin用户密码；
+        injected_files：注入的文件；
+        requested_networks：请求的网络信息；
+        is_first_time：标志是否是第一次；
+        filter_properties：过滤器属性信息；
+        &quot;&quot;&quot;
+        
+        # 获取要运行的实例UUID值；
+        instance_uuids = request_spec['instance_uuids']
+        # EventReporter：上下文管理类；
+        # 获取EventReporter类的对象；
+        with compute_utils.EventReporter(context, conductor_api.LocalAPI(),
+                                         'schedule', *instance_uuids):
+            
+            # schedule_run_instance这个方法在/nova/scheduler/chance.py和/nova/scheduler/filter_scheduler.py中都有定义；
+            # 这里具体调用的是哪一个方法，要看driver的定义；
+            # 这个类的初始化方法中定义了self.driver = importutils.import_object(scheduler_driver)；
+            # 也就是说，调用哪一个方法，是由scheduler_driver来具体指定的；
+            # 初始化类中具体定义了，如果scheduler_driver没有被定义，则采用配置参数来给它赋值；
+            # 也就是scheduler_driver = CONF.scheduler_driver；
+            # 而配置参数CONF.scheduler_driver默认的值是nova.scheduler.filter_scheduler.FilterScheduler；
+            # 从而可以知道，当没有指明scheduler_driver的值时，默认调用/nova/scheduler/filter_scheduler.py中的schedule_run_instance方法；
+            # 这里我会把两个方法都分别跟踪进行分析的；
+            
+            # /nova/scheduler/filter_scheduler.py中的schedule_run_instance方法完成了以下的操作；
+            # 获取要建立实例的数目；
+            # 循环每一个实例；
+            # 获取分配给这个实例的主机；
+            # 拨备创建实例请求的各种资源；
+            # 远程发送运行实例的消息到队列；
+            # 发布调度运行实例结束这个事件的通知；  
+            
+            # /nova/scheduler/chance.py中的schedule_run_instance方法完成了以下的操作；
+            # 循环遍历每个实例；
+            # 为每个实例随机挑选一个主机；
+            # 在一个实例上设置给定的属性并更新实例相关的数据；   
+            # 远程发送建立实例的消息到队列；
+            
+            #注：研究一下这两个方法的实现有什么不同；
+            #研究这两个方法之后会对很多东西学的明白许多；
+            try:
+                # driver = nova.scheduler.filter_scheduler.FilterScheduler
+                return self.driver.schedule_run_instance(context,
+                        request_spec, admin_password, injected_files,
+                        requested_networks, is_first_time, filter_properties)
+
+            except exception.NoValidHost as ex:
+                # don't re-raise
+                self._set_vm_state_and_notify('run_instance',
+                                              {'vm_state': vm_states.ERROR,
+                                              'task_state': None},
+                                              context, ex, request_spec)
+            except Exception as ex:
+                with excutils.save_and_reraise_exception():
+                    self._set_vm_state_and_notify('run_instance',
+                                                  {'vm_state': vm_states.ERROR,
+                                                  'task_state': None},
+                                                  context, ex, request_spec)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们来看语句return self.driver.schedule_run_instance(context,request_spec, admin_password, injected_files,requested_networks, is_first_time, filter_properties)</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">来看这个方法所处的类SchedulerManager的初始化方法：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_2_9234547"  name="code" class="python">class SchedulerManager(manager.Manager):
+    &quot;&quot;&quot;
+    选择一个主机来运行实例；
+    &quot;&quot;&quot;
+
+    RPC_API_VERSION = '2.6'
+
+    def __init__(self, scheduler_driver=None, *args, **kwargs):
+        
+        # 如果scheduler_driver没有定义，则赋值CONF.scheduler_driver给scheduler_driver；
+        # scheduler_driver：这个配置参数默认值为nova.scheduler.filter_scheduler.FilterScheduler；
+        if not scheduler_driver:
+            scheduler_driver = CONF.scheduler_driver
+        
+        # import_object：导入一个类，然后返回这个类的实例对象；
+        # 导入scheduler_driver指定的类；
+        # 例如scheduler_driver的值为nova.scheduler.filter_scheduler.FilterScheduler；
+        # 则导入nova.scheduler.filter_scheduler.FilterScheduler这个类；
+        # 这样也就实现了类的动态的导入；
+        self.driver = importutils.import_object(scheduler_driver)
+        super(SchedulerManager, self).__init__(*args, **kwargs)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">再来看scheduler_driver的定义：</span><pre code_snippet_id="153711" snippet_file_name="blog_20140112_3_5264813"  name="code" class="python">scheduler_driver_opt = cfg.StrOpt('scheduler_driver',
+        default='nova.scheduler.filter_scheduler.FilterScheduler',
+        help='Default driver to use for the scheduler')</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到调度器所应用的选取主机方法是动态导入的，默认是应用nova.scheduler.filter_scheduler.FilterScheduler类所定义的基于主机过滤器的调度器方法。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">再来看方法schedule_run_instance的代码实现：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_4_8994567"  name="code" class="python">def schedule_run_instance(self, context, request_spec,
+                              admin_password, injected_files,
+                              requested_networks, is_first_time,
+                              filter_properties):
+        &quot;&quot;&quot;
+        这个方法被从nova.compute.api调用，来提供实例；
+        返回创建的实例的列表；
+                     
+        获取要建立实例的数目；
+        循环每一个实例，获取分配给这个实例的主机；
+        拨备创建实例请求的各种资源；
+        远程发送运行实例的消息到队列；
+        发布调度运行实例结束这个事件的通知；   
+        &quot;&quot;&quot;
+        # request_spec：请求规范；
+        # 这个参数的格式字典化；
+        payload = dict(request_spec=request_spec)
+        
+        # notifier.publisher_id(&quot;scheduler&quot;)：获取信息发布者ID；
+        # 返回值为&quot;scheduler.host&quot;；
+        # notify：使用指定的驱动程序发布通知；（这个方法需要进一步分析它的具体实现过程）
+        notifier.notify(context, notifier.publisher_id(&quot;scheduler&quot;),'scheduler.run_instance.start', notifier.INFO, payload)
+
+        # 从request_spec当中获取instance_uuids值；
+        instance_uuids = request_spec.pop('instance_uuids')
+        # 获取要建立实例的数目；
+        num_instances = len(instance_uuids)
+        LOG.debug(_(&quot;Attempting to build %(num_instances)d instance(s)&quot;) % locals())
+
+        # 返回满足要求规格的主机列表；
+        # 循环为每一个实例获取合适的主机后，返回选择的主机列表；
+        weighed_hosts = self._schedule(context, request_spec, filter_properties, instance_uuids)
+
+        # @@@这个语句没有弄明白，后面要继续看一下；
+        filter_properties.pop('context', None)
+
+        # 循环遍历instance_uuids；
+        for num, instance_uuid in enumerate(instance_uuids):
+            request_spec['instance_properties']['launch_index'] = num
+
+            try:
+                # 获取分配给这个实例的主机；
+                try:
+                    weighed_host = weighed_hosts.pop(0)
+                except IndexError:
+                    raise exception.NoValidHost(reason=&quot;&quot;)
+
+                # context：上下文信息；
+                # weighed_host：获取分配给这个实例的主机；
+                # request_spec：请求规范；
+                # filter_properties：过滤器属性信息；
+                # requested_networks：请求的网络信息；
+                # injected_files：注入文件；
+                # admin_password：admin密码；
+                # is_first_time：标志是否是第一次；
+                # instance_uuid：每个实例的UUID；
+                # _provision_resource：在这个区域内拨备创建请求的各种资源；
+                # 远程发送建立实例的消息到队列；
+                self._provision_resource(context, weighed_host,
+                                         request_spec,
+                                         filter_properties,
+                                         requested_networks,
+                                         injected_files, admin_password,
+                                         is_first_time,
+                                         instance_uuid=instance_uuid)
+            except Exception as ex:
+                driver.handle_schedule_error(context, ex, instance_uuid, request_spec)
+            retry = filter_properties.get('retry', {})
+            retry['hosts'] = []
+
+        # @@@notify：使用指定的驱动程序发布通知；
+        # 应该是发布调度运行实例结束这个事件的通知；
+        notifier.notify(context, notifier.publisher_id(&quot;scheduler&quot;),
+                        'scheduler.run_instance.end', notifier.INFO, payload)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们比较关注语句weighed_hosts = self._schedule(context, request_spec, filter_properties, instance_uuids)，这条语句通过调用方法_schedule实现了循环为每一个实例获取合适的主机后，返回可用的主机列表。具体来看方法_schedule的代码实现：</span><pre code_snippet_id="153711" snippet_file_name="blog_20140112_5_4152781"  name="code" class="python">def _schedule(self, context, request_spec, filter_properties, instance_uuids=None):
+        &quot;&quot;&quot;
+        返回满足要求规格的主机列表；
+        循环为每一个实例获取合适的主机后，返回选择的主机列表；
+        
+        对主机进行过滤；
+        FilterManager类继承自Scheduler类；
+        在Scheduler类的初始化中，加载了所有可用的filter类；
+        根据配置文件中scheduler_default_filters字段的定义选择默认使用的一个或多个filter；
+        依次对每个主机调用filter类的host_passes()方法，如果返回都为True，则主机通过过滤；
+        
+        对所有通过过滤的主机计算权值；
+        &quot;&quot;&quot;
+        # elevated：返回带有admin标志设置的context的版本；
+        elevated = context.elevated()
+        # 获取实例属性信息（instance_properties）；
+        instance_properties = request_spec['instance_properties']
+        # 获取实例类型信息（instance_type）；
+        instance_type = request_spec.get(&quot;instance_type&quot;, None)
+
+        update_group_hosts = False
+        # 获取scheduler_hints；
+        scheduler_hints = filter_properties.get('scheduler_hints') or {}
+        # 获取group信息；
+        group = scheduler_hints.get('group', None)
+        if group:
+            # group_hosts：获取group中所有具有经过过滤后符合过滤条件的主机的列表；
+            group_hosts = self.group_hosts(elevated, group)
+            # 表示已经更新过group_hosts；
+            update_group_hosts = True
+            # 如果filter_properties中不包含'group_hosts'，则增加'group_hosts'到filter_properties中；
+            if 'group_hosts' not in filter_properties:
+                filter_properties.update({'group_hosts': []})
+                
+            # 获取filter_properties中原有的'group_hosts'；
+            # 把两部分'group_hosts'加在一起；（@@@应该都是符合条件的，自己的理解；）
+            configured_hosts = filter_properties['group_hosts']
+            filter_properties['group_hosts'] = configured_hosts + group_hosts
+
+        # 获取配置选项；
+        config_options = self._get_configuration_options()
+        
+        # 要建立实例的属性信息对象拷贝；
+        properties = instance_properties.copy()
+        
+        # 从instance_uuids获取properties['uuid']；
+        if instance_uuids:
+            properties['uuid'] = instance_uuids[0]
+        # 记录尝试次数；
+        self._populate_retry(filter_properties, properties)
+
+        # 更新过滤器属性信息；
+        filter_properties.update({'context': context,
+                                  'request_spec': request_spec,
+                                  'config_options': config_options,
+                                  'instance_type': instance_type})
+
+        # 从request_spec获取有用的信息，填充到过滤器属性当中；
+        # 分别是filter_properties['os_type']和filter_properties['project_id']；
+        self.populate_filter_properties(request_spec, filter_properties)
+
+        # 寻找可以接受的本地主机列表通过对我们的选项进行反复的过滤和称重；
+        # 这里我们使用了迭代，所以只遍历了一次这个列表；
+        # 获取并返回HostStates列表；
+        
+        # 过滤掉不满足要求的主机； 
+        hosts = self.host_manager.get_all_host_states(elevated)
+
+        selected_hosts = []
+        
+        # 获取要建立的实例数目；
+        if instance_uuids:
+            num_instances = len(instance_uuids)
+        else:
+            num_instances = request_spec.get('num_instances', 1)
+            
+        # 遍历num_instances个实例，为每个实例选取合适的运行主机；
+        for num in xrange(num_instances):
+            # Filter local hosts based on requirements ...
+            # 基于具体要求过滤本地主机；
+            # get_filtered_hosts：过滤主机，返回那些通过所有过滤器的主机；
+            hosts = self.host_manager.get_filtered_hosts(hosts, filter_properties)
+            if not hosts:
+                break
+
+            LOG.debug(_(&quot;Filtered %(hosts)s&quot;) % locals())
+            
+            # 对主机进行称重；
+            # 获取并返回一个WeighedObjects的主机排序列表（最高分排在第一）；
+            weighed_hosts = self.host_manager.get_weighed_hosts(hosts, filter_properties)
+
+            # scheduler_host_subset_size：这个参数定义了新的实例将会被调度到一个主机上，这个主机是随机的从最好的（分数最高的）N个主机组成的子集中选择出来的；
+            # 这个参数定义了这个子集的大小，供选择最好的主机使用；
+            # 如果值为1，则由称重函数返回第一个主机；
+            # 这个值至少为1，任何小于1的值都会被忽略，而且会被1所代替；
+            # 这个参数的默认值为1；
+            scheduler_host_subset_size = CONF.scheduler_host_subset_size
+            if scheduler_host_subset_size &gt; len(weighed_hosts):
+                scheduler_host_subset_size = len(weighed_hosts)
+            if scheduler_host_subset_size &lt; 1:
+                scheduler_host_subset_size = 1
+
+            # 按照上面的解释，从分数最高的若干主机组成的子集中，随机的选择一个主机出来；
+            # 新的实例将会被调度到这个主机上；
+            chosen_host = random.choice(
+                weighed_hosts[0:scheduler_host_subset_size])
+            LOG.debug(_(&quot;Choosing host %(chosen_host)s&quot;) % locals())
+            # 把选好的主机增加到selected_hosts列表中；
+            selected_hosts.append(chosen_host)
+
+            # 因为已经选好了一个主机，所以要在下一个实例选择主机前，更新主机资源信息；
+            chosen_host.obj.consume_from_instance(instance_properties)
+            if update_group_hosts is True:
+                filter_properties['group_hosts'].append(chosen_host.obj.host)
+        
+        # 循环为每一个实例获取合适的主机后，返回选择的主机列表；
+        return selected_hosts</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法的实现过程中，主要就是三步：</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">1.语句：hosts = self.host_manager.get_all_host_states(elevated)</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">实现了过滤掉不可用的主机节点，获取可用的主机节点列表；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">2 语句：hosts = self.host_manager.get_filtered_hosts(hosts, filter_properties)</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">针对建立一个虚拟机实例的要求，实现了用系统指定的过滤器对上面获取的可用主机节点列表进行过滤，进一步得到符合过滤器要求的主机列表；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">3 语句：weighed_hosts = self.host_manager.get_weighed_hosts(hosts, filter_properties)</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">实现了对过滤后的主机列表中的每一个主机节点进行称重操作，选取某个标准下最优的主机节点作为建立虚拟机实例的目标主机；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">好了，具体来对这些语句进行解析。</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:24px">1.hosts = self.host_manager.get_all_host_states(elevated)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">具体来看方法get_all_host_states的代码实现：</span><br>
+</p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_6_183047"  name="code" class="python">def get_all_host_states(self, context):
+        &quot;&quot;&quot;
+        获取并返回HostStates列表；
+        HostStates代表了所有HostManager知道的主机；
+        另外，HostState中的每个consumable resources都是预填充的；
+        基于数据库中的数据进行调整；       
+        过滤掉不满足要求的主机；     
+        &quot;&quot;&quot;
+
+        # 获取可用计算节点的资源使用情况；
+        # 获取所有computeNodes（计算节点）；
+        compute_nodes = db.compute_node_get_all(context)
+        # 集合；
+        seen_nodes = set()
+        for compute in compute_nodes:
+            service = compute['service']
+            if not service:
+                LOG.warn(_(&quot;No service for compute ID %s&quot;) % compute['id'])
+                continue
+            # 获取主机host；
+            host = service['host']
+            # 获取hypervisor_hostname作为节点名；
+            node = compute.get('hypervisor_hostname')
+            # 组成state_key；
+            state_key = (host, node)
+            # 获取capabilities；
+            capabilities = self.service_states.get(state_key, None)
+            # 获取host_state；
+            host_state = self.host_state_map.get(state_key)
+            
+            # 更新只读的capabilities字典；
+            if host_state:
+                host_state.update_capabilities(capabilities, dict(service.iteritems()))
+            # @@@跟踪一台主机的可变和不可变的信息；
+            # 还试图删除以前使用的数据结构，并锁定访问；
+            else:
+                host_state = self.host_state_cls(host, node,capabilities=capabilities,service=dict(service.iteritems()))
+                self.host_state_map[state_key] = host_state
+                
+            # update_from_compute_node：从compute信息更新它的主机信息；
+            host_state.update_from_compute_node(compute)
+            # 更新集合seen_nodes；
+            seen_nodes.add(state_key)
+
+        # 从host_state_map中删除状态不是活跃的计算节点；
+        # 获取并删除状态不活跃的计算节点；
+        dead_nodes = set(self.host_state_map.keys()) - seen_nodes
+        for state_key in dead_nodes:
+            host, node = state_key
+            LOG.info(_(&quot;Removing dead compute node %(host)s:%(node)s &quot;
+                       &quot;from scheduler&quot;) % locals())
+            del self.host_state_map[state_key]
+
+        return self.host_state_map.itervalues()</pre><strong><span style="font-family:KaiTi_GB2312; font-size:18px">1.1 compute_nodes = db.compute_node_get_all(context)</span></strong>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句实现了从数据库获取所有computeNodes（计算节点），具体来看方法compute_node_get_all的代码实现：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_7_9106"  name="code" class="python">def compute_node_get_all(context):
+    &quot;&quot;&quot;
+    通过查询数据库所有所有ComputeNode（数据节点）；
+    &quot;&quot;&quot;
+    return model_query(context, models.ComputeNode).\
+            options(joinedload('service')).\
+            options(joinedload('stats')).\
+            all()</pre>
+<p></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">1.2 host_state = self.host_state_cls(host, node,capabilities=capabilities,service=dict(service.iteritems()))</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句实现了初始化主机的一些参数，具体来看代码：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_8_4610912"  name="code" class="python">host_state_cls = HostState
+class HostState(object):
+    def __init__(self, host, node, capabilities=None, service=None):
+        self.host = host
+        self.nodename = node
+        self.update_capabilities(capabilities, service)
+
+        # Mutable available resources.
+        # These will change as resources are virtually &quot;consumed&quot;.
+        self.total_usable_disk_gb = 0
+        self.disk_mb_used = 0
+        self.free_ram_mb = 0
+        self.free_disk_mb = 0
+        self.vcpus_total = 0
+        self.vcpus_used = 0
+        # Valid vm types on this host: 'pv', 'hvm' or 'all'
+        if 'allowed_vm_type' in self.capabilities:
+            self.allowed_vm_type = self.capabilities['allowed_vm_type']
+        else:
+            self.allowed_vm_type = 'all'
+
+        # Additional host information from the compute node stats:
+        self.vm_states = {}
+        self.task_states = {}
+        self.num_instances = 0
+        self.num_instances_by_project = {}
+        self.num_instances_by_os_type = {}
+        self.num_io_ops = 0
+
+        # Resource oversubscription values for the compute host:
+        self.limits = {}
+
+        self.updated = None</pre>
+<p></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">1.3 host_state.update_from_compute_node(compute)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句实现了从compute信息更新主机信息，具体来看代码：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_9_9769125"  name="code" class="python">def update_from_compute_node(self, compute):
+        &quot;&quot;&quot;
+        从compute_node信息更新它的主机信息；
+        &quot;&quot;&quot;
+        
+        # 若果已经更新过，则直接返回；
+        if (self.updated and compute['updated_at'] and self.updated &gt; compute['updated_at']):
+            return
+        # 获取all_ram_mb；
+        all_ram_mb = compute['memory_mb']
+
+        # 假设如果使用qcow2磁盘，则虚拟磁盘大小都被实例所消耗；
+        least = compute.get('disk_available_least')
+        # 获取剩余的磁盘空间free_disk_mb；
+        free_disk_mb = least if least is not None else compute['free_disk_gb']
+        free_disk_mb *= 1024
+
+        # 获取使用的磁盘空间；
+        self.disk_mb_used = compute['local_gb_used'] * 1024
+
+        # free_ram_mb可以是负值；
+        self.free_ram_mb = compute['free_ram_mb']
+        # 获取total_usable_ram_mb；
+        self.total_usable_ram_mb = all_ram_mb
+        # 获取total_usable_disk_gb；
+        self.total_usable_disk_gb = compute['local_gb']
+        self.free_disk_mb = free_disk_mb
+        self.vcpus_total = compute['vcpus']
+        self.vcpus_used = compute['vcpus_used']
+        self.updated = compute['updated_at']
+
+        stats = compute.get('stats', [])
+        statmap = self._statmap(stats)
+
+        # 追踪主机上的实例数目；
+        self.num_instances = int(statmap.get('num_instances', 0))
+
+        # 通过project_id获取实例数目；
+        project_id_keys = [k for k in statmap.keys() if
+                k.startswith(&quot;num_proj_&quot;)]
+        for key in project_id_keys:
+            project_id = key[9:]
+            self.num_instances_by_project[project_id] = int(statmap[key])
+
+        # 在一定的vm_states中追踪实例的数目；
+        vm_state_keys = [k for k in statmap.keys() if k.startswith(&quot;num_vm_&quot;)]
+        for key in vm_state_keys:
+            vm_state = key[7:]
+            self.vm_states[vm_state] = int(statmap[key])
+
+        # 在一定的task_states中追踪实例的数目；
+        task_state_keys = [k for k in statmap.keys() if
+                k.startswith(&quot;num_task_&quot;)]
+        for key in task_state_keys:
+            task_state = key[9:]
+            self.task_states[task_state] = int(statmap[key])
+
+        # 通过host_type追踪实例数目；
+        os_keys = [k for k in statmap.keys() if k.startswith(&quot;num_os_type_&quot;)]
+        for key in os_keys:
+            os = key[12:]
+            self.num_instances_by_os_type[os] = int(statmap[key])
+
+        # 获取num_io_ops；
+        self.num_io_ops = int(statmap.get('io_workload', 0))</pre><span style="font-size:24px"><strong><span style="font-family:KaiTi_GB2312">2.hosts = self.host_manager.get_filtered_hosts(hosts, filter_properties)</span></strong></span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">具体来看方法get_filtered_hosts的代码实现：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_10_7958982"  name="code" class="python">def get_filtered_hosts(self, hosts, filter_properties, filter_class_names=None):
+        &quot;&quot;&quot;
+        过滤主机，返回那些通过所有过滤器的主机；
+        &quot;&quot;&quot;
+
+        def _strip_ignore_hosts(host_map, hosts_to_ignore):
+            ignored_hosts = []
+            for host in hosts_to_ignore:
+                if host in host_map:
+                    del host_map[host]
+                    ignored_hosts.append(host)
+            ignored_hosts_str = ', '.join(ignored_hosts)
+            msg = _('Host filter ignoring hosts: %(ignored_hosts_str)s')
+            LOG.debug(msg, locals())
+
+        def _match_forced_hosts(host_map, hosts_to_force):
+            for host in host_map.keys():
+                if host not in hosts_to_force:
+                    del host_map[host]
+            if not host_map:
+                forced_hosts_str = ', '.join(hosts_to_force)
+                msg = _(&quot;No hosts matched due to not matching 'force_hosts'&quot;
+                        &quot;value of '%(forced_hosts_str)s'&quot;)
+                LOG.debug(msg, locals())
+                return
+            forced_hosts_str = ', '.join(host_map.iterkeys())
+            msg = _('Host filter forcing available hosts to '
+                    '%(forced_hosts_str)s')
+            LOG.debug(msg, locals())
+
+        # 返回经过验证的可用的过滤器；
+        filter_classes = self._choose_host_filters(filter_class_names)
+        ignore_hosts = filter_properties.get('ignore_hosts', [])
+        force_hosts = filter_properties.get('force_hosts', [])
+        if ignore_hosts or force_hosts:
+            name_to_cls_map = dict([(x.host, x) for x in hosts])
+            if ignore_hosts:
+                _strip_ignore_hosts(name_to_cls_map, ignore_hosts)
+                if not name_to_cls_map:
+                    return []
+            if force_hosts:
+                _match_forced_hosts(name_to_cls_map, force_hosts)
+                # NOTE(vish): Skip filters on forced hosts.
+                if name_to_cls_map:
+                    return name_to_cls_map.values()
+            hosts = name_to_cls_map.itervalues()
+        return self.filter_handler.get_filtered_objects(filter_classes, hosts, filter_properties)</pre><strong><span style="font-family:KaiTi_GB2312; font-size:18px">2.1 filter_classes = self._choose_host_filters(filter_class_names)</span></strong>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句实现了返回经过验证的可用的过滤器，具体来看方法_choose_host_filters的代码实现：</span></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_11_1165349"  name="code" class="python">def _choose_host_filters(self, filter_cls_names):
+        &quot;&quot;&quot;        
+        返回经过验证的可用的过滤器；
+        &quot;&quot;&quot;
+        # 使用默认过滤器；
+        if filter_cls_names is None:
+            # CONF.scheduler_default_filters：这个参数定义了当请求中没有指定特定的过滤器类的时候，默认应用的用于过滤主机的过滤器类的名称列表；
+            # 参数的默认值为：
+            # ['RetryFilter','AvailabilityZoneFilter','RamFilter','ComputeFilter','ComputeCapabilitiesFilter','ImagePropertiesFilter']
+            filter_cls_names = CONF.scheduler_default_filters
+        if not isinstance(filter_cls_names, (list, tuple)):
+            filter_cls_names = [filter_cls_names]
+        good_filters = []
+        bad_filters = []
+        
+        # 遍历所有配置的过滤器(我们使用的是默认过滤器)；
+        for filter_name in filter_cls_names:
+            found_class = False
+            # 遍历所有可用的过滤器；
+            for cls in self.filter_classes:
+                # 如果在可用过滤器中找到配置的过滤器,则认为它可以使用；
+                if cls.__name__ == filter_name:
+                    good_filters.append(cls)
+                    found_class = True
+                    break
+            if not found_class:
+                bad_filters.append(filter_name)
+        if bad_filters:
+            msg = &quot;, &quot;.join(bad_filters)
+            raise exception.SchedulerHostFilterNotFound(filter_name=msg)
+        return good_filters</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>2.2 return self.filter_handler.get_filtered_objects(filter_classes, hosts, filter_properties)</strong></span></p>
+<p></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_12_7403357"  name="code" class="python">def get_filtered_objects(self, filter_classes, objs, filter_properties):
+    for filter_cls in filter_classes:
+        objs = filter_cls().filter_all(objs, filter_properties)
+    return list(objs)</pre>
+<p></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_13_925369"  name="code" class="python">def filter_all(self, filter_obj_list, filter_properties):
+        for obj in filter_obj_list:
+            if self._filter_one(obj, filter_properties):
+                yield obj</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_14_9115224"  name="code" class="python">def _filter_one(self, obj, filter_properties):
+        &quot;&quot;&quot;
+        如果通过过滤器则返回TRUE，否则返回FALSE；
+        &quot;&quot;&quot;
+        return self.host_passes(obj, filter_properties)</pre><strong><span style="font-family:KaiTi_GB2312; font-size:24px">3. weighed_hosts = self.host_manager.get_weighed_hosts(hosts, filter_properties)</span></strong>
+<p></p>
+<pre code_snippet_id="153711" snippet_file_name="blog_20140112_15_7861488"  name="code" class="python">def get_weighed_hosts(self, hosts, weight_properties):
+    &quot;&quot;&quot;
+    对主机进行称重；
+    返回一个WeighedObjects的主机排序列表（最高分排在第一）；
+    &quot;&quot;&quot;      
+    # get_weighed_objects：返回一个WeighedObjects的主机排序列表（最高分排在第一）；
+    return self.weight_handler.get_weighed_objects(self.weight_classes, hosts, weight_properties)</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_16_3543090"  name="code" class="python"># scheduler_weight_classes:这个参数定义了使用哪个称重类来称重主机；
+# 默认值是nova.scheduler.weights.all_weighers；
+# 从名称列表CONF.scheduler_available_filters获取可装载的类；
+# 返回类的列表；
+# 所以这条语句的意思就是获取nova.scheduler.weights.all_weighers指定的所有的类；
+self.weight_classes = self.weight_handler.get_matching_classes(CONF.scheduler_weight_classes)</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_17_9224691"  name="code" class="python">cfg.ListOpt('scheduler_weight_classes',
+            default=['nova.scheduler.weights.all_weighers'],
+            help='Which weight class names to use for weighing hosts'),
+# 这个参数定义了使用哪个称重类来称重主机；
+# 默认值是nova.scheduler.weights.all_weighers；</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_18_7414548"  name="code" class="python">def all_weighers():
+    &quot;&quot;&quot;
+    Return a list of weight plugin classes found in this directory.
+    &quot;&quot;&quot;
+
+    # least_cost_functions：这个参数定义了是否应用称重方法LeastCostScheduler；
+    # 参数的默认值为None；
+    # compute_fill_first_cost_fn_weight：参数的默认值为None；
+    if (CONF.least_cost_functions is not None or
+            CONF.compute_fill_first_cost_fn_weight is not None):
+        LOG.deprecated(('least_cost has been deprecated in favor of the RAM Weigher.'))
+        return least_cost.get_least_cost_weighers()
+    return HostWeightHandler().get_all_classes()</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_19_8636047"  name="code" class="python">def get_weighed_objects(self, weigher_classes, obj_list, weighing_properties):
+    &quot;&quot;&quot;
+    返回一个WeighedObjects的排序列表（最高分排在第一）；
+    &quot;&quot;&quot;
+
+    if not obj_list:
+        return []
+
+    # object_class = WeighedObject
+    weighed_objs = [self.object_class(obj, 0.0) for obj in obj_list]
+    for weigher_cls in weigher_classes:
+        weigher = weigher_cls()
+        weigher.weigh_objects(weighed_objs, weighing_properties)
+
+    return sorted(weighed_objs, key=lambda x: x.weight, reverse=True)
+
+object_class = WeighedObject</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_20_9857546"  name="code" class="python">class WeighedObject(object):
+    &quot;&quot;&quot;
+    权重信息对象类；
+    &quot;&quot;&quot;
+    def __init__(self, obj, weight):
+        self.obj = obj
+        self.weight = weight</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_21_9475862"  name="code" class="python">def get_least_cost_weighers():
+    cost_functions = _get_cost_functions()
+
+    # Unfortunately we need to import this late so we don't have an
+    # import loop.
+    from nova.scheduler import weights
+
+    class _LeastCostWeigher(weights.BaseHostWeigher):
+        def weigh_objects(self, weighted_hosts, weight_properties):
+            for host in weighted_hosts:
+                host.weight = sum(weight * fn(host.obj, weight_properties)
+                            for weight, fn in cost_functions)
+
+    return [_LeastCostWeigher]</pre><pre code_snippet_id="153711" snippet_file_name="blog_20140112_22_1253769"  name="code" class="python">def _get_cost_functions():
+    &quot;&quot;&quot;
+    Returns a list of tuples containing weights and cost functions to
+    use for weighing hosts
+    &quot;&quot;&quot;
+    cost_fns_conf = CONF.least_cost_functions
+    if cost_fns_conf is None:
+        # The old default.  This will get fixed up below.
+        fn_str = 'nova.scheduler.least_cost.compute_fill_first_cost_fn'
+        cost_fns_conf = [fn_str]
+    cost_fns = []
+    for cost_fn_str in cost_fns_conf:
+        short_name = cost_fn_str.split('.')[-1]
+        if not (short_name.startswith('compute_') or
+                short_name.startswith('noop')):
+            continue
+        # Fix up any old paths to the new paths
+        if cost_fn_str.startswith('nova.scheduler.least_cost.'):
+            cost_fn_str = ('nova.scheduler.weights.least_cost' +
+                       cost_fn_str[25:])
+        try:
+            # NOTE: import_class is somewhat misnamed since
+            # the weighing function can be any non-class callable
+            # (i.e., no 'self')
+            cost_fn = importutils.import_class(cost_fn_str)
+        except ImportError:
+            raise exception.SchedulerCostFunctionNotFound(
+                    cost_fn_str=cost_fn_str)
+
+        try:
+            flag_name = &quot;%s_weight&quot; % cost_fn.__name__
+            weight = getattr(CONF, flag_name)
+        except AttributeError:
+            raise exception.SchedulerWeightFlagNotFound(
+                    flag_name=flag_name)
+        # Set the original default.
+        if (flag_name == 'compute_fill_first_cost_fn_weight' and
+                weight is None):
+            weight = -1.0
+        cost_fns.append((weight, cost_fn))
+    return cost_fns</pre><span style="font-family:KaiTi_GB2312; font-size:18px">其实，流程是比较简单的，就是过滤和称重的过程的。<br>
+</span>
+<p></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.11-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="15734437" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>1</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/15615743';">上一篇</span><a href="/gaoxingnengjisuan/article/details/15615743" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack Nova-scheduler组件的源码解析（1）</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/17722991';">下一篇</span><a href="/gaoxingnengjisuan/article/details/17722991" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">OpenStack Cinder源码分析之一</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37338635" title="OpenStack Nova-scheduler组件的源码解析（2）" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack Nova-scheduler组件的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Tomstrong_369/article/details/51314279" title="OpenStack Kolla 源码分析 --Ansible" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack Kolla 源码分析 --Ansible</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/zengmingen/article/details/62044656" title="一共81个，开源大数据处理工具汇总" strategy="recommend_sim_new" target="_blank" style="width: 290px;">一共81个，开源大数据处理工具汇总</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Titan0427/article/details/52244113" title="Openstack Manila源码阅读笔记(一)manilaclient调用过程" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Openstack Manila源码阅读笔记(一)manilaclient调用过程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Jmilk/article/details/52116458" title="Openstack Nova 源码分析 — RPC 远程调用过程" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Openstack Nova 源码分析 — RPC 远程调用过程</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Tech_Salon/article/details/70238434" title="nova创建虚机流程源码分析 openstack" strategy="recommend_sim_new" target="_blank" style="width: 290px;">nova创建虚机流程源码分析 openstack</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Jmilk/article/details/52213999" title="Openstack nova-scheduler 源码分析 — Filters/Weighting" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Openstack nova-scheduler 源码分析 — Filters/Weighting</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/haoge921026/article/details/54409266" title="OpenStack-Nova组件理解" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack-Nova组件理解</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Jmilk/article/details/52165016" title="Openstack Nova 源码分析 — 使用 VCDriver 创建 VMware Instance" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Openstack Nova 源码分析 — 使用 VCDriver 创建 VMware Instance</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/39156829" title="nova-scheduler详解 openstack-ice版" strategy="recommend_sim_new" target="_blank" style="width: 290px;">nova-scheduler详解 openstack-ice版</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/15734437",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "15734437",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '15734437';
+    var commentscount = 12;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='OpenStack Nova-scheduler组件的源码解析（2）';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466761次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

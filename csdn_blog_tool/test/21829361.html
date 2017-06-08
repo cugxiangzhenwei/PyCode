@@ -1,0 +1,1606 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/21829361"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之三 - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="（4）self._setup_extensions(ext_mgr)现在我们回到类/cinder/api/openstack/__init__.py----class APIRouter中的初始化方法：    class APIRouter(base_wsgi.Router):          def __init__(self, ext_mgr=None):" />
+
+    <meta name="keywords" content="OpenStack,cinder,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=OpenStack+Cinder%e6%9c%8d%e5%8a%a1%e5%90%af%e5%8a%a8%e8%bf%87%e7%a8%8b%e4%b8%ad%e7%9a%84%e8%b5%84%e6%ba%90%e5%8a%a0%e8%bd%bd%e5%92%8c%e6%89%a9%e5%b1%95%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%e4%b9%8b%e4%b8%89&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/21829361"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/21829361">
+        OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之三            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/cinder' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">cinder</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2014-03-25 03:43</span>
+            <span class="link_view" title="阅读次数">2298人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('OpenStack+Cinder%e6%9c%8d%e5%8a%a1%e5%90%af%e5%8a%a8%e8%bf%87%e7%a8%8b%e4%b8%ad%e7%9a%84%e8%b5%84%e6%ba%90%e5%8a%a0%e8%bd%bd%e5%92%8c%e6%89%a9%e5%b1%95%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%e4%b9%8b%e4%b8%89','21829361');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(21829361,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1853287','gaoxingnengjisuan','top','21829361');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-CINDER<em>（25）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1853287"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1853287">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:rgb(51,102,255)"><span style="font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></span></span></span></span></span></span></span></span><strong><br>
+</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><br>
+</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>（4）self._setup_extensions(ext_mgr)</strong></span><br>
+</p>
+<p></p>
+<p style="font-family:KaiTi_GB2312"><span style="font-size:18px"><span style="font-weight:bold">在前面的博客中，我们说过<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">在/cinder/api/contrib/目录下的文件都是用来实现功能扩展的，这里主要分为两部分：1.在一个控制器中单纯地实现新的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">Restful资源功能</span></span>；2.即可实现新的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">Restful资源功能</span></span></span></span>又可对已有的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">Restful资源功能</span></span></span></span>实现扩展。（这里总觉得有点理解的不正确，后续会修正或者改正这部分的内容。）</span></span><br>
+</span></span></p>
+<p style="font-family:KaiTi_GB2312"><span style="font-size:18px"><span style="font-weight:bold">在这里我们将主要分析<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">/cinder/api/contrib/目录下</span></span>如何<span style="font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">即实现新的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">Restful资源功能</span></span></span></span>又对已有的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold">Restful资源功能</span></span></span></span>实现扩展</span></span></span></span>。</span><br>
+</span></p>
+<p style="font-family:KaiTi_GB2312"><span style="font-size:18px">现在我们回到类</span><span style="font-size:18px">/cinder/api/openstack/__init__.py----class APIRouter</span><span style="font-size:18px">中的初始化方法：</span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_1_9046324"  code_snippet_id="254780" snippet_file_name="blog_20140325_1_9046324" name="code" class="python">    class APIRouter(base_wsgi.Router):  
+        def __init__(self, ext_mgr=None):  
+            if ext_mgr is None:  
+                if self.ExtensionManager:  
+                    ext_mgr = self.ExtensionManager() (1)  
+                else:  
+                    raise Exception(_(&quot;Must specify an ExtensionManager class&quot;))  
+              
+            mapper = ProjectMapper()          
+            self.resources = {}  
+            self._setup_routes(mapper, ext_mgr) (2)  
+            self._setup_ext_routes(mapper, ext_mgr) （3）  
+            self._setup_extensions(ext_mgr) （4）  
+            super(APIRouter, self).__init__(mapper) （5）  </pre><span style="font-family:KaiTi_GB2312; font-size:18px">来看第四条比较重要的语句self._setup_extensions(ext_mgr)，具体来看方法_setup_extensions的源码实现：</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_2_6253879"  code_snippet_id="254780" snippet_file_name="blog_20140325_2_6253879" name="code" class="python">def _setup_extensions(self, ext_mgr):           
+        for extension in ext_mgr.get_controller_extensions():  
+            collection = extension.collection
+            controller = extension.controller
+
+            if collection not in self.resources:
+                LOG.warning(_('Extension %(ext_name)s: Cannot extend '
+                              'resource %(collection)s: No such resource'),
+                            {'ext_name': extension.extension.name,
+                             'collection': collection})
+                continue
+
+            LOG.debug(_('Extension %(ext_name)s extending resource: '
+                        '%(collection)s'),
+                      {'ext_name': extension.extension.name,
+                       'collection': collection})
+
+            resource = self.resources[collection]
+            resource.register_actions(controller)
+            resource.register_extensions(controller)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">来看方法中的语句：for extension in ext_mgr.get_controller_extensions()，进一步来看方法</span><span style="font-family:KaiTi_GB2312; font-size:18px">get_controller_extensions</span><span style="font-family:KaiTi_GB2312; font-size:18px">的源码实现：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_3_5447084"  code_snippet_id="254780" snippet_file_name="blog_20140325_3_5447084" name="code" class="python">def get_controller_extensions(self):
+        &quot;&quot;&quot;
+        Returns a list of ControllerExtension objects.
+        获取ControllerExtension对象的列表；
+        &quot;&quot;&quot;
+        controller_exts = []
+        for ext in self.extensions.values():
+            
+            try:
+                get_ext_method = ext.get_controller_extensions
+            except AttributeError:
+                continue
+            controller_exts.extend(get_ext_method())
+            
+        return controller_exts</pre><span style="font-family:KaiTi_GB2312; font-size:18px">来看语句：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">for ext in self.extensions.values():<br>
+&nbsp;&nbsp;&nbsp; get_ext_method = ext.get_controller_extensions<br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">示例输出：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">self.extensions = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'OS-SCH-HNT': &lt;cinder.api.contrib.scheduler_hints.Scheduler_hints object at 0x1f39a50&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-hosts': &lt;cinder.api.contrib.hosts.Hosts object at 0x1e04b90&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-vol-tenant-attr': &lt;cinder.api.contrib.volume_tenant_attribute.Volume_tenant_attribute object at 0x2906ad0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-quota-sets': &lt;cinder.api.contrib.quotas.Quotas object at 0x1f28290&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-types-manage': &lt;cinder.api.contrib.types_manage.Types_manage object at 0x2816c50&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-volume-encryption-metadata': &lt;cinder.api.contrib.volume_encryption_metadata.Volume_encryption_metadata object at 0x1e04790&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-snapshot-actions': &lt;cinder.api.contrib.snapshot_actions.Snapshot_actions object at 0x1e04550&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'backups': &lt;cinder.api.contrib.backups.Backups object at 0x280d850&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-volume-actions': &lt;cinder.api.contrib.volume_actions.Volume_actions object at 0x280d950&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-vol-host-attr': &lt;cinder.api.contrib.volume_host_attribute.Volume_host_attribute object at 0x1f28090&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption': &lt;cinder.api.contrib.volume_type_encryption.Volume_type_encryption object at 0x1e04210&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-availability-zone': &lt;cinder.api.contrib.availability_zones.Availability_zones object at 0x280d2d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-types-extra-specs': &lt;cinder.api.contrib.types_extra_specs.Types_extra_specs object at 0x1f39210&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-vol-mig-status-attr': &lt;cinder.api.contrib.volume_mig_status_attribute.Volume_mig_status_attribute object at 0x1f39750&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-image-create': &lt;cinder.api.contrib.image_create.Image_create object at 0x1e04610&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-extended-snapshot-attributes': &lt;cinder.api.contrib.extended_snapshot_attributes.Extended_snapshot_attributes object at 0x28210d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'qos-specs': &lt;cinder.api.contrib.qos_specs_manage.Qos_specs_manage object at 0x29064d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-quota-class-sets': &lt;cinder.api.contrib.quota_classes.Quota_classes object at 0x1e04a90&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-volume-transfer': &lt;cinder.api.contrib.volume_transfer.Volume_transfer object at 0x2821d10&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-vol-image-meta': &lt;cinder.api.contrib.volume_image_metadata.Volume_image_metadata object at 0x2906ed0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-admin-actions': &lt;cinder.api.contrib.admin_actions.Admin_actions object at 0x2821950&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'os-services': &lt;cinder.api.contrib.services.Services object at 0x1f39cd0&gt;}</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">根据上一篇博客中的相关内容，我们可以验证，这里分为两部分：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">第一部分的类中直接实现了方法get_controller_extensions：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">ext = &lt;cinder.api.contrib.scheduler_hints.Scheduler_hints object at 0x1f39a50&gt;<br>
+ext = &lt;cinder.api.contrib.volume_tenant_attribute.Volume_tenant_attribute object at 0x2906ad0&gt;<br>
+ext = &lt;cinder.api.contrib.types_manage.Types_manage object at 0x2816c50&gt;<br>
+ext = &lt;cinder.api.contrib.snapshot_actions.Snapshot_actions object at 0x1e04550&gt;<br>
+ext = &lt;cinder.api.contrib.volume_actions.Volume_actions object at 0x280d950&gt;<br>
+ext = &lt;cinder.api.contrib.volume_host_attribute.Volume_host_attribute object at 0x1f28090&gt;<br>
+ext = &lt;cinder.api.contrib.volume_type_encryption.Volume_type_encryption object at 0x1e04210&gt;<br>
+ext = &lt;cinder.api.contrib.volume_mig_status_attribute.Volume_mig_status_attribute object at 0x1f39750&gt;<br>
+ext = &lt;cinder.api.contrib.extended_snapshot_attributes.Extended_snapshot_attributes object at 0x28210d0&gt;<br>
+ext = &lt;cinder.api.contrib.volume_image_metadata.Volume_image_metadata object at 0x2906ed0&gt;<br>
+ext = &lt;cinder.api.contrib.admin_actions.Admin_actions object at 0x2821950&gt;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">第二部分的类中没有继承父类的get_controller_extensions方法，这里调用的是其父类中的get_controller_extensions方法：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">ext = &lt;cinder.api.contrib.hosts.Hosts object at 0x1e04b90&gt;<br>
+ext = &lt;cinder.api.contrib.quotas.Quotas object at 0x1f28290&gt;<br>
+ext = &lt;cinder.api.contrib.volume_encryption_metadata.Volume_encryption_metadata object at 0x1e04790&gt;<br>
+ext = &lt;cinder.api.contrib.backups.Backups object at 0x280d850&gt;<br>
+ext = &lt;cinder.api.contrib.availability_zones.Availability_zones object at 0x280d2d0&gt;<br>
+ext = &lt;cinder.api.contrib.types_extra_specs.Types_extra_specs object at 0x1f39210&gt;<br>
+ext = &lt;cinder.api.contrib.image_create.Image_create object at 0x1e04610&gt;<br>
+ext = &lt;cinder.api.contrib.qos_specs_manage.Qos_specs_manage object at 0x29064d0&gt;<br>
+ext = &lt;cinder.api.contrib.quota_classes.Quota_classes object at 0x1e04a90&gt;<br>
+ext = &lt;cinder.api.contrib.volume_transfer.Volume_transfer object at 0x2821d10&gt;<br>
+ext = &lt;cinder.api.contrib.services.Services object at 0x1f39cd0&gt;</span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">来看语句controller_exts.extend(get_ext_method())的实现<span style="font-size:18px"><span style="font-family:KaiTi_GB2312">（看几个例子，看一下实现过程）；</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">第一部分的类中直接实现了方法get_controller_extensions：<br>
+=============================================================<br>
+ext = &lt;cinder.api.contrib.scheduler_hints.Scheduler_hints object at 0x1f39a50&gt;<br>
+class Scheduler_hints(extensions.ExtensionDescriptor):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Pass arbitrary key/value pairs to the scheduler.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; name = &quot;SchedulerHints&quot;<br>
+&nbsp;&nbsp;&nbsp; alias = &quot;OS-SCH-HNT&quot;<br>
+&nbsp;&nbsp;&nbsp; namespace = volumes.SCHEDULER_HINTS_NAMESPACE<br>
+&nbsp;&nbsp;&nbsp; updated = &quot;2013-04-18T00:00:00&#43;00:00&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller = SchedulerHintsController()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ext = extensions.ControllerExtension(self, 'volumes', controller)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return [ext]<br>
+<br>
+class SchedulerHintsController(wsgi.Controller):<br>
+<br>
+class Controller(object):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Default controller.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; __metaclass__ = ControllerMetaclass<br>
+<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = None<br>
+<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, view_builder=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Initialize controller with a view builder instance.&quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if view_builder:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = view_builder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elif self._view_builder_class:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = self._view_builder_class()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = None<br>
+=============================================================<br>
+ext = &lt;cinder.api.contrib.volume_tenant_attribute.Volume_tenant_attribute object at 0x2906ad0&gt;<br>
+class Volume_tenant_attribute(extensions.ExtensionDescriptor):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Expose the internal project_id as an attribute of a volume.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; name = &quot;VolumeTenantAttribute&quot;<br>
+&nbsp;&nbsp;&nbsp; alias = &quot;os-vol-tenant-attr&quot;<br>
+&nbsp;&nbsp;&nbsp; namespace = (&quot;http://docs.openstack.org/volume/ext/&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;volume_tenant_attribute/api/v1&quot;)<br>
+&nbsp;&nbsp;&nbsp; updated = &quot;2011-11-03T00:00:00&#43;00:00&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller = VolumeTenantAttributeController()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension = extensions.ControllerExtension(self, 'volumes', controller)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return [extension]<br>
+<br>
+class VolumeTenantAttributeController(wsgi.Controller):<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, *args, **kwargs):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; super(VolumeTenantAttributeController, self).__init__(*args, **kwargs)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self.volume_api = volume.API()<br>
+<br>
+class Controller(object):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Default controller.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; __metaclass__ = ControllerMetaclass<br>
+<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = None<br>
+<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, view_builder=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Initialize controller with a view builder instance.&quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if view_builder:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = view_builder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elif self._view_builder_class:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = self._view_builder_class()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = None<br>
+=============================================================<br>
+ext = &lt;cinder.api.contrib.types_manage.Types_manage object at 0x2816c50&gt;<br>
+class Types_manage(extensions.ExtensionDescriptor):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Types manage support.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; name = &quot;TypesManage&quot;<br>
+&nbsp;&nbsp;&nbsp; alias = &quot;os-types-manage&quot;<br>
+&nbsp;&nbsp;&nbsp; namespace = &quot;http://docs.openstack.org/volume/ext/types-manage/api/v1&quot;<br>
+&nbsp;&nbsp;&nbsp; updated = &quot;2011-08-24T00:00:00&#43;00:00&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller = VolumeTypesManageController()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension = extensions.ControllerExtension(self, 'types', controller)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return [extension]<br>
+<br>
+class VolumeTypesManageController(wsgi.Controller):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp; The volume types API controller for the OpenStack API.<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = views_types.ViewBuilder<br>
+<br>
+class Controller(object):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Default controller.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; __metaclass__ = ControllerMetaclass<br>
+<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = None<br>
+<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, view_builder=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Initialize controller with a view builder instance.&quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if view_builder:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = view_builder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elif self._view_builder_class:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = self._view_builder_class()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = None<br>
+=============================================================<br>
+ext = &lt;cinder.api.contrib.snapshot_actions.Snapshot_actions object at 0x1e04550&gt;<br>
+class Snapshot_actions(extensions.ExtensionDescriptor):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Enable snapshot manager actions.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; name = &quot;SnapshotActions&quot;<br>
+&nbsp;&nbsp;&nbsp; alias = &quot;os-snapshot-actions&quot;<br>
+&nbsp;&nbsp;&nbsp; namespace = \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;http://docs.openstack.org/volume/ext/snapshot-actions/api/v1.1&quot;<br>
+&nbsp;&nbsp;&nbsp; updated = &quot;2013-07-16T00:00:00&#43;00:00&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller = SnapshotActionsController()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension = extensions.ControllerExtension(self,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshots',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return [extension]<br>
+<br>
+class SnapshotActionsController(wsgi.Controller):<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, *args, **kwargs):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; super(SnapshotActionsController, self).__init__(*args, **kwargs)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOG.debug(&quot;SnapshotActionsController initialized&quot;)<br>
+<br>
+class Controller(object):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Default controller.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; __metaclass__ = ControllerMetaclass<br>
+<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = None<br>
+<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, view_builder=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Initialize controller with a view builder instance.&quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if view_builder:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = view_builder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elif self._view_builder_class:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = self._view_builder_class()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = None<br>
+=============================================================<br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">第二部分的类中没有继承父类的get_controller_extensions方法，这里调用的是其父类中的get_controller_extensions方法：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">class ExtensionDescriptor(object):<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List of extensions.ControllerExtension extension objects.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Controller extensions are used to extend existing controllers.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller_exts = []<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return controller_exts</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">可见没有做什么具体的工作；</span></span></p>
+<span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看看在上述第一部分的类所对应的控制器类中，是如何实现即定义新的Restful资源功能又对已有的Restful资源功能实现扩展的。<br>
+我们可以看到在这些控制器类中的方法中，有两类装饰器，即@action和@extension，其中定义新的Restful资源功能就是应用装饰器@action实现的，而扩展已有的Restful资源功能就是应用装饰器@extension实现的。我们来看它们是如何实现的。首先来看这两个装饰器：</span><br>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"><span style="font-weight:bold"><span style="font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"><span style="font-weight:bold"><span style="font-size:18px"><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-weight:bold"></span></span></strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_4_8336240"  code_snippet_id="254780" snippet_file_name="blog_20140325_4_8336240" name="code" class="python">def action(name):
+    &quot;&quot;&quot;
+    Mark a function as an action.
+    The given name will be taken as the action key in the body.
+    This is also overloaded to allow extensions to provide
+    non-extending definitions of create and delete operations.
+    &quot;&quot;&quot;
+    def decorator(func):
+        func.wsgi_action = name
+        return func
+    return decorator</pre><pre code_snippet_id="254780" snippet_file_name="blog_20140325_5_3624967"  code_snippet_id="254780" snippet_file_name="blog_20140325_5_3624967" name="code" class="python">def extends(*args, **kwargs):
+    &quot;&quot;&quot;
+&nbsp; &nbsp; Indicate a function extends an operation.
+
+    Can be used as either::
+
+        @extends
+        def index(...):
+            pass
+
+    or as::
+
+        @extends(action='resize')
+        def _action_resize(...):
+            pass
+    &quot;&quot;&quot;
+
+    def decorator(func):
+        # Store enough information to find what we're extending
+        func.wsgi_extends = (func.__name__, kwargs.get('action'))
+        return func
+
+    # If we have positional arguments, call the decorator
+    if args:
+        return decorator(*args)
+
+    # OK, return the decorator instead
+    return decorator</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们关注这里两条语句，即：</span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">func.wsgi_action = name<br>
+func.wsgi_extends = (func.__name__, kwargs.get('action'))</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们再回来看上面的输出示例，如：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">=============================================================<br>
+ext = &lt;cinder.api.contrib.types_manage.Types_manage object at 0x2816c50&gt;<br>
+class Types_manage(extensions.ExtensionDescriptor):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Types manage support.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; name = &quot;TypesManage&quot;<br>
+&nbsp;&nbsp;&nbsp; alias = &quot;os-types-manage&quot;<br>
+&nbsp;&nbsp;&nbsp; namespace = &quot;http://docs.openstack.org/volume/ext/types-manage/api/v1&quot;<br>
+&nbsp;&nbsp;&nbsp; updated = &quot;2011-08-24T00:00:00&#43;00:00&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; def get_controller_extensions(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; controller = VolumeTypesManageController()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension = extensions.ControllerExtension(self, 'types', controller)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return [extension]<br>
+<br>
+class VolumeTypesManageController(wsgi.Controller):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp; The volume types API controller for the OpenStack API.<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = views_types.ViewBuilder<br>
+<br>
+class Controller(object):<br>
+&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Default controller.&quot;&quot;&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; __metaclass__ = ControllerMetaclass<br>
+<br>
+&nbsp;&nbsp;&nbsp; _view_builder_class = None<br>
+<br>
+&nbsp;&nbsp;&nbsp; def __init__(self, view_builder=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&quot;&quot;Initialize controller with a view builder instance.&quot;&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if view_builder:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = view_builder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elif self._view_builder_class:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = self._view_builder_class()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._view_builder = None<br>
+=============================================================</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到这些控制器类的父类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class Controller(object)</span></span>中，都会获取类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">ControllerMetaclass的实例化对象，我们进一步来看看方法class
+ ControllerMetaclass(type)----def __new__的源码实现（对于__init__和__new__方法的区别，可以查询相关资料）：</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_6_7593918"  code_snippet_id="254780" snippet_file_name="blog_20140325_6_7593918" name="code" class="python">class ControllerMetaclass(type):
+    &quot;&quot;&quot;
+&nbsp; &nbsp; Controller metaclass.
+
+    This metaclass automates the task of assembling a dictionary
+    mapping action keys to method names.
+    &quot;&quot;&quot;
+
+    def __new__(self, mcs, name, bases, cls_dict):
+        &quot;&quot;&quot;Adds the wsgi_actions dictionary to the class.&quot;&quot;&quot;
+        # Find all actions
+        actions = {}
+        extensions = []
+        # start with wsgi actions from base classes
+&nbsp; &nbsp; &nbsp; &nbsp; for base in bases:
+            actions.update(getattr(base, 'wsgi_actions', {}))
+            
+&nbsp; &nbsp; &nbsp; &nbsp; for key, value in cls_dict.items():
+            if not callable(value):
+                continue
+            
+            if getattr(value, 'wsgi_action', None):
+                actions[value.wsgi_action] = key
+            
+            elif getattr(value, 'wsgi_extends', None):
+                extensions.append(value.wsgi_extends)
+
+        # Add the actions and extensions to the class dict
+        cls_dict['wsgi_actions'] = actions
+        cls_dict['wsgi_extensions'] = extensions
+
+        return super(ControllerMetaclass, mcs).__new__(mcs, name, bases, cls_dict)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中，将</span><span style="font-family:KaiTi_GB2312; font-size:18px">wsgi_action</span><span style="font-family:KaiTi_GB2312; font-size:18px">和</span><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">wsgi_extends</span></span></span><span style="font-family:KaiTi_GB2312; font-size:18px">收集起来，保存在相应的字典中，来看输出示例：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">cls_dict = {'__module__': 'cinder.api.contrib.admin_actions', '_update': &lt;function _update
+ at 0x35ea5f0&gt;, '_delete': &lt;function _delete at 0x35ea848&gt;, <strong>'wsgi_actions': {'os-reset_status': '_reset_status', 'os-force_delete': '_force_delete'}</strong>, 'collection': 'snapshots', '_get': &lt;function _get at 0x35ea7d0&gt;,<strong>'wsgi_extensions':
+ []</strong>, '__doc__': 'AdminController for Snapshots.'}</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">cls_dict = {'__module__': 'cinder.api.contrib.admin_actions', '_update': &lt;function _update
+ at 0x35ea320&gt;, 'validate_update': &lt;function validate_update at 0x35ea578&gt;, '_delete': &lt;function _delete at 0x35ea500&gt;, '_migrate_volume': &lt;function _migrate_volume at 0x35ea6e0&gt;, '_force_detach': &lt;function _force_detach at 0x35ea668&gt;,<strong>'wsgi_actions':
+ {'os-migrate_volume_completion': '_migrate_volume_completion', 'os-reset_status': '_reset_status', 'os-force_delete': '_force_delete', 'os-migrate_volume': '_migrate_volume', 'os-force_detach': '_force_detach'}</strong>, 'collection': 'volumes', '_get': &lt;function
+ _get at 0x35ea488&gt;, 'valid_status': set(['available', 'creating', 'in-use', 'error_deleting', 'attaching', 'detaching', 'error', 'deleting']),<strong>'wsgi_extensions': []</strong>, '__doc__': 'AdminController for Volumes.', '_migrate_volume_completion': &lt;function
+ _migrate_volume_completion at 0x35ea758&gt;}</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">cls_dict = {'__module__': 'cinder.api.contrib.extended_snapshot_attributes', 'show': &lt;function
+ show at 0x3526320&gt;, '_get_snapshots': &lt;function _get_snapshots at 0x3526230&gt;, 'detail': &lt;function detail at 0x3526398&gt;, '_extend_snapshot': &lt;function _extend_snapshot at 0x35262a8&gt;,<strong>'wsgi_extensions': [('show', None), ('detail', None)]</strong>, '__init__':
+ &lt;function __init__ at 0x35261b8&gt;,<strong>'wsgi_actions': {}</strong>}</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">我们关注其中的<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>wsgi_actions</strong></span></span></span>和<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>wsgi_extensions</strong></span></span></span>，在后续应用中应该会对其进行解析，这样http请求就可以把名称和具体实现方法一一对应起来。</span></span></span></p>
+<p><br>
+<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>（5）super(APIRouter, self).__init__(mapper)</strong></span><br>
+</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></span></p>
+<pre code_snippet_id="254780" snippet_file_name="blog_20140325_7_1247226"  code_snippet_id="254780" snippet_file_name="blog_20140325_7_1247226" name="code" class="python">class Router(object):
+    &quot;&quot;&quot;WSGI middleware that maps incoming requests to WSGI apps.&quot;&quot;&quot;
+
+    def __init__(self, mapper):
+        self.map = mapper
+        self._router = routes.middleware.RoutesMiddleware(self._dispatch, self.map)</pre><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">至此，OpenStack Cinder服务启动过程中的资源加载和扩展的源码简单解析完成了。</span></span></span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这几篇博客是我边看源码边写的，肯定会有不严谨和理解偏差的地方，欢迎大家批评指正。<br>
+</span></span></span></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.14-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="21829361" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/21752277';">上一篇</span><a href="/gaoxingnengjisuan/article/details/21752277" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之二</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/22518045';">下一篇</span><a href="/gaoxingnengjisuan/article/details/22518045" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">Openstack Cinder中建立volume过程的源码解析（1）</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/21722111" title="OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之一" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之一</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/21752277" title="OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之二" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之二</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22834873" title="Openstack Cinder中建立volume过程的源码解析（2）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22835959" title="Openstack Cinder中建立volume过程的源码解析（3）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（3）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23794279" title="Openstack Cinder中建立volume过程的源码解析（9）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（9）</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22518045" title="Openstack Cinder中建立volume过程的源码解析（1）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（1）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lzw06061139/article/details/52211384" title="Openstack liberty 中Cinder-api启动过程源码分析1" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack liberty 中Cinder-api启动过程源码分析1</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/ddl007/article/details/8670364" title="OpenStack源码分析之cinder-api服务启动" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack源码分析之cinder-api服务启动</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23789533" title="Openstack Cinder中建立volume过程的源码解析（8）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（8）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23628117" title="Openstack Cinder中建立volume过程的源码解析（5）----以及taskflow相关解析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（5）----以及taskflow相关解析</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/21829361",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "21829361",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '21829361';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之三';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466759次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

@@ -1,0 +1,2468 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/7536132"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>如何使用GDAL进行图像镶嵌 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="相信看过和用过gdalwarp工具的同学都会对gdalwarp这个工具的强悍功能所震惊。今天主要就是用gdalwarp来进行图像镶嵌，当然这个镶嵌是比较简单的镶嵌，就是上层的图像会覆盖下层的图像。对于gdalwarp的介绍，我还要搬过来一下，见下面：&#160; &#160; &#160; &#160;The gdalwarp utility is an imagemosaicing, reprojection and warp" />
+
+    <meta name="keywords" content="null,dataset,string" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8GDAL%e8%bf%9b%e8%a1%8c%e5%9b%be%e5%83%8f%e9%95%b6%e5%b5%8c&u=http://blog.csdn.net/liminlu0314/article/details/7536132"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/7536132">
+        如何使用GDAL进行图像镶嵌            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/null' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">null</a><a href='http://www.csdn.net/tag/dataset' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">dataset</a><a href='http://www.csdn.net/tag/string' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">string</a><a href='http://www.csdn.net/tag/image' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">image</a><a href='http://www.csdn.net/tag/transformation' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">transformation</a><a href='http://www.csdn.net/tag/vector' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">vector</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2012-05-04 21:27</span>
+            <span class="link_view" title="阅读次数">6463人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(32)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8GDAL%e8%bf%9b%e8%a1%8c%e5%9b%be%e5%83%8f%e9%95%b6%e5%b5%8c','7536132');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(7536132,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('777646','liminlu0314','top','7536132');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">GDAL<em>（119）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777646"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777646">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label  onclick="GetCategoryArticles('777642','liminlu0314','top','7536132');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">C++编程技术<em>（59）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777642"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777642">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label  onclick="GetCategoryArticles('777640','liminlu0314','top','7536132');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">GIS RS<em>（38）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777640"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777640">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 相信看过和用过gdalwarp工具的同学都会对gdalwarp这个工具的强悍功能所震惊。今天主要就是用gdalwarp来进行图像镶嵌，当然这个镶嵌是比较简单的镶嵌，就是上层的图像会覆盖下层的图像。对于gdalwarp的介绍，我还要搬过来一下，见下面：</span></p>
+<p><span style="font-size:16px"><span style="font-family:'WenQuanYi Micro Hei Mono','WenQuanYi Micro Hei','Microsoft Yahei Mono','Microsoft Yahei',sans-serif"><span style="color:#000099">&nbsp; &nbsp; &nbsp; &nbsp;The gdalwarp utility is an image</span><span style="color:#ff0000">mosaicing</span><span style="color:#000099">,
+ reprojection and warping utility. The program can reproject to any supported projection, and can also apply GCPs stored with the image if the image is &quot;raw&quot; with control information.</span></span><br>
+</span></p>
+<p><span style="font-family:'WenQuanYi Micro Hei Mono','WenQuanYi Micro Hei','Microsoft Yahei Mono','Microsoft Yahei',sans-serif"><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp;总觉得自己翻译的不好，就不翻译了，关于这篇博客的主要内容，就是上面的红色字体，</span><span style="font-size:16px; color:#ff0000">mosaicing</span><span style="font-size:16px; color:#000099">。gdalwarp使用的镶嵌算法很简单，就是根据图像的地理位置进行拼接，对于重叠去的处理，就是后面处理的图像会覆盖前面处理的图像，下面的代码都是改造gdalwarp.cpp中的代码。这个镶嵌可以支持镶嵌块文件镶嵌，是一个面状的shp文件，通过shp的属性表字段和对应的影像进行关联。废话不多说，上代码（代码比较粗糙，板砖轻拍：））。</span></span></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif; font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp;先是几个子函数，第一个获取文件名称的，这个代码是很久之前写的，用的比较笨的办法，其实可以用boost库的filesysterm中的path类，一个函数就搞定了。反正都一样，呵呵。</span></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 获取文件名称，除去后缀名
+*/
+inline string GetFileName(const char* pszFile)
+{
+	string temp = pszFile;
+	size_t a = temp.find_last_of('\\');
+	size_t aa = temp.find_last_of('/');
+
+	if (a != string::npos &amp;&amp; aa != string::npos)
+		a = MAX(a,aa);
+	else
+		a = MIN(a,aa);
+
+	size_t b = temp.find_last_of('.');
+	string strLayerName = temp.substr(a+1);
+	return strLayerName;
+}
+</pre><span style="font-size:16px; color:#000099"><br>
+&nbsp; &nbsp; &nbsp; &nbsp; 接下来是创建输出图像的代码，这个函数比较长，简单的思想就是，遍历所有的输入文件，然后计算所有的输入文件的空间范围的并集，然后根据图像的分辨率，计算结果图像的大小投影等信息，这个函数里面其实可以直接进行投影转换，等一系列的坐标转换处理，这里不进行深入讨论，以免偏离本文重点，这个代码是从gdalwarp.cpp中搬过来的，中间我加了一些注释，修改了一些返回&#20540;之类的，好，看代码：</span>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 创建输出文件
+* @param papszSrcFiles			输入文件列表
+* @param pszFilename			输出文件路径
+* @param pszFormat				输出文件格式
+* @param papszTO				转换选项
+* @param ppapszCreateOptions	创建文件选项
+* @param eDT					创建文件数据类型
+* @return 返回输出文件的句柄
+*/
+static GDALDatasetH 
+GDALWarpCreateOutput( char **papszSrcFiles, const char *pszFilename, 
+					 const char *pszFormat, char **papszTO, 
+					 char ***ppapszCreateOptions, GDALDataType eDT, int &amp;iRst )
+{
+	GDALDriverH hDriver;
+	GDALDatasetH hDstDS;
+	void *hTransformArg;
+	GDALColorTableH hCT = NULL;
+	double dfWrkMinX=0, dfWrkMaxX=0, dfWrkMinY=0, dfWrkMaxY=0;
+	double dfWrkResX=0, dfWrkResY=0;
+	int nDstBandCount = 0;
+
+	iRst = RE_SUCCESS;
+
+	/* -------------------------------------------------------------------- */
+	/*      获取输出文件类型驱动                                            */
+	/* -------------------------------------------------------------------- */
+	hDriver = GDALGetDriverByName( pszFormat );
+	if( hDriver == NULL || 
+		GDALGetMetadataItem( hDriver, GDAL_DCAP_CREATE, NULL ) == NULL )
+	{
+		iRst = RE_FILENOTSUPPORT;
+		return NULL;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      循环所有的输入文件，计算图像范围                                */
+	/* -------------------------------------------------------------------- */
+	char    *pszThisTargetSRS = (char*)CSLFetchNameValue( papszTO, &quot;DST_SRS&quot; );
+	if( pszThisTargetSRS != NULL )
+		pszThisTargetSRS = CPLStrdup( pszThisTargetSRS );
+
+	for(int iSrc = 0; papszSrcFiles[iSrc] != NULL; iSrc++ )
+	{
+		GDALDatasetH hSrcDS;
+		const char *pszThisSourceSRS = CSLFetchNameValue(papszTO,&quot;SRC_SRS&quot;);
+
+		hSrcDS = GDALOpen( papszSrcFiles[iSrc], GA_ReadOnly );
+		if( hSrcDS == NULL )
+		{
+			iRst = RE_FILENOTEXIST;
+			return NULL;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      检查当前文件是否存在波段                                        */
+		/* -------------------------------------------------------------------- */
+		if ( GDALGetRasterCount(hSrcDS) == 0 )
+		{
+			iRst = RE_FILETYPEERROR;
+			return NULL;
+		}
+
+		if( eDT == GDT_Unknown )
+			eDT = GDALGetRasterDataType(GDALGetRasterBand(hSrcDS,1));
+
+		/* -------------------------------------------------------------------- */
+		/*      If we are processing the first file, and it has a color         */
+		/*      table, then we will copy it to the destination file.            */
+		/* -------------------------------------------------------------------- */
+		if( iSrc == 0 )
+		{
+			nDstBandCount = GDALGetRasterCount(hSrcDS);
+			hCT = GDALGetRasterColorTable( GDALGetRasterBand(hSrcDS,1) );
+			if( hCT != NULL )
+				hCT = GDALCloneColorTable( hCT );
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      Get the sourcesrs from the dataset, if not set already.         */
+		/* -------------------------------------------------------------------- */
+		if( pszThisSourceSRS == NULL )
+		{
+			const char *pszMethod = CSLFetchNameValue( papszTO, &quot;METHOD&quot; );
+
+			if( GDALGetProjectionRef( hSrcDS ) != NULL &amp;&amp; 
+				strlen(GDALGetProjectionRef( hSrcDS )) &gt; 0 &amp;&amp; 
+				(pszMethod == NULL || EQUAL(pszMethod,&quot;GEOTRANSFORM&quot;)) )
+				pszThisSourceSRS = GDALGetProjectionRef( hSrcDS );
+			else if( GDALGetGCPProjection( hSrcDS ) != NULL &amp;&amp; 
+				strlen(GDALGetGCPProjection(hSrcDS)) &gt; 0 &amp;&amp; 
+				GDALGetGCPCount( hSrcDS ) &gt; 1 &amp;&amp; 
+				(pszMethod == NULL || EQUALN(pszMethod,&quot;GCP_&quot;,4)) )
+				pszThisSourceSRS = GDALGetGCPProjection( hSrcDS );
+			else if( pszMethod != NULL &amp;&amp; EQUAL(pszMethod,&quot;RPC&quot;) )
+				pszThisSourceSRS = SRS_WKT_WGS84;
+			else
+				pszThisSourceSRS = &quot;&quot;;
+		}
+
+		if( pszThisTargetSRS == NULL )
+			pszThisTargetSRS = CPLStrdup( pszThisSourceSRS );
+
+		/* -------------------------------------------------------------------- */
+		/*      Create a transformation object from the source to               */
+		/*      destination coordinate system.                                  */
+		/* -------------------------------------------------------------------- */
+		hTransformArg = 
+			GDALCreateGenImgProjTransformer2( hSrcDS, NULL, papszTO );
+
+		if( hTransformArg == NULL )
+		{
+			CPLFree( pszThisTargetSRS );
+			GDALClose( hSrcDS );
+			return NULL;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      Get approximate output definition.                              */
+		/* -------------------------------------------------------------------- */
+		double adfThisGeoTransform[6];
+		double adfExtent[4];
+		int    nThisPixels, nThisLines;
+
+		if( GDALSuggestedWarpOutput2( hSrcDS, 
+			GDALGenImgProjTransform, hTransformArg, 
+			adfThisGeoTransform, 
+			&amp;nThisPixels, &amp;nThisLines, 
+			adfExtent, 0 ) != CE_None )
+		{
+			CPLFree( pszThisTargetSRS );
+			GDALClose( hSrcDS );
+			return NULL;
+		}
+
+		if (CPLGetConfigOption( &quot;CHECK_WITH_INVERT_PROJ&quot;, NULL ) == NULL)
+		{
+			double MinX = adfExtent[0];
+			double MaxX = adfExtent[2];
+			double MaxY = adfExtent[3];
+			double MinY = adfExtent[1];
+			int bSuccess = TRUE;
+
+			/* Check that the the edges of the target image are in the validity area */
+			/* of the target projection */
+#define N_STEPS 20
+			int i,j;
+			for(i=0;i&lt;=N_STEPS &amp;&amp; bSuccess;i++)
+			{
+				for(j=0;j&lt;=N_STEPS &amp;&amp; bSuccess;j++)
+				{
+					double dfRatioI = i * 1.0 / N_STEPS;
+					double dfRatioJ = j * 1.0 / N_STEPS;
+					double expected_x = (1 - dfRatioI) * MinX + dfRatioI * MaxX;
+					double expected_y = (1 - dfRatioJ) * MinY + dfRatioJ * MaxY;
+					double x = expected_x;
+					double y = expected_y;
+					double z = 0;
+					/* Target SRS coordinates to source image pixel coordinates */
+					if (!GDALGenImgProjTransform(hTransformArg, TRUE, 1, &amp;x, &amp;y, &amp;z, &amp;bSuccess) || !bSuccess)
+						bSuccess = FALSE;
+					/* Source image pixel coordinates to target SRS coordinates */
+					if (!GDALGenImgProjTransform(hTransformArg, FALSE, 1, &amp;x, &amp;y, &amp;z, &amp;bSuccess) || !bSuccess)
+						bSuccess = FALSE;
+					if (fabs(x - expected_x) &gt; (MaxX - MinX) / nThisPixels ||
+						fabs(y - expected_y) &gt; (MaxY - MinY) / nThisLines)
+						bSuccess = FALSE;
+				}
+			}
+
+			/* If not, retry with CHECK_WITH_INVERT_PROJ=TRUE that forces ogrct.cpp */
+			/* to check the consistency of each requested projection result with the */
+			/* invert projection */
+			if (!bSuccess)
+			{
+				CPLSetConfigOption( &quot;CHECK_WITH_INVERT_PROJ&quot;, &quot;TRUE&quot; );
+				CPLDebug(&quot;WARP&quot;, &quot;Recompute out extent with CHECK_WITH_INVERT_PROJ=TRUE&quot;);
+				GDALDestroyGenImgProjTransformer(hTransformArg);
+				hTransformArg = 
+					GDALCreateGenImgProjTransformer2( hSrcDS, NULL, papszTO );
+
+				if( GDALSuggestedWarpOutput2( hSrcDS, 
+					GDALGenImgProjTransform, hTransformArg, 
+					adfThisGeoTransform, 
+					&amp;nThisPixels, &amp;nThisLines, 
+					adfExtent, 0 ) != CE_None )
+				{
+					CPLFree( pszThisTargetSRS );
+					GDALClose( hSrcDS );
+					return NULL;
+				}
+			}
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      Expand the working bounds to include this region, ensure the    */
+		/*      working resolution is no more than this resolution.             */
+		/* -------------------------------------------------------------------- */
+		if( dfWrkMaxX == 0.0 &amp;&amp; dfWrkMinX == 0.0 )
+		{
+			dfWrkMinX = adfExtent[0];
+			dfWrkMaxX = adfExtent[2];
+			dfWrkMaxY = adfExtent[3];
+			dfWrkMinY = adfExtent[1];
+			dfWrkResX = adfThisGeoTransform[1];
+			dfWrkResY = ABS(adfThisGeoTransform[5]);
+		}
+		else
+		{
+			dfWrkMinX = MIN(dfWrkMinX,adfExtent[0]);
+			dfWrkMaxX = MAX(dfWrkMaxX,adfExtent[2]);
+			dfWrkMaxY = MAX(dfWrkMaxY,adfExtent[3]);
+			dfWrkMinY = MIN(dfWrkMinY,adfExtent[1]);
+			dfWrkResX = MIN(dfWrkResX,adfThisGeoTransform[1]);
+			dfWrkResY = MIN(dfWrkResY,ABS(adfThisGeoTransform[5]));
+		}
+
+		GDALDestroyGenImgProjTransformer( hTransformArg );
+
+		GDALClose( hSrcDS );
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Did we have any usable sources?                                 */
+	/* -------------------------------------------------------------------- */
+	if( nDstBandCount == 0 )
+	{
+		CPLError( CE_Failure, CPLE_AppDefined, &quot;No usable source images.&quot; );
+		CPLFree( pszThisTargetSRS );
+		return NULL;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Turn the suggested region into a geotransform and suggested     */
+	/*      number of pixels and lines.                                     */
+	/* -------------------------------------------------------------------- */
+	double adfDstGeoTransform[6];
+	int nPixels, nLines;
+
+	adfDstGeoTransform[0] = dfWrkMinX;
+	adfDstGeoTransform[1] = dfWrkResX;
+	adfDstGeoTransform[2] = 0.0;
+	adfDstGeoTransform[3] = dfWrkMaxY;
+	adfDstGeoTransform[4] = 0.0;
+	adfDstGeoTransform[5] = -1 * dfWrkResY;
+
+	nPixels = (int) ((dfWrkMaxX - dfWrkMinX) / dfWrkResX + 0.5);
+	nLines = (int) ((dfWrkMaxY - dfWrkMinY) / dfWrkResY + 0.5);
+
+	/* -------------------------------------------------------------------- */
+	/*      Did the user override some parameters?                          */
+	/* -------------------------------------------------------------------- */
+	if( dfXRes != 0.0 &amp;&amp; dfYRes != 0.0 )
+	{
+		if( dfMinX == 0.0 &amp;&amp; dfMinY == 0.0 &amp;&amp; dfMaxX == 0.0 &amp;&amp; dfMaxY == 0.0 )
+		{
+			dfMinX = adfDstGeoTransform[0];
+			dfMaxX = adfDstGeoTransform[0] + adfDstGeoTransform[1] * nPixels;
+			dfMaxY = adfDstGeoTransform[3];
+			dfMinY = adfDstGeoTransform[3] + adfDstGeoTransform[5] * nLines;
+		}
+
+		nPixels = (int) ((dfMaxX - dfMinX + (dfXRes/2.0)) / dfXRes);
+		nLines = (int) ((dfMaxY - dfMinY + (dfYRes/2.0)) / dfYRes);
+		adfDstGeoTransform[0] = dfMinX;
+		adfDstGeoTransform[3] = dfMaxY;
+		adfDstGeoTransform[1] = dfXRes;
+		adfDstGeoTransform[5] = -dfYRes;
+	}
+	else if( nForcePixels != 0 &amp;&amp; nForceLines != 0 )
+	{
+		if( dfMinX == 0.0 &amp;&amp; dfMinY == 0.0 &amp;&amp; dfMaxX == 0.0 &amp;&amp; dfMaxY == 0.0 )
+		{
+			dfMinX = dfWrkMinX;
+			dfMaxX = dfWrkMaxX;
+			dfMaxY = dfWrkMaxY;
+			dfMinY = dfWrkMinY;
+		}
+
+		dfXRes = (dfMaxX - dfMinX) / nForcePixels;
+		dfYRes = (dfMaxY - dfMinY) / nForceLines;
+
+		adfDstGeoTransform[0] = dfMinX;
+		adfDstGeoTransform[3] = dfMaxY;
+		adfDstGeoTransform[1] = dfXRes;
+		adfDstGeoTransform[5] = -dfYRes;
+
+		nPixels = nForcePixels;
+		nLines = nForceLines;
+	}
+	else if( nForcePixels != 0 )
+	{
+		if( dfMinX == 0.0 &amp;&amp; dfMinY == 0.0 &amp;&amp; dfMaxX == 0.0 &amp;&amp; dfMaxY == 0.0 )
+		{
+			dfMinX = dfWrkMinX;
+			dfMaxX = dfWrkMaxX;
+			dfMaxY = dfWrkMaxY;
+			dfMinY = dfWrkMinY;
+		}
+
+		dfXRes = (dfMaxX - dfMinX) / nForcePixels;
+		dfYRes = dfXRes;
+
+		adfDstGeoTransform[0] = dfMinX;
+		adfDstGeoTransform[3] = dfMaxY;
+		adfDstGeoTransform[1] = dfXRes;
+		adfDstGeoTransform[5] = -dfYRes;
+
+		nPixels = nForcePixels;
+		nLines = (int) ((dfMaxY - dfMinY + (dfYRes/2.0)) / dfYRes);
+	}
+	else if( nForceLines != 0 )
+	{
+		if( dfMinX == 0.0 &amp;&amp; dfMinY == 0.0 &amp;&amp; dfMaxX == 0.0 &amp;&amp; dfMaxY == 0.0 )
+		{
+			dfMinX = dfWrkMinX;
+			dfMaxX = dfWrkMaxX;
+			dfMaxY = dfWrkMaxY;
+			dfMinY = dfWrkMinY;
+		}
+
+		dfYRes = (dfMaxY - dfMinY) / nForceLines;
+		dfXRes = dfYRes;
+
+		adfDstGeoTransform[0] = dfMinX;
+		adfDstGeoTransform[3] = dfMaxY;
+		adfDstGeoTransform[1] = dfXRes;
+		adfDstGeoTransform[5] = -dfYRes;
+
+		nPixels = (int) ((dfMaxX - dfMinX + (dfXRes/2.0)) / dfXRes);
+		nLines = nForceLines;
+	}
+	else if( dfMinX != 0.0 || dfMinY != 0.0 || dfMaxX != 0.0 || dfMaxY != 0.0 )
+	{
+		dfXRes = adfDstGeoTransform[1];
+		dfYRes = fabs(adfDstGeoTransform[5]);
+
+		nPixels = (int) ((dfMaxX - dfMinX + (dfXRes/2.0)) / dfXRes);
+		nLines = (int) ((dfMaxY - dfMinY + (dfYRes/2.0)) / dfYRes);
+
+		dfXRes = (dfMaxX - dfMinX) / nPixels;
+		dfYRes = (dfMaxY - dfMinY) / nLines;
+
+		adfDstGeoTransform[0] = dfMinX;
+		adfDstGeoTransform[3] = dfMaxY;
+		adfDstGeoTransform[1] = dfXRes;
+		adfDstGeoTransform[5] = -dfYRes;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Do we want to generate an alpha band in the output file?        */
+	/* -------------------------------------------------------------------- */
+	if( bEnableSrcAlpha )
+		nDstBandCount--;
+
+	if( bEnableDstAlpha )
+		nDstBandCount++;
+
+	/* -------------------------------------------------------------------- */
+	/*      Create the output file.                                         */
+	/* -------------------------------------------------------------------- */
+	hDstDS = GDALCreate( hDriver, pszFilename, nPixels, nLines, 
+		nDstBandCount, eDT, *ppapszCreateOptions );
+
+	if( hDstDS == NULL )
+	{
+		CPLFree( pszThisTargetSRS );
+		return NULL;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Write out the projection definition.                            */
+	/* -------------------------------------------------------------------- */
+	GDALSetProjection( hDstDS, pszThisTargetSRS );
+	GDALSetGeoTransform( hDstDS, adfDstGeoTransform );
+
+	/* -------------------------------------------------------------------- */
+	/*      Try to set color interpretation of output file alpha band.      */
+	/*      TODO: We should likely try to copy the other bands too.         */
+	/* -------------------------------------------------------------------- */
+	if( bEnableDstAlpha )
+	{
+		GDALSetRasterColorInterpretation( 
+			GDALGetRasterBand( hDstDS, nDstBandCount ), 
+			GCI_AlphaBand );
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Copy the color table, if required.                              */
+	/* -------------------------------------------------------------------- */
+	if( hCT != NULL )
+	{
+		GDALSetRasterColorTable( GDALGetRasterBand(hDstDS,1), hCT );
+		GDALDestroyColorTable( hCT );
+	}
+
+	CPLFree( pszThisTargetSRS );
+	return hDstDS;
+}
+</pre><br>
+<span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 接下来是投影坐标到图像行列号坐标转换的一个类，也是从gdalwarp.cpp中搬过来的：</span>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 转换投影坐标到图像行列号坐标
+*
+* 用于图像裁切中，按照AOI来裁切时转换AOI坐标到图像行列号坐标
+*/
+class CutlineTransformer : public OGRCoordinateTransformation
+{
+public:
+
+	/**
+	* @brief 源图像转换参数
+	*/
+	void *hSrcImageTransformer;
+
+	/**
+	* @brief 获取源数据空间参考坐标系
+	* @return 返回源数据空间参考坐标系
+	*/
+	virtual OGRSpatialReference *GetSourceCS() { return NULL; }
+
+	/**
+	* @brief 获取目标数据空间参考坐标系
+	* @return 返回目标数据空间参考坐标系
+	*/
+	virtual OGRSpatialReference *GetTargetCS() { return NULL; }
+
+	/**
+	* @brief 批量转换投影坐标到行列号
+	* @param nCount		坐标点个数
+	* @param x			x坐标串
+	* @param y			y坐标串
+	* @param z			z坐标串
+	* @return 返回是否执行正确
+	*/
+	virtual int Transform( int nCount, double *x, double *y, double *z = NULL )
+	{
+		int nResult;
+
+		int *pabSuccess = (int *) CPLCalloc(sizeof(int),nCount);
+		nResult = TransformEx( nCount, x, y, z, pabSuccess );
+		CPLFree( pabSuccess );
+
+		return nResult;
+	}
+
+	/**
+	* @brief 批量转换投影坐标到行列号
+	* @param nCount		坐标点个数
+	* @param x			x坐标串
+	* @param y			y坐标串
+	* @param z			z坐标串
+	* @param pabSuccess	保存执行成功的数组
+	* @return 返回是否执行正确
+	*/
+	virtual int TransformEx( int nCount, double *x, double *y, 
+		double *z = NULL, int *pabSuccess = NULL ) 
+	{
+		return GDALGenImgProjTransform( hSrcImageTransformer, TRUE, 
+			nCount, x, y, z, pabSuccess );
+	}
+};</pre><br>
+接下来这个函数比较重要，主要作用是读取矢量文件中的镶嵌块文件，构造一个镶嵌线，在镶嵌的时候使用：
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 加载镶嵌块
+* @param pszCutlineDSName	镶嵌块文件
+* @param pszCLayer			镶嵌块图层名称，可以为NULL
+* @param pszCWHERE			镶嵌块过滤字段
+* @param pszCSQL			镶嵌块SQL过滤字段
+* @param phCutlineRet		返回的镶嵌块数据指针
+* @return 返回值0表示该正确
+*/
+static int
+LoadCutline( const char *pszCutlineDSName, const char *pszCLayer, 
+			const char *pszCWHERE, const char *pszCSQL, 
+			void **phCutlineRet )
+{
+	OGRRegisterAll();
+
+	/* -------------------------------------------------------------------- */
+	/*      Open source vector dataset.                                     */
+	/* -------------------------------------------------------------------- */
+	OGRDataSourceH hSrcDS;
+
+	hSrcDS = OGROpen( pszCutlineDSName, FALSE, NULL );
+	if( hSrcDS == NULL )
+	{
+		if(m_pProcess != NULL)
+			m_pProcess-&gt;SetMessage(&quot;指定的镶嵌块文件不存在...&quot;);
+
+		return RE_FILENOTEXIST;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Get the source layer                                            */
+	/* -------------------------------------------------------------------- */
+	OGRLayerH hLayer = NULL;
+
+	if( pszCSQL != NULL )
+		hLayer = OGR_DS_ExecuteSQL( hSrcDS, pszCSQL, NULL, NULL ); 
+	else if( pszCLayer != NULL )
+		hLayer = OGR_DS_GetLayerByName( hSrcDS, pszCLayer );
+	else
+		hLayer = OGR_DS_GetLayer( hSrcDS, 0 );
+
+	if( hLayer == NULL )
+	{
+		if(m_pProcess != NULL)
+			m_pProcess-&gt;SetMessage(&quot;指定的矢量文件中没有找到图层...&quot;);
+
+		OGR_DS_Destroy( hSrcDS );
+		return RE_FAILED;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Apply WHERE clause if there is one.                             */
+	/* -------------------------------------------------------------------- */
+	if( pszCWHERE != NULL )
+		OGR_L_SetAttributeFilter( hLayer, pszCWHERE );
+
+	/* -------------------------------------------------------------------- */
+	/*      Collect the geometries from this layer, and build list of       */
+	/*      burn values.                                                    */
+	/* -------------------------------------------------------------------- */
+	OGRFeatureH hFeat;
+	OGRGeometryH hMultiPolygon = OGR_G_CreateGeometry( wkbMultiPolygon );
+
+	OGR_L_ResetReading( hLayer );
+
+	while( (hFeat = OGR_L_GetNextFeature( hLayer )) != NULL )
+	{
+		OGRGeometryH hGeom = OGR_F_GetGeometryRef(hFeat);
+
+		if( hGeom == NULL )
+		{
+			if(m_pProcess != NULL)
+				m_pProcess-&gt;SetMessage(&quot;指定的矢量文件图层中不存在图形...&quot;);
+
+			OGR_DS_Destroy( hSrcDS );
+			return RE_FAILED;
+		}
+
+		OGRwkbGeometryType eType = wkbFlatten(OGR_G_GetGeometryType( hGeom ));
+
+		if( eType == wkbPolygon )
+			OGR_G_AddGeometry( hMultiPolygon, hGeom );
+		else if( eType == wkbMultiPolygon )
+		{
+			int iGeom;
+
+			for( iGeom = 0; iGeom &lt; OGR_G_GetGeometryCount( hGeom ); iGeom++ )
+			{
+				OGR_G_AddGeometry( hMultiPolygon, 
+					OGR_G_GetGeometryRef(hGeom,iGeom) );
+			}
+		}
+		else
+		{
+			if(m_pProcess != NULL)
+				m_pProcess-&gt;SetMessage(&quot;指定的镶嵌块文件不是多边形矢量...&quot;);
+
+			OGR_DS_Destroy( hSrcDS );
+			return RE_FAILED;
+		}
+
+		OGR_F_Destroy( hFeat );
+	}
+
+	if( OGR_G_GetGeometryCount( hMultiPolygon ) == 0 )
+	{
+		if(m_pProcess != NULL)
+			m_pProcess-&gt;SetMessage(&quot;没有从指定的镶嵌块文件图层中读取镶嵌块...&quot;);
+
+		return RE_FAILED;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Ensure the coordinate system gets set on the geometry.          */
+	/* -------------------------------------------------------------------- */
+	OGR_G_AssignSpatialReference(
+		hMultiPolygon, OGR_L_GetSpatialRef(hLayer) );
+
+	*phCutlineRet = (void *) hMultiPolygon;
+
+	/* -------------------------------------------------------------------- */
+	/*      Cleanup                                                         */
+	/* -------------------------------------------------------------------- */
+	if( pszCSQL != NULL )
+		OGR_DS_ReleaseResultSet( hSrcDS, hLayer );
+
+	OGR_DS_Destroy( hSrcDS );
+	return RE_SUCCESS;
+}
+</pre><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 下面的函数是用来将镶嵌块的投影坐标转换到图像的行列号坐标中去：</span>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 转换AOI到源文件之间的行列号
+* @param hSrcDS				输入文件GDAL数据集句柄
+* @param hCutline			裁切的几何形状
+* @param ppapszWarpOptions	转换选项，用于配置裁切参数
+* @param papszTO_In			转换选项
+* @return 返回值0表示该正确
+*/
+static void
+TransformCutlineToSource( GDALDatasetH hSrcDS, void *hCutline,
+						 char ***ppapszWarpOptions, char **papszTO_In )
+{
+	OGRGeometryH hMultiPolygon = OGR_G_Clone( (OGRGeometryH) hCutline );
+	char **papszTO = CSLDuplicate( papszTO_In );
+
+	/* -------------------------------------------------------------------- */
+	/*      Checkout that SRS are the same.                                 */
+	/* -------------------------------------------------------------------- */
+	OGRSpatialReferenceH  hRasterSRS = NULL;
+	const char *pszProjection = NULL;
+
+	if( GDALGetProjectionRef( hSrcDS ) != NULL 
+		&amp;&amp; strlen(GDALGetProjectionRef( hSrcDS )) &gt; 0 )
+		pszProjection = GDALGetProjectionRef( hSrcDS );
+	else if( GDALGetGCPProjection( hSrcDS ) != NULL )
+		pszProjection = GDALGetGCPProjection( hSrcDS );
+
+	if( pszProjection != NULL )
+	{
+		hRasterSRS = OSRNewSpatialReference(NULL);
+		if( OSRImportFromWkt( hRasterSRS, (char **)&amp;pszProjection ) != CE_None )
+		{
+			OSRDestroySpatialReference(hRasterSRS);
+			hRasterSRS = NULL;
+		}
+	}
+
+	OGRSpatialReferenceH hSrcSRS = OGR_G_GetSpatialReference( hMultiPolygon );
+	if( hRasterSRS != NULL &amp;&amp; hSrcSRS != NULL )
+	{
+		/* ok, we will reproject */
+	}
+	else if( hRasterSRS != NULL &amp;&amp; hSrcSRS == NULL )
+	{
+		fprintf(stderr,
+			&quot;Warning : the source raster dataset has a SRS, but the input vector layer\n&quot;
+			&quot;not.  Cutline results may be incorrect.\n&quot;);
+	}
+	else if( hRasterSRS == NULL &amp;&amp; hSrcSRS != NULL )
+	{
+		fprintf(stderr,
+			&quot;Warning : the input vector layer has a SRS, but the source raster dataset does not.\n&quot;
+			&quot;Cutline results may be incorrect.\n&quot;);
+	}
+
+	if( hRasterSRS != NULL )
+		OSRDestroySpatialReference(hRasterSRS);
+
+	/* -------------------------------------------------------------------- */
+	/*      Extract the cutline SRS WKT.                                    */
+	/* -------------------------------------------------------------------- */
+	if( hSrcSRS != NULL )
+	{
+		char *pszCutlineSRS_WKT = NULL;
+
+		OSRExportToWkt( hSrcSRS, &amp;pszCutlineSRS_WKT );
+		papszTO = CSLSetNameValue( papszTO, &quot;DST_SRS&quot;, pszCutlineSRS_WKT );
+		CPLFree( pszCutlineSRS_WKT );
+	}
+	else
+	{
+		int iDstSRS = CSLFindString( papszTO, &quot;DST_SRS&quot; );
+		if( iDstSRS &gt;= 0 )
+			papszTO = CSLRemoveStrings( papszTO, iDstSRS, 1, NULL );
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      Transform the geometry to pixel/line coordinates.               */
+	/* -------------------------------------------------------------------- */
+	CutlineTransformer oTransformer;
+
+	oTransformer.hSrcImageTransformer = 
+		GDALCreateGenImgProjTransformer2( hSrcDS, NULL, papszTO );
+
+	CSLDestroy( papszTO );
+
+	if( oTransformer.hSrcImageTransformer == NULL )
+		exit( 1 );
+
+	OGR_G_Transform( hMultiPolygon, 
+		(OGRCoordinateTransformationH) &amp;oTransformer );
+
+	GDALDestroyGenImgProjTransformer( oTransformer.hSrcImageTransformer );
+
+	/* -------------------------------------------------------------------- */
+	/*      Convert aggregate geometry into WKT.                            */
+	/* -------------------------------------------------------------------- */
+	char *pszWKT = NULL;
+
+	OGR_G_ExportToWkt( hMultiPolygon, &amp;pszWKT );
+	OGR_G_DestroyGeometry( hMultiPolygon );
+
+	*ppapszWarpOptions = CSLSetNameValue( *ppapszWarpOptions, 
+		&quot;CUTLINE&quot;, pszWKT );
+	CPLFree( pszWKT );
+}</pre><br>
+<span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 接下来就是最重要的函数了，镶嵌函数的主体函数，注意两点，函数里面有关于进度条的信息，是我自己定义的，你可以参考我之前的博客，如果不想要，删掉即可；此外返回&#20540;是我自己定义的int类型，用来标记函数为什么返回了。下面的代码也是改造gdalwarp.cpp而来。</span>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">/**
+* @brief 图像镶嵌处理
+* &lt;B&gt;注意事项，调用此函数之前，请先对影像进行几何纠正到同一投影坐标系统下，分辨率可以不同，
+* 但是投影信息以及输入的各个数据的波段个数必须一致，否则会出现不能正常完成镶嵌操作。
+* 图像的分辨率会按照输入影像的第一个影像获取，包括投影等信息&lt;/B&gt;
+* @param vStrSrcFiles		输入文件以及镶嵌线路径数组，默认第一个为参考影像，第一个图像在最下层，后面的依次向上
+* @param pszCutLineFile		输入镶嵌块文件文件路径数组
+* @param pszOutFile			输出文件路径
+* @param eResampleMethod	重采样方式
+* @param pszFormat			输出文件格式，详细参考GDAL支持数据类型
+* @param pProcess			进度条指针，这个是我自己定义的类型，你可以自己写一个，或者删除
+* @return 返回值，表示计算过程中出现的各种错误信息，返回值是我自己定义的int类型
+*/
+int ImageMosaicing(vector&lt;string&gt; vStrSrcFiles, const char* pszCutLineFile, const char* pszOutFile, 
+				GDALResampleAlg eResampleMethod, const char *pszFormat, CBatProcessBase* pProcess )
+{
+	CProcessBase* pAllProcess = NULL;
+	CProcessBase* pSubProcess = NULL;
+
+	if(pProcess != NULL)
+	{
+		pAllProcess = pProcess-&gt;m_pAllProcess;
+		pSubProcess = pProcess-&gt;m_pSubProcess;
+		pProcess-&gt;SetMessage(&quot;正在执行镶嵌...&quot;);
+
+		pAllProcess-&gt;SetStepCount(vStrSrcFiles.size());
+	}
+
+	//输入输出文件
+	GDALDatasetH		hDstDS;
+	char              **papszSrcFiles = NULL;
+	const char         *pszDstFilename = NULL;
+	int                 bCreateOutput = FALSE;
+	//坐标转换对象
+	void               *hTransformArg, *hGenImgProjArg=NULL, *hApproxArg=NULL;
+	char              **papszWarpOptions = NULL;
+	double              dfErrorThreshold = 0.125;
+	GDALTransformerFunc pfnTransformer = NULL;
+	//输出文件选项
+	char              **papszCreateOptions = NULL;
+	GDALDataType        eOutputType = GDT_Unknown, eWorkingType = GDT_Unknown; 
+	
+	GDALResampleAlg     eResampleAlg = (GDALResampleAlg)eResampleMethod;
+	//NODATA设置
+	const char         *pszSrcNodata = NULL;
+	const char         *pszDstNodata = NULL;
+	int                 bMulti = FALSE;
+	char              **papszTO = NULL;
+	//镶嵌线文件
+	const char         *pszCutlineDSName = NULL;
+
+	if(vStrSrcFiles.empty())
+		return RE_PARAMERROR;
+
+	GDALAllRegister();
+	OGRRegisterAll();
+
+	pszSrcNodata = &quot;0 0 0&quot;;
+	pszDstNodata = &quot;0 0 0&quot;;
+	dfXRes = 0.0;
+	dfYRes = 0.0;
+	bCreateOutput = TRUE;
+	eResampleAlg = GRA_Bilinear;
+	pszCutlineDSName = pszCutLineFile;
+
+	for(size_t i=0; i&lt;vStrSrcFiles.size(); i++)
+	{
+		string strFile = vStrSrcFiles[i];
+		papszSrcFiles = CSLAddString( papszSrcFiles, strFile.c_str());
+	}
+
+	pszDstFilename = pszOutFile;
+	if( pszDstFilename == NULL )
+	{
+		return RE_FILENOTEXIST;
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      输出文件是否已经存在？                                          */
+	/* -------------------------------------------------------------------- */
+	CPLPushErrorHandler( CPLQuietErrorHandler );
+	hDstDS = GDALOpen( pszDstFilename, GA_Update );
+	CPLPopErrorHandler();
+
+	/* Avoid overwriting an existing destination file that cannot be opened in */
+	/* update mode with a new GTiff file */
+	if ( hDstDS == NULL )
+	{
+		CPLPushErrorHandler( CPLQuietErrorHandler );
+		hDstDS = GDALOpen( pszDstFilename, GA_ReadOnly );
+		CPLPopErrorHandler();
+
+		if (hDstDS)
+		{
+			fprintf( stderr, &quot;输出文件%s存在，但是不能写入\n&quot;, pszDstFilename );
+			GDALClose(hDstDS);
+			return RE_FAILED;
+		}
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      创建输出文件                                                    */
+	/* -------------------------------------------------------------------- */
+	int   bInitDestSetForFirst = FALSE;
+
+	if( hDstDS == NULL )
+	{
+		int iResult = RE_SUCCESS;
+		hDstDS = GDALWarpCreateOutput( papszSrcFiles, pszDstFilename, pszFormat,
+			papszTO, &amp;papszCreateOptions, eOutputType, iResult);
+		
+		if(iResult != RE_SUCCESS)
+			return iResult;
+
+		bCreateOutput = TRUE;
+
+		if( CSLFetchNameValue( papszWarpOptions, &quot;INIT_DEST&quot; ) == NULL &amp;&amp; 
+			pszDstNodata == NULL )
+		{
+			papszWarpOptions = CSLSetNameValue(papszWarpOptions,
+				&quot;INIT_DEST&quot;, &quot;0&quot;);
+			bInitDestSetForFirst = TRUE;
+		}
+		else if( CSLFetchNameValue( papszWarpOptions, &quot;INIT_DEST&quot; ) == NULL )
+		{
+			papszWarpOptions = CSLSetNameValue(papszWarpOptions,
+				&quot;INIT_DEST&quot;, &quot;NO_DATA&quot; );
+			bInitDestSetForFirst = TRUE;
+		}
+
+		CSLDestroy( papszCreateOptions );
+		papszCreateOptions = NULL;
+	}
+
+	if( hDstDS == NULL )
+		return RE_CREATEFAILED;
+
+	/* -------------------------------------------------------------------- */
+	/*      遍历所有的输入文件，并将其写入输出文件                          */
+	/* -------------------------------------------------------------------- */
+	int iRev = RE_SUCCESS;
+	for(int iSrc = 0; papszSrcFiles[iSrc] != NULL; iSrc++ )
+	{
+		GDALDatasetH hSrcDS;
+
+		/* -------------------------------------------------------------------- */
+		/*      打开文件                                                        */
+		/* -------------------------------------------------------------------- */
+		hSrcDS = GDALOpen( papszSrcFiles[iSrc], GA_ReadOnly );
+
+		if( hSrcDS == NULL )
+		{
+			iRev = RE_FILENOTEXIST;
+			goto CLEAN;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      检查输入文件是否不存在波段                                      */
+		/* -------------------------------------------------------------------- */
+		if ( GDALGetRasterCount(hSrcDS) == 0 )
+		{
+			fprintf(stderr, &quot;输入文件 %s 不存在波段。\n&quot;, papszSrcFiles[iSrc] );
+			iRev = RE_FILENOTSUPPORT;
+			goto CLEAN;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      处理alpha波段                                                   */
+		/* -------------------------------------------------------------------- */
+		GDALColorInterp ci = GDALGetRasterColorInterpretation( 
+			GDALGetRasterBand(hSrcDS,GDALGetRasterCount(hSrcDS)));
+
+		if( ci == GCI_AlphaBand &amp;&amp; !bEnableSrcAlpha )
+			bEnableSrcAlpha = TRUE;
+
+		/* -------------------------------------------------------------------- */
+		/*      创建转换参数从源坐标到目标坐标系                                */
+		/* -------------------------------------------------------------------- */
+		hTransformArg = hGenImgProjArg = 
+			GDALCreateGenImgProjTransformer2( hSrcDS, hDstDS, papszTO );
+
+		if( hTransformArg == NULL )
+		{
+			iRev = RE_PARAMERROR;
+			goto CLEAN;
+		}
+
+		pfnTransformer = GDALGenImgProjTransform;
+
+		/* -------------------------------------------------------------------- */
+		/*      Warp the transformer with a linear approximator unless the      */
+		/*      acceptable error is zero.                                       */
+		/* -------------------------------------------------------------------- */
+		if( dfErrorThreshold != 0.0 )
+		{
+			hTransformArg = hApproxArg = 
+				GDALCreateApproxTransformer( GDALGenImgProjTransform, 
+				hGenImgProjArg, dfErrorThreshold);
+			pfnTransformer = GDALApproxTransform;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      Clear temporary INIT_DEST settings after the first image.       */
+		/* -------------------------------------------------------------------- */
+		if( bInitDestSetForFirst &amp;&amp; iSrc == 1 )
+			papszWarpOptions = CSLSetNameValue( papszWarpOptions, 
+			&quot;INIT_DEST&quot;, NULL );
+
+		/* -------------------------------------------------------------------- */
+		/*      创建warp选项                                                    */
+		/* -------------------------------------------------------------------- */
+		GDALWarpOptions *psWO = GDALCreateWarpOptions();
+
+		psWO-&gt;papszWarpOptions = CSLDuplicate(papszWarpOptions);
+		psWO-&gt;eWorkingDataType = eWorkingType;
+		psWO-&gt;eResampleAlg = eResampleAlg;
+
+		psWO-&gt;hSrcDS = hSrcDS;
+		psWO-&gt;hDstDS = hDstDS;
+
+		psWO-&gt;pfnTransformer = pfnTransformer;
+		psWO-&gt;pTransformerArg = hTransformArg;
+
+		psWO-&gt;pfnProgress = ALGTermProgress;
+		psWO-&gt;pProgressArg = pSubProcess;
+
+		psWO-&gt;dfWarpMemoryLimit = 52428800;		//使用50M的内存
+
+		/* -------------------------------------------------------------------- */
+		/*      创建波段映射关系                                                */
+		/* -------------------------------------------------------------------- */
+		if( bEnableSrcAlpha )
+			psWO-&gt;nBandCount = GDALGetRasterCount(hSrcDS) - 1;
+		else
+			psWO-&gt;nBandCount = GDALGetRasterCount(hSrcDS);
+
+		psWO-&gt;panSrcBands = (int *) CPLMalloc(psWO-&gt;nBandCount*sizeof(int));
+		psWO-&gt;panDstBands = (int *) CPLMalloc(psWO-&gt;nBandCount*sizeof(int));
+
+		for(int i = 0; i &lt; psWO-&gt;nBandCount; i++ )
+		{
+			psWO-&gt;panSrcBands[i] = i+1;
+			psWO-&gt;panDstBands[i] = i+1;
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      构建alpha波段                                                   */
+		/* -------------------------------------------------------------------- */
+		if( bEnableSrcAlpha )
+			psWO-&gt;nSrcAlphaBand = GDALGetRasterCount(hSrcDS);
+
+		if( !bEnableDstAlpha 
+			&amp;&amp; GDALGetRasterCount(hDstDS) == psWO-&gt;nBandCount+1 
+			&amp;&amp; GDALGetRasterColorInterpretation( 
+			GDALGetRasterBand(hDstDS,GDALGetRasterCount(hDstDS))) 
+			== GCI_AlphaBand )
+		{
+				printf( &quot;Using band %d of destination image as alpha.\n&quot;, 
+				GDALGetRasterCount(hDstDS) );
+
+			bEnableDstAlpha = TRUE;
+		}
+
+		if( bEnableDstAlpha )
+			psWO-&gt;nDstAlphaBand = GDALGetRasterCount(hDstDS);
+
+		/* -------------------------------------------------------------------- */
+		/*      创建  NODATA 选项                                               */
+		/* -------------------------------------------------------------------- */
+		if( pszSrcNodata != NULL &amp;&amp; !EQUALN(pszSrcNodata,&quot;n&quot;,1) )
+		{
+			char **papszTokens = CSLTokenizeString( pszSrcNodata );
+			int  nTokenCount = CSLCount(papszTokens);
+
+			psWO-&gt;padfSrcNoDataReal = (double *) 
+				CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+			psWO-&gt;padfSrcNoDataImag = (double *) 
+				CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+
+			for(int i = 0; i &lt; psWO-&gt;nBandCount; i++ )
+			{
+				if( i &lt; nTokenCount )
+				{
+					CPLStringToComplex( papszTokens[i], 
+						psWO-&gt;padfSrcNoDataReal + i,
+						psWO-&gt;padfSrcNoDataImag + i );
+				}
+				else
+				{
+					psWO-&gt;padfSrcNoDataReal[i] = psWO-&gt;padfSrcNoDataReal[i-1];
+					psWO-&gt;padfSrcNoDataImag[i] = psWO-&gt;padfSrcNoDataImag[i-1];
+				}
+			}
+
+			CSLDestroy( papszTokens );
+
+			psWO-&gt;papszWarpOptions = CSLSetNameValue(psWO-&gt;papszWarpOptions,
+				&quot;UNIFIED_SRC_NODATA&quot;, &quot;YES&quot; );
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      没有指定NODATA值，从源文件中读取                                */
+		/* -------------------------------------------------------------------- */
+		if( pszSrcNodata == NULL )
+		{
+			int bHaveNodata = FALSE;
+			double dfReal = 0.0;
+
+			for(int i = 0; !bHaveNodata &amp;&amp; i &lt; psWO-&gt;nBandCount; i++ )
+			{
+				GDALRasterBandH hBand = GDALGetRasterBand( hSrcDS, i+1 );
+				dfReal = GDALGetRasterNoDataValue( hBand, &amp;bHaveNodata );
+			}
+
+			if( bHaveNodata )
+			{
+				printf( &quot;Using internal nodata values (eg. %g) for image %s.\n&quot;,
+					dfReal, papszSrcFiles[iSrc] );
+				psWO-&gt;padfSrcNoDataReal = (double *) 
+					CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+				psWO-&gt;padfSrcNoDataImag = (double *) 
+					CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+
+				for(int i = 0; i &lt; psWO-&gt;nBandCount; i++ )
+				{
+					GDALRasterBandH hBand = GDALGetRasterBand( hSrcDS, i+1 );
+
+					dfReal = GDALGetRasterNoDataValue( hBand, &amp;bHaveNodata );
+
+					if( bHaveNodata )
+					{
+						psWO-&gt;padfSrcNoDataReal[i] = dfReal;
+						psWO-&gt;padfSrcNoDataImag[i] = 0.0;
+					}
+					else
+					{
+						psWO-&gt;padfSrcNoDataReal[i] = -123456.789;
+						psWO-&gt;padfSrcNoDataImag[i] = 0.0;
+					}
+				}
+			}
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      设置输出文件的NODATA为最大值                                    */
+		/* -------------------------------------------------------------------- */
+		if( pszDstNodata != NULL )
+		{
+			char **papszTokens = CSLTokenizeString( pszDstNodata );
+			int  nTokenCount = CSLCount(papszTokens);
+
+			psWO-&gt;padfDstNoDataReal = (double *) 
+				CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+			psWO-&gt;padfDstNoDataImag = (double *) 
+				CPLMalloc(psWO-&gt;nBandCount*sizeof(double));
+
+			for(int i = 0; i &lt; psWO-&gt;nBandCount; i++ )
+			{
+				if( i &lt; nTokenCount )
+				{
+					CPLStringToComplex( papszTokens[i], 
+						psWO-&gt;padfDstNoDataReal + i,
+						psWO-&gt;padfDstNoDataImag + i );
+				}
+				else
+				{
+					psWO-&gt;padfDstNoDataReal[i] = psWO-&gt;padfDstNoDataReal[i-1];
+					psWO-&gt;padfDstNoDataImag[i] = psWO-&gt;padfDstNoDataImag[i-1];
+				}
+
+				GDALRasterBandH hBand = GDALGetRasterBand( hDstDS, i+1 );
+				int bClamped = FALSE, bRounded = FALSE;
+
+#define CLAMP(val,type,minval,maxval) \
+	do { if (val &lt; minval) { bClamped = TRUE; val = minval; } \
+		else if (val &gt; maxval) { bClamped = TRUE; val = maxval; } \
+		else if (val != (type)val) { bRounded = TRUE; val = (type)(val + 0.5); } } \
+		while(0)
+
+				switch(GDALGetRasterDataType(hBand))
+				{
+				case GDT_Byte:
+					CLAMP(psWO-&gt;padfDstNoDataReal[i], GByte,
+						0.0, 255.0);
+					break;
+				case GDT_Int16:
+					CLAMP(psWO-&gt;padfDstNoDataReal[i], GInt16,
+						-32768.0, 32767.0);
+					break;
+				case GDT_UInt16:
+					CLAMP(psWO-&gt;padfDstNoDataReal[i], GUInt16,
+						0.0, 65535.0);
+					break;
+				case GDT_Int32:
+					CLAMP(psWO-&gt;padfDstNoDataReal[i], GInt32,
+						-2147483648.0, 2147483647.0);
+					break;
+				case GDT_UInt32:
+					CLAMP(psWO-&gt;padfDstNoDataReal[i], GUInt32,
+						0.0, 4294967295.0);
+					break;
+				default:
+					break;
+				}
+
+				if (bClamped)
+				{
+					printf( &quot;for band %d, destination nodata value has been clamped &quot;
+						&quot;to %.0f, the original value being out of range.\n&quot;,
+						i + 1, psWO-&gt;padfDstNoDataReal[i]);
+				}
+				else if(bRounded)
+				{
+					printf(&quot;for band %d, destination nodata value has been rounded &quot;
+						&quot;to %.0f, %s being an integer datatype.\n&quot;,
+						i + 1, psWO-&gt;padfDstNoDataReal[i],
+						GDALGetDataTypeName(GDALGetRasterDataType(hBand)));
+				}
+
+				if( bCreateOutput )
+				{
+					GDALSetRasterNoDataValue( 
+						GDALGetRasterBand( hDstDS, psWO-&gt;panDstBands[i] ), 
+						psWO-&gt;padfDstNoDataReal[i] );
+				}
+			}
+
+			CSLDestroy( papszTokens );
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      读取镶嵌线                                                      */
+		/* -------------------------------------------------------------------- */
+		void *hCutline = NULL;
+		if( pszCutlineDSName != NULL )
+		{
+			string strFileName = GetFileName(papszSrcFiles[iSrc]);
+			string strWhere = &quot;影像路径=\&quot;&quot; + strFileName + &quot;\&quot;&quot;;
+			LoadCutline( pszCutlineDSName, NULL, strWhere.c_str(), NULL, &amp;hCutline );
+		}
+
+		if( hCutline != NULL )
+		{
+			TransformCutlineToSource( hSrcDS, hCutline, &amp;(psWO-&gt;papszWarpOptions), papszTO );
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      初始化执行warp                                                  */
+		/* -------------------------------------------------------------------- */
+		GDALWarpOperation oWO;
+		CPLErr CE = CE_None;
+		if( oWO.Initialize( psWO ) == CE_None )
+		{
+			if( bMulti )
+				CE = oWO.ChunkAndWarpMulti( 0, 0, GDALGetRasterXSize( hDstDS ), GDALGetRasterYSize( hDstDS ) );
+			else
+				CE = oWO.ChunkAndWarpImage( 0, 0, GDALGetRasterXSize( hDstDS ), GDALGetRasterYSize( hDstDS ) );
+		}
+
+		/* -------------------------------------------------------------------- */
+		/*      清理资源                                                        */
+		/* -------------------------------------------------------------------- */
+		if( hApproxArg != NULL )
+			GDALDestroyApproxTransformer( hApproxArg );
+
+		if( hGenImgProjArg != NULL )
+			GDALDestroyGenImgProjTransformer( hGenImgProjArg );
+
+		GDALDestroyWarpOptions( psWO );
+
+		if( hCutline != NULL )	//释放镶嵌块资源
+		{
+			OGR_G_DestroyGeometry( (OGRGeometryH) hCutline );
+			hCutline = NULL;
+		}
+
+		GDALClose( hSrcDS );
+
+		if (CE != CE_None)
+		{
+			GDALClose( hDstDS );
+
+			CSLDestroy( papszSrcFiles );
+			CSLDestroy( papszWarpOptions );
+			CSLDestroy( papszTO );
+
+			GDALDumpOpenDatasets( stderr );
+
+			OGRCleanupAll();
+
+			RasterDelete(pszOutFile);
+
+			if(pProcess != NULL)
+			{
+				if (!pAllProcess-&gt;m_bIsContinue)
+				{
+					pProcess-&gt;SetMessage(&quot;取消计算！&quot;);
+					return RE_USERCANCEL;
+				}
+				else
+				{
+					pProcess-&gt;SetMessage(&quot;执行失败！&quot;);
+					return RE_FAILED;
+				}
+			}
+
+			return RE_FAILED;
+		}
+
+		if(pAllProcess != NULL)
+			pAllProcess-&gt;StepIt();
+	}
+
+	/* -------------------------------------------------------------------- */
+	/*      善后工作                                                        */
+	/* -------------------------------------------------------------------- */
+CLEAN:
+
+	GDALClose( hDstDS );
+
+	CSLDestroy( papszSrcFiles );
+	CSLDestroy( papszWarpOptions );
+	CSLDestroy( papszTO );
+
+	GDALDumpOpenDatasets( stderr );
+
+	OGRCleanupAll();
+
+	if(pProcess != NULL)
+		pProcess-&gt;SetMessage(&quot;镶嵌完成...&quot;);
+
+	return RE_SUCCESS;
+}</pre><br>
+<span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 这里读取镶嵌块文件的时候，镶嵌块文件保存了参与镶嵌的文件的镶嵌块，同时有一个属性字段是“影像路径”，其&#20540;是镶嵌块对应的影像的绝对路径，当然你可以不用给镶嵌块文件，也是可以进行处理的，只不过效果可能就……你懂得。</span>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif; font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; 有任何疑问，可以看gdalwarp.cpp中的代码，基本上全是那里面的代码。</span></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif; font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp; PS：这里面需要定义几个全局变量，要不然可能有问题，全局变量定义如下：</span></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"></span></p>
+<pre name="code" class="cpp">//全局变量 图像范围
+static double	       dfMinX=0.0, dfMinY=0.0, dfMaxX=0.0, dfMaxY=0.0;
+//全局变量 图像分辨率
+static double	       dfXRes=0.0, dfYRes=0.0;
+//全局变量 图像宽高
+static int             nForcePixels=0, nForceLines=0;
+//全局变量 图像是否具有Alpha通道
+static int             bEnableDstAlpha = FALSE, bEnableSrcAlpha = FALSE;
+//全局变量 进度条指针
+CProcessBase* m_pProcess = NULL;	</pre>
+<p></p>
+<p><span style="font-family:WenQuanYi Micro Hei Mono,WenQuanYi Micro Hei,Microsoft Yahei Mono,Microsoft Yahei,sans-serif"><span style="font-size:16px; color:#000099">忽然，发现代码好多，唉，我也不想搞这么长的代码啊，没办法，您就凑合着看吧，欢迎大家指导。</span></span></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="7536132" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/7506101';">上一篇</span><a href="/liminlu0314/article/details/7506101" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">GDAL C# “OSGeo.GDAL.GdalPINVOKE”的类型初始值设定项引发异常 解决方法</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/7592857';">下一篇</span><a href="/liminlu0314/article/details/7592857" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">GDAL源码剖析（九）之GDAL体系架构</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/9025845" title="GDAL工具使用示例（一）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL工具使用示例（一）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/iuhsihsow/article/details/8455274" title="GDAL1.8（1.9.0b1）APP简单介绍" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL1.8（1.9.0b1）APP简单介绍</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/IvanLJF/article/details/9137429" title="GDAL工具使用示例（一）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL工具使用示例（一）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/50119129" title="编译GDAL支持OpenCL使用GPU加速" strategy="recommend_sim_0" target="_blank" style="width: 290px;">编译GDAL支持OpenCL使用GPU加速</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/8082940" title="GDAL\OGR C#中文路径不支持的问题解决方法" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL\OGR C#中文路径不支持的问题解决方法</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sf2gis2/article/details/41630169" title="GDAL应用" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL应用</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/7218543" title="GDAL源码剖析（四）之命令行程序说明二" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（四）之命令行程序说明二</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/taor1/article/details/8263232" title="GDAL源码剖析之命令行程序说明" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析之命令行程序说明</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sf2gis2/article/details/44774757" title="gdal应用-gdalwarp" strategy="recommend_sim_0" target="_blank" style="width: 290px;">gdal应用-gdalwarp</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/7536132",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "7536132",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '7536132';
+    var commentscount = 32;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='如何使用GDAL进行图像镶嵌';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847252次</span></li>
+    <li>积分：<span>10753</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10753 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

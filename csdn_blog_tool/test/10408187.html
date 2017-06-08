@@ -1,0 +1,1832 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/10408187"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析 - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="这篇博文开始，我们来解析一下Nova虚拟机动态迁移的实现源码。这里不会再像前面那样对代码进行逐行的详细解析，目的是来整理Nova虚拟机动态迁移的实现步骤和相关源码部分架构。首先我们来看虚拟机动态迁移在Opentack Nova中的API请求处理函数/nova/api/openstack/compute/contrib/admin_actions.py----def _migrate_liv" />
+
+    <meta name="keywords" content="OpenStack,nova,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=OpenStack%e5%9f%ba%e4%ba%8eLibvirt%e7%9a%84%e8%99%9a%e6%8b%9f%e5%8c%96%e5%b9%b3%e5%8f%b0%e8%b0%83%e5%ba%a6%e5%ae%9e%e7%8e%b0----Nova%e8%99%9a%e6%8b%9f%e6%9c%ba%e5%8a%a8%e6%80%81%e8%bf%81%e7%a7%bb%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/10408187"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/10408187">
+        OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/nova' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">nova</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-08-28 22:09</span>
+            <span class="link_view" title="阅读次数">6297人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(6)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('OpenStack%e5%9f%ba%e4%ba%8eLibvirt%e7%9a%84%e8%99%9a%e6%8b%9f%e5%8c%96%e5%b9%b3%e5%8f%b0%e8%b0%83%e5%ba%a6%e5%ae%9e%e7%8e%b0----Nova%e8%99%9a%e6%8b%9f%e6%9c%ba%e5%8a%a8%e6%80%81%e8%bf%81%e7%a7%bb%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90','10408187');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(10408187,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[{&quot;name&quot;:&quot;OpenStack知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/33?source=blogtop&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1481875458834_834.jpg&quot;}]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1461395','gaoxingnengjisuan','top','10408187');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-NOVA<em>（35）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1461395"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1461395">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"></span><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这篇博文开始，我们来解析一下Nova虚拟机动态迁移的实现源码。这里不会再像前面那样对代码进行逐行的详细解析，目的是来整理Nova虚拟机动态迁移的实现步骤和相关源码部分架构。</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">首先我们来看虚拟机动态迁移在Opentack Nova中的</span><span style="font-family:KaiTi_GB2312; font-size:18px">API请求处理函数</span><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/api/openstack/compute/contrib/admin_actions.py----def
+ _migrate_live：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_1_9159134"  name="code" class="python">def _migrate_live(self, req, id, body):
+        &quot;&quot;&quot;
+        Permit admins to (live) migrate a server to a new host.
+        允许管理员实时迁移一个服务到新的主机；
+        &quot;&quot;&quot;
+        context = req.environ[&quot;nova.context&quot;]
+        authorize(context, 'migrateLive')
+
+        try:
+            block_migration = body[&quot;os-migrateLive&quot;][&quot;block_migration&quot;]
+            disk_over_commit = body[&quot;os-migrateLive&quot;][&quot;disk_over_commit&quot;]
+            # 确定服务迁移的目标主机；
+            host = body[&quot;os-migrateLive&quot;][&quot;host&quot;]
+        except (TypeError, KeyError):
+            msg = _(&quot;host and block_migration must be specified.&quot;)
+            raise exc.HTTPBadRequest(explanation=msg)
+
+        try:
+            instance = self.compute_api.get(context, id)
+            # live_migrate：实施地迁移服务到新的主机；
+            self.compute_api.live_migrate(context, instance, block_migration,
+                                          disk_over_commit, host)
+        except (exception.ComputeServiceUnavailable,
+                exception.InvalidHypervisorType,
+                exception.UnableToMigrateToSelf,
+                exception.DestinationHypervisorTooOld) as ex:
+            raise exc.HTTPBadRequest(explanation=ex.format_message())
+        except Exception:
+            if host is None:
+                msg = _(&quot;Live migration of instance %(id)s to another host&quot;
+                        &quot; failed&quot;) % locals()
+            else:
+                msg = _(&quot;Live migration of instance %(id)s to host %(host)s&quot;
+                        &quot; failed&quot;) % locals()
+            LOG.exception(msg)
+            # Return messages from scheduler
+            raise exc.HTTPBadRequest(explanation=msg)
+
+        return webob.Response(status_int=202)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中我们可以看到，实现虚拟机动态迁移主要实现的语句就是：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">self.compute_api.live_migrate(context, instance, block_migration, disk_over_commit, host)</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们接着看方法live_migrate的源码：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_2_6443919"  name="code" class="python">&nbsp; &nbsp; # check_instance_state：这是一个装饰器，用于在进入API方法之前，检测虚拟机和/或任务的状态；
+    # 如果实例处于错误的状态，将会引发异常；
+    @check_instance_state(vm_state=[vm_states.ACTIVE])
+    def live_migrate(self, context, instance, block_migration,
+                     disk_over_commit, host_name):
+        &quot;&quot;&quot;
+        实时地迁移服务到新的主机；
+        &quot;&quot;&quot;
+        LOG.debug(_(&quot;Going to try to live migrate instance to %s&quot;),
+                  host_name or &quot;another host&quot;, instance=instance)
+
+        # update：更新实例的记录，如果任务或者虚拟机状态发生改变则发送一个状态更新的通知；
+        # 返回更新后的实例信息；
+        instance = self.update(context, instance,
+                               task_state=task_states.MIGRATING,
+                               expected_task_state=None)
+
+        # 调用call方法实现在主题topic的模式上发送实时迁移虚拟机的消息，并等待回应；
+        self.scheduler_rpcapi.live_migration(context, block_migration,
+                disk_over_commit, instance, host_name)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这个方法中，主要实现了两部分内容，更新记录中的实例信息和在主题topic的模式上发送实时迁移虚拟机的消息。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们先来看跟新记录中的实例信息这部分内容，主要是通过调用方法update方法实现的。具体来看方法update的实现源码：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_3_2125521"  name="code" class="python">def update(self, context, instance, **kwargs):
+        &quot;&quot;&quot;
+        更新数据存储中的实例；
+
+        :param context: The security context
+        安全上下文信息；
+        :param instance: The instance to update
+        要更新的实例；
+        
+        # 更新实例的记录，如果任务或者虚拟机状态发生改变则发送一个状态更新的通知；
+        # 返回更新后的实例信息；
+        &quot;&quot;&quot;
+        
+        # 更新实例的记录，如果任务或者虚拟机状态发生改变则发送一个状态更新的通知；
+        # 返回旧的实例信息和更新后的实例信息；
+        _, updated = self._update(context, instance, **kwargs)
+        return updated</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_4_1743837"  name="code" class="python">def _update(self, context, instance, **kwargs):
+        # 更新实例的记录，如果任务或者虚拟机状态发生改变则发送一个状态更新的通知；
+        # 返回旧的实例信息和更新后的实例信息；
+        
+        # 更新实例的信息；
+        # 返回旧的实例信息和更新后的实例信息；
+        old_ref, instance_ref = self.db.instance_update_and_get_original(context, instance['uuid'], kwargs)
+        # 发送通知，来报告实例中发生的任何改变；
+        notifications.send_update(context, old_ref, instance_ref, service=&quot;api&quot;)
+
+        return dict(old_ref.iteritems()), dict(instance_ref.iteritems())</pre><span style="font-family:KaiTi_GB2312; font-size:18px">方法_update主要实现了两方面的内容，一是实现更新实例信息，二是发送通知，来报告实例中发生的任何改变。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">先来看方法instance_update_and_get_original的实现源码：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_5_2965336"  name="code" class="python">def instance_update_and_get_original(context, instance_uuid, values):
+    &quot;&quot;&quot;   
+    更新实例的信息；
+    返回旧的实例信息和更新后的实例信息；
+    &quot;&quot;&quot;
+    rv = IMPL.instance_update_and_get_original(context, instance_uuid, values)
+    try:
+        # 在top等级的cell上，更新实例；
+        cells_rpcapi.CellsAPI().instance_update_at_top(context, rv[1])
+    except Exception:
+        LOG.exception(_(&quot;Failed to notify cells of instance update&quot;))
+    return rv</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_6_8123549"  name="code" class="python">def instance_update_and_get_original(context, instance_uuid, values):
+    &quot;&quot;&quot;   
+    更新实例的信息；
+    返回旧的实例信息和更新后的实例信息；
+    &quot;&quot;&quot;
+    return _instance_update(context, instance_uuid, values,
+                            copy_old_instance=True)</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_7_981252"  name="code" class="python">def _instance_update(context, instance_uuid, values, copy_old_instance=False):
+    &quot;&quot;&quot;
+    更新实例的信息；
+    返回旧的实例信息和更新后的实例信息；
+    &quot;&quot;&quot;
+    
+    # 获取db_session的session；
+    # get_session：返回一个SQLAlchemy session，若没有定义，则新建一个SQLAlchemy session；
+    session = get_session()
+
+    # 如果instance_uuid不是一个UUID值，则引发异常；
+    # is_uuid_like：判断instance_uuid是否是一个UUID值，返回结果；
+    if not uuidutils.is_uuid_like(instance_uuid):
+        raise exception.InvalidUUID(instance_uuid)
+
+    with session.begin():
+        # _instance_get_by_uuid：通过instance_uuid获取一个具体的实例；
+        instance_ref = _instance_get_by_uuid(context, instance_uuid, session=session)
+        if &quot;expected_task_state&quot; in values:
+            # it is not a db column so always pop out
+            expected = values.pop(&quot;expected_task_state&quot;)
+            if not isinstance(expected, (tuple, list, set)):
+                expected = (expected,)
+            actual_state = instance_ref[&quot;task_state&quot;]
+            if actual_state not in expected:
+                raise exception.UnexpectedTaskStateError(actual=actual_state,
+                                                         expected=expected)
+
+        instance_hostname = instance_ref['hostname'] or ''
+        if (&quot;hostname&quot; in values and
+                values[&quot;hostname&quot;].lower() != instance_hostname.lower()):
+                _validate_unique_server_name(context,
+                                             session,
+                                             values['hostname'])
+
+        if copy_old_instance:
+            old_instance_ref = copy.copy(instance_ref)
+        else:
+            old_instance_ref = None
+
+        metadata = values.get('metadata')
+        if metadata is not None:
+            _instance_metadata_update_in_place(context, instance_ref,
+                                               'metadata',
+                                               models.InstanceMetadata,
+                                               values.pop('metadata'),
+                                               session)
+
+        system_metadata = values.get('system_metadata')
+        if system_metadata is not None:
+            _instance_metadata_update_in_place(context, instance_ref,
+                                               'system_metadata',
+                                               models.InstanceSystemMetadata,
+                                               values.pop('system_metadata'),
+                                               session)
+
+        instance_ref.update(values)
+        instance_ref.save(session=session)
+
+    return (old_instance_ref, instance_ref)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">再来看方法_update中实现发送通知，来报告实例中发生的任何改变的实现内容，即调用了方法send_update来实现的：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_8_4187618"  name="code" class="python">def send_update(context, old_instance, new_instance, service=None, host=None):
+    &quot;&quot;&quot;
+    发送通知，来报告实例中发生的任何改变；
+    &quot;&quot;&quot;
+
+    if not CONF.notify_on_any_change and not CONF.notify_on_state_change:
+        return
+
+    update_with_state_change = False
+
+    old_vm_state = old_instance[&quot;vm_state&quot;]
+    new_vm_state = new_instance[&quot;vm_state&quot;]
+    old_task_state = old_instance[&quot;task_state&quot;]
+    new_task_state = new_instance[&quot;task_state&quot;]
+
+    if old_vm_state != new_vm_state:
+        update_with_state_change = True
+    elif CONF.notify_on_state_change:
+        if (CONF.notify_on_state_change.lower() == &quot;vm_and_task_state&quot; and
+            old_task_state != new_task_state):
+            update_with_state_change = True
+
+    if update_with_state_change:
+        send_update_with_states(context, new_instance, old_vm_state,
+                new_vm_state, old_task_state, new_task_state, service, host)
+
+    else:
+        try:
+            _send_instance_update_notification(context, new_instance,
+                    service=service, host=host)
+        except Exception:
+            LOG.exception(_(&quot;Failed to send state update notification&quot;),
+                    instance=new_instance)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们再回到方法live_migrate中，来看第二部分主要实现的内容，即调用方法live_migration来实现在主题topic的模式上发送实时迁移虚拟机的消息。来看方法live_migration：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_9_2900862"  name="code" class="python">def live_migration(self, ctxt, block_migration, disk_over_commit,
+            instance, dest):
+        # 调用call方法实现在主题topic的模式上发送实时迁移虚拟机的消息，并等待回应；
+        
+        # to_primitive：转换更新后的instance到primitives格式；
+        instance_p = jsonutils.to_primitive(instance)
+        
+        # call：在一个主题topic上发送一条消息，并等待响应；rv:多次调用（呼叫）等待者类的对象列表；返回rv[-1]列表的结尾；
+        return self.call(ctxt, self.make_msg('live_migration',
+                block_migration=block_migration,
+                disk_over_commit=disk_over_commit, instance=instance_p,
+                dest=dest))</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这里调用方法call来实现在一个主题topic上发送一条消息（进行实时迁移操作），并等待响应。这里将调用/nova/scheduler/manager.py----live_migration这个方法来执行实时迁移的调度的方法，并返回实例当前运行的主机。具体来看方法的实现源码：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_22_9161252"  name="code" class="python">def live_migration(self, context, instance, dest, block_migration, disk_over_commit):
+        try:
+            # schedule_live_migration:执行实时迁移的调度方法；
+            # 返回实例当前运行的主机；   
+            return self.driver.schedule_live_migration(
+                context, instance, dest,
+                block_migration, disk_over_commit)
+        except (exception.ComputeServiceUnavailable,
+                exception.InvalidHypervisorType,
+                exception.UnableToMigrateToSelf,
+                exception.DestinationHypervisorTooOld,
+                exception.InvalidLocalStorage,
+                exception.InvalidSharedStorage) as ex:
+            request_spec = {'instance_properties': {
+                'uuid': instance['uuid'], },
+            }
+            with excutils.save_and_reraise_exception():
+                self._set_vm_state_and_notify('live_migration',
+                            dict(vm_state=instance['vm_state'],
+                                 task_state=None,
+                                 expected_task_state=task_states.MIGRATING,),
+                                              context, ex, request_spec)
+        except Exception as ex:
+            with excutils.save_and_reraise_exception():
+                self._set_vm_state_and_notify('live_migration',
+                                             {'vm_state': vm_states.ERROR},
+                                             context, ex, {})</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_11_1581087"  name="code" class="python">def schedule_live_migration(self, context, instance, dest,
+                                block_migration, disk_over_commit):
+        &quot;&quot;&quot;           
+        执行实时迁移的调度方法；
+        返回实例当前运行的主机；        
+        &quot;&quot;&quot;
+        # 检测确保能够进行实时迁移；
+        # _live_migration_src_check：为源主机的实时迁移作例行的检测；
+        self._live_migration_src_check(context, instance)
+
+        # 如果目标主机没有定义，则由调度算法选取一个主机；
+        if dest is None:           
+            # ignore_hosts：避免作为目标主机的主机；
+            # 源主机不能作为目标主机；
+            ignore_hosts = [instance['host']]
+            while dest is None:
+                # _live_migration_dest_check：为实时迁移作目标主机的例行检测；
+                # 返回获取的目标主机；
+                dest = self._live_migration_dest_check(context, instance, dest, ignore_hosts)
+                try:
+                    # _live_migration_common_check：实时迁移进行的常规检测；
+                    self._live_migration_common_check(context, instance, dest)
+                    # check_can_live_migrate_destination：检测是否可以进行实时迁移；
+                    # 这个检测将会在目标主机上进行，然后返回检测结果给源主机；
+                    migrate_data = self.compute_rpcapi.\
+                        check_can_live_migrate_destination(context, instance,
+                                                           dest,
+                                                           block_migration,
+                                                           disk_over_commit)
+                except exception.Invalid:
+                    ignore_hosts.append(dest)
+                    dest = None
+                    continue
+        else:
+            # _live_migration_dest_check：为实时迁移作目标主机的例行检测；
+            # 返回获取的目标主机；
+            self._live_migration_dest_check(context, instance, dest)
+            # _live_migration_common_check：实时迁移进行的常规检测；
+            self._live_migration_common_check(context, instance, dest)
+            # check_can_live_migrate_destination：检测是否可以进行实时迁移；
+            # 这个检测将会在目标主机上进行，然后返回检测结果给源主机；
+            migrate_data = self.compute_rpcapi.\
+                check_can_live_migrate_destination(context, instance, dest,
+                                                   block_migration,
+                                                   disk_over_commit)
+
+        # 执行迁移；
+        src = instance['host']
+        self.compute_rpcapi.live_migration(context, host=src,
+                instance=instance, dest=dest,
+                block_migration=block_migration,
+                migrate_data=migrate_data)</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">可以看见，在方法schedule_live_migration中，主要进行了三部分的内容，第一，如果目前主机不存在，则由调度算法选取一个目标主机，并且进行相关的检测，确保能够进行实时迁移操作；第二，如果目标主机存在，则直接进行相关的检测操作，确保能够进行实时迁移操作；第三，执行迁移操作。</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">在前两部分的内容中，分别调用了三个方法_live_migration_dest_check、_live_migration_common_check和<br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">check_can_live_migrate_destination。我们分别来看这三个方法：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">首先来看方法<span style="font-family:KaiTi_GB2312; font-size:18px">_live_migration_dest_check</span>，具体来看它的源码：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_12_4438789"  name="code" class="python">def _live_migration_dest_check(self, context, instance_ref, dest, ignore_hosts=None):
+        &quot;&quot;&quot;
+        为实时迁移作目标主机的例行检测；
+
+        :param dest: destination host
+        目标主机；
+        :param ignore_hosts: hosts that should be avoided as dest host
+        应该避免作为目标主机的主机；
+        &quot;&quot;&quot;
+
+        # 如果没有指定目标主机，则选取一个；
+        if dest is None:
+            # instance_type_get：通过id值获取实例类型；
+            instance_type = db.instance_type_get(context, instance_ref['instance_type_id'])
+            # 以字典的形式返回给定image镜像instance_ref['image_ref']的镜像数据；
+            # 调用glance客户端，下载镜像数据（此时为JSON格式）；
+            # 转换从glance下载的镜像数据为python可处理的字典格式；
+            image = self.image_service.show(context, instance_ref['image_ref'])
+            request_spec = {'instance_properties': instance_ref,
+                            'instance_type': instance_type,
+                            'instance_uuids': [instance_ref['uuid']],
+                            'image': image}
+            # 过滤器；
+            filter_properties = {'ignore_hosts': ignore_hosts}
+            # 调用合适的scheduler算法来获取合适的主机，作为实时迁移的目标主机；
+            return self.select_hosts(context, request_spec, filter_properties)[0]
+
+        # 检测主机上的实例是否在运行，并且目标主机和源主机是不同的；
+        src = instance_ref['host']
+        if dest == src:
+            raise exception.UnableToMigrateToSelf(
+                    instance_id=instance_ref['uuid'], host=dest)
+
+        # 检确保目标主机是存在的；
+        try:
+            # service_get_by_compute_host：为给定的计算主机获取服务入口（条目）；
+            dservice_ref = db.service_get_by_compute_host(context, dest)
+        except exception.NotFound:
+            raise exception.ComputeServiceUnavailable(host=dest)
+
+        # 确保目标主机是活跃的；
+        if not self.servicegroup_api.service_is_up(dservice_ref):
+            raise exception.ComputeServiceUnavailable(host=dest)
+
+        # 检测内存需求；
+        # 确保目标主机具有足够的内存来进行实时迁移；
+        self._assert_compute_node_has_enough_memory(context, instance_ref, dest)
+
+        return dest</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这个方法中，将会判断是否定义了目标主机dest，如果没有定义目标主机，将会调用合适的scheduler算法来获取合适的主机，作为实时迁移的目标主机。然后会针对目标主机进行一系列的检查操作。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">再来看方法_live_migration_common_check，看看它的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_13_2420902"  name="code" class="python">def _live_migration_common_check(self, context, instance_ref, dest):
+        &quot;&quot;&quot;
+        实时迁移进行的常规检测；
+        &quot;&quot;&quot;
+        # 获取目标主机信息；
+        dservice_ref = self._get_compute_info(context, dest)
+        src = instance_ref['host']
+        # 获取源主机信息；
+        oservice_ref = self._get_compute_info(context, src)
+
+        # 确保目标主机和源主机的虚拟机管理程序是相同的；
+        orig_hypervisor = oservice_ref['hypervisor_type']
+        dest_hypervisor = dservice_ref['hypervisor_type']
+        if orig_hypervisor != dest_hypervisor:
+            raise exception.InvalidHypervisorType()
+
+        # 确保目标主机的虚拟机管理程序版本大于源主机的虚拟机管理程序版本；
+        orig_hypervisor = oservice_ref['hypervisor_version']
+        dest_hypervisor = dservice_ref['hypervisor_version']
+        if orig_hypervisor &gt; dest_hypervisor:
+            raise exception.DestinationHypervisorTooOld()</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中，主要实现了对源主机和目标主机上的虚拟机管理程序的版本进行检查。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">最后来看方法check_can_live_migrate_destination，这个方法实现的是在目标主机上检测是否可以进行实时迁移，并将检测结果返回给源主机。来看看它的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_14_7263471"  name="code" class="python">def check_can_live_migrate_destination(self, ctxt, instance, destination,
+                                           block_migration, disk_over_commit):
+        instance_p = jsonutils.to_primitive(instance)
+        return self.call(ctxt,
+                         self.make_msg('check_can_live_migrate_destination',
+                                       instance=instance_p,
+                                       block_migration=block_migration,
+                                       disk_over_commit=disk_over_commit),
+                         topic=_compute_topic(self.topic, ctxt, destination, None))</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这里调用call方法实现在一个主题topic上发送一条远程消息，实现在目标主机上进行检测是否可以进行实时迁移，并等待响应。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">接下来将会执行/nova/compute/manager.py中的方法check_can_live_migrate_destination，这个方法实现了在目标主机上进行检测是否可以进行实时迁移。具体来看方法的实现代码：</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_15_6848767"  name="code" class="python">@exception.wrap_exception(notifier=notifier, publisher_id=publisher_id())
+    def check_can_live_migrate_destination(self, ctxt, instance,
+                                           block_migration=False,
+                                           disk_over_commit=False):
+        &quot;&quot;&quot;       
+        检测是否可以进行实时迁移；
+        这个检测将会在目标主机上进行，然后返回检测结果给源主机；
+        &quot;&quot;&quot;
+
+        # 获取源主机信息；
+        src_compute_info = self._get_compute_info(ctxt, instance['host'])
+        # 获取目标主机信息；
+        dst_compute_info = self._get_compute_info(ctxt, CONF.host)
+        # check_can_live_migrate_destination：检测是否可以执行实时迁移；
+        # 这个检测是运行在目标主机上的，然后返回检测结果给源主机；
+        dest_check_data = self.driver.check_can_live_migrate_destination(ctxt,
+            instance, src_compute_info, dst_compute_info,
+            block_migration, disk_over_commit)
+        migrate_data = {}
+        try:
+            # check_can_live_migrate_source：检测是否可以执行实时迁移；
+            migrate_data = self.compute_rpcapi.check_can_live_migrate_source(ctxt, instance, dest_check_data)
+        finally:
+            # check_can_live_migrate_destination_cleanup：目标主机所要做的必要的清理工作；
+            self.driver.check_can_live_migrate_destination_cleanup(ctxt, dest_check_data)
+        if dest_check_data and 'migrate_data' in dest_check_data:
+            migrate_data.update(dest_check_data['migrate_data'])
+        return migrate_data</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这个方法中继而调用了以下方法，这里不再做一一解释：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_16_7198214"  name="code" class="python">def check_can_live_migrate_destination(self, ctxt, instance_ref,
+                                           src_compute_info, dst_compute_info,
+                                           block_migration=False,
+                                           disk_over_commit=False):
+        &quot;&quot;&quot;        
+        检测是否可以执行实时迁移；
+        这个检测是运行在目标主机上的，然后返回检测结果给源主机；
+        &quot;&quot;&quot;
+        disk_available_mb = None
+        
+        # 如果是块迁移；
+        if block_migration:
+            disk_available_gb = dst_compute_info['disk_available_least']
+            # disk_available_mb：获取磁盘上可用空间（总的可用空间减去为主机预留的空间）；
+            # disk_available_gb * 1024：获取磁盘上可用空间的总量（MB）；
+            # reserved_host_disk_mb：这个参数定义了在磁盘上为host主机预留的空间总量（MB）；
+            # 参数的默认值为0；
+            disk_available_mb = (disk_available_gb * 1024) - CONF.reserved_host_disk_mb
+
+        # 检测CPU相关信息；
+        src = instance_ref['host']
+        source_cpu_info = src_compute_info['cpu_info']
+        # 检测主机中的CPU和xml文件中给定的CPU是否是兼容的；
+        self._compare_cpu(source_cpu_info)
+
+        # _create_shared_storage_test_file：在CONF.instances_path定义的实例在磁盘disk上的存储路径下创建临时文件；
+        filename = self._create_shared_storage_test_file()
+
+        return {&quot;filename&quot;: filename,
+                &quot;block_migration&quot;: block_migration,
+                &quot;disk_over_commit&quot;: disk_over_commit,
+                &quot;disk_available_mb&quot;: disk_available_mb}</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_17_4275256"  name="code" class="python">def check_can_live_migrate_source(self, ctxt, instance, dest_check_data):
+        instance_p = jsonutils.to_primitive(instance)
+        return self.call(ctxt, self.make_msg('check_can_live_migrate_source',
+                                             instance=instance_p,
+                                             dest_check_data=dest_check_data),
+                         topic=_compute_topic(self.topic, ctxt, None,
+                                              instance))</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_18_1069672"  name="code" class="python">@exception.wrap_exception(notifier=notifier, publisher_id=publisher_id())
+def check_can_live_migrate_source(self, ctxt, instance, dest_check_data):
+        &quot;&quot;&quot;
+        检测是否可以执行实时迁移；
+        &quot;&quot;&quot;
+        capi = self.conductor_api
+        bdms = capi.block_device_mapping_get_all_by_instance(ctxt, instance)
+
+        is_volume_backed = self.compute_api.is_volume_backed_instance(ctxt,
+                                                                      instance,
+                                                                      bdms)
+        dest_check_data['is_volume_backed'] = is_volume_backed
+        # check_can_live_migrate_source：检测是否可以执行实时迁移；
+        return self.driver.check_can_live_migrate_source(ctxt, instance, dest_check_data)</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_19_4591683"  name="code" class="python">def check_can_live_migrate_source(self, ctxt, instance_ref,
+                                      dest_check_data):
+        &quot;&quot;&quot;        
+        检测是否可以执行实时迁移；
+        &quot;&quot;&quot;
+        source = CONF.host
+        filename = dest_check_data[&quot;filename&quot;]
+        block_migration = dest_check_data[&quot;block_migration&quot;]
+        is_volume_backed = dest_check_data.get('is_volume_backed', False)
+
+        shared = self._check_shared_storage_test_file(filename)
+
+        if block_migration:
+            if shared:
+                reason = _(&quot;Block migration can not be used &quot;
+                           &quot;with shared storage.&quot;)
+                raise exception.InvalidLocalStorage(reason=reason, path=source)
+            # 检测目标主机是否有足够的磁盘空间来进行实时迁移；
+            self._assert_dest_node_has_enough_disk(ctxt, instance_ref,
+                                    dest_check_data['disk_available_mb'],
+                                    dest_check_data['disk_over_commit'])
+
+        elif not shared and not is_volume_backed:
+            reason = _(&quot;Live migration can not be used &quot;
+                       &quot;without shared storage.&quot;)
+            raise exception.InvalidSharedStorage(reason=reason, path=source)
+        dest_check_data.update({&quot;is_shared_storage&quot;: shared})
+        return dest_check_data</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看方法schedule_live_migration中的第三部分内容，即执行迁移操作。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">先来回顾其中实现这部分的源码：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153688" snippet_file_name="blog_20140112_20_7798049"  name="code" class="python">&nbsp; &nbsp; &nbsp; &nbsp; # 执行迁移；
+        src = instance['host']
+        self.compute_rpcapi.live_migration(context, host=src,
+                instance=instance, dest=dest,
+                block_migration=block_migration,
+                migrate_data=migrate_data)</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_21_2051191"  name="code" class="python">    def live_migration(self, ctxt, instance, dest, block_migration, host,
+                       migrate_data=None):
+        instance_p = jsonutils.to_primitive(instance)
+        self.cast(ctxt, self.make_msg('live_migration', instance=instance_p,
+                dest=dest, block_migration=block_migration,
+                migrate_data=migrate_data),
+                topic=_compute_topic(self.topic, ctxt, host, None))</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_22_9161252"  name="code" class="python">def live_migration(self, context, instance, dest, block_migration, disk_over_commit):
+        try:
+            # schedule_live_migration:执行实时迁移的调度方法；
+            # 返回实例当前运行的主机；   
+            return self.driver.schedule_live_migration(
+                context, instance, dest,
+                block_migration, disk_over_commit)
+        except (exception.ComputeServiceUnavailable,
+                exception.InvalidHypervisorType,
+                exception.UnableToMigrateToSelf,
+                exception.DestinationHypervisorTooOld,
+                exception.InvalidLocalStorage,
+                exception.InvalidSharedStorage) as ex:
+            request_spec = {'instance_properties': {
+                'uuid': instance['uuid'], },
+            }
+            with excutils.save_and_reraise_exception():
+                self._set_vm_state_and_notify('live_migration',
+                            dict(vm_state=instance['vm_state'],
+                                 task_state=None,
+                                 expected_task_state=task_states.MIGRATING,),
+                                              context, ex, request_spec)
+        except Exception as ex:
+            with excutils.save_and_reraise_exception():
+                self._set_vm_state_and_notify('live_migration',
+                                             {'vm_state': vm_states.ERROR},
+                                             context, ex, {})</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_23_6827721"  name="code" class="python">def live_migration(self, ctxt, instance_ref, dest,
+                       post_method, recover_method, block_migration=False,
+                       migrate_data=None):
+        &quot;&quot;&quot;       
+        建立一个绿色线程来运行方法_live_migration，来执行实时迁移；
+        主要是调用libvirt python接口方法virDomainMigrateToURI，来实现从当前主机迁移domain对象到给定的目标主机；
+        &quot;&quot;&quot;
+
+        # spawn：建立一个绿色线程来运行方法“func(*args, **kwargs)”，这里就是来运行方法_live_migration；
+        # _live_migration：执行实时迁移；
+        # 主要是调用libvirt python接口方法virDomainMigrateToURI，来实现从当前主机迁移domain对象到给定的目标主机；
+        greenthread.spawn(self._live_migration, ctxt, instance_ref, dest,
+                          post_method, recover_method, block_migration,
+                          migrate_data)</pre><pre code_snippet_id="153688" snippet_file_name="blog_20140112_24_8082239"  name="code" class="python">def _live_migration(self, ctxt, instance_ref, dest, post_method,
+                        recover_method, block_migration=False,
+                        migrate_data=None):
+        &quot;&quot;&quot;
+        执行实时迁移；
+        主要是调用libvirt python接口方法virDomainMigrateToURI，来实现从当前主机迁移domain对象到给定的目标主机；
+
+        :params ctxt: security context
+        安全上下文信息；
+        :params instance_ref:
+            nova.db.sqlalchemy.models.Instance object
+            instance object that is migrated.
+        被迁移的实例对象；
+        :params dest: destination host
+        目标主机；
+        :params post_method:
+            post operation method.
+            expected nova.compute.manager.post_live_migration.
+        post操作方法；
+        :params recover_method:
+            recovery method when any exception occurs.
+            expected nova.compute.manager.recover_live_migration.
+        发生任何异常时候的恢复方法；
+        :params migrate_data: implementation specific params
+        实时迁移的具体参数；
+        &quot;&quot;&quot;
+
+        # 执行迁移操作；
+        try:
+            if block_migration:
+                # 获取块迁移标志列表；
+                # block_migration_flag：这个参数定义了为块迁移设置迁移标志；
+                # 参数的默认值为'VIR_MIGRATE_UNDEFINE_SOURCE, VIR_MIGRATE_PEER2PEER, VIR_MIGRATE_NON_SHARED_INC'；
+                flaglist = CONF.block_migration_flag.split(',')
+            else:
+                # 获取实时迁移标志列表；
+                # 这个参数定义了实时迁移的迁移标志；
+                # 参数的默认值为'VIR_MIGRATE_UNDEFINE_SOURCE, VIR_MIGRATE_PEER2PEER'；
+                flaglist = CONF.live_migration_flag.split(',')
+            flagvals = [getattr(libvirt, x.strip()) for x in flaglist]
+            logical_sum = reduce(lambda x, y: x | y, flagvals)
+
+            # 根据给定的实例名称检索libvirt域对象；
+            dom = self._lookup_by_name(instance_ref[&quot;name&quot;])
+            
+            # migrateToURI：调用libvirt python接口方法virDomainMigrateToURI，来实现从当前主机迁移domain对象到给定的目标主机；
+            # live_migration_uri：这个参数定义了迁移目标URI；
+            # 参数的默认值为&quot;qemu+tcp://%s/system&quot;；
+            # 这里面的&quot;%s&quot;用迁移目标主机名来代替；
+            # live_migration_bandwidth：这个参数定义了迁移过程中所使用的最大的带宽；
+            # 参数的默认值为0；
+            dom.migrateToURI(CONF.live_migration_uri % dest,
+                             logical_sum,
+                             None,
+                             CONF.live_migration_bandwidth)
+
+        except Exception as e:
+            with excutils.save_and_reraise_exception():
+                LOG.error(_(&quot;Live Migration failure: %(e)s&quot;) % locals(),
+                          instance=instance_ref)
+                recover_method(ctxt, instance_ref, dest, block_migration)
+
+        # Waiting for completion of live_migration.
+        # 获取等待完成实时迁移的时间；
+        timer = utils.FixedIntervalLoopingCall(f=None)
+
+        def wait_for_live_migration():
+            &quot;&quot;&quot;
+            waiting for live migration completion.
+            检测虚拟机迁移操作的实施状态；
+            &quot;&quot;&quot;
+            try:
+                self.get_info(instance_ref)['state']
+            except exception.NotFound:
+                timer.stop()
+                post_method(ctxt, instance_ref, dest, block_migration,
+                            migrate_data)
+
+        # 这两条语句所实现的功能是以一定的时间间隔（0.5）循环调用wait_for_live_migration方法，来检测虚拟机迁移的状态，知道虚拟机成功迁移为止；
+        timer.f = wait_for_live_migration
+        timer.start(interval=0.5).wait()</pre><span style="font-family:KaiTi_GB2312; font-size:18px">至此，Nova虚拟机动态迁移的实现机制和实现源码解析完成。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"><span style="font-size:18px"><span class="link_title">博文中不免有不正确的地方，欢迎朋友们不吝批评指正，谢谢大家了！<img alt="微笑" src="http://static.blog.csdn.net/xheditor/xheditor_emot/default/smile.gif"></span></span></span><br>
+</span></span></p>
+<p></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.12-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="10408187" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/10233043';">上一篇</span><a href="/gaoxingnengjisuan/article/details/10233043" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/10893163';">下一篇</span><a href="/gaoxingnengjisuan/article/details/10893163" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">OpenStack Nova源码结构（1）</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/38062481" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37339217" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/CCjedweat/article/details/54172791" title="Libvirt API轻量级虚拟机调度(C语言)" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Libvirt API轻量级虚拟机调度(C语言)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Moolight_shadow/article/details/70576783" title="Openstack虚拟机创建流程粗略源码分析（更新中）" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Openstack虚拟机创建流程粗略源码分析（更新中）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/kingtwoice/article/details/54270950" title="虚拟机模拟搭建VMware虚拟化平台" strategy="recommend_sim_new" target="_blank" style="width: 290px;">虚拟机模拟搭建VMware虚拟化平台</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/hnhuangyiyang/article/details/50904078" title="CentOS7.1 KVM虚拟化之虚拟机根分区扩容(8)" strategy="recommend_sim_new" target="_blank" style="width: 290px;">CentOS7.1 KVM虚拟化之虚拟机根分区扩容(8)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/38062533" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（2）" strategy="recommend_sim_new" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/li_101357/article/details/52984218" title="Nova API服务 之 创建虚拟机流程(1)" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Nova API服务 之 创建虚拟机流程(1)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/qq_31820885/article/details/51273383" title="大数据课程学习流程" strategy="recommend_sim_new" target="_blank" style="width: 290px;">大数据课程学习流程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/qq_21398167/article/details/46347837" title="libvirt 虚拟机迁移配置" strategy="recommend_sim_new" target="_blank" style="width: 290px;">libvirt 虚拟机迁移配置</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/10408187",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "10408187",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '10408187';
+    var commentscount = 6;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466747次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

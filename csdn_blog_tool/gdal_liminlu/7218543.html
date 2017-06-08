@@ -1,0 +1,1801 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/7218543"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>GDAL源码剖析（四）之命令行程序说明二 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="接博客GDAL源码剖析（四）之命令行程序说明一http://blog.csdn.net/liminlu0314/article/details/6978589其中有个nearblack,gdalbuildvrt工具，没有做说明，以后加上，里面可能有很多不足，望大家批评指正，谢谢。1.&#160;gdalwarp&#160;图像纠正用法：gdalwarp&#160;[--help-general]" />
+
+    <meta name="keywords" content="工具,csv,算法" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=GDAL%e6%ba%90%e7%a0%81%e5%89%96%e6%9e%90%ef%bc%88%e5%9b%9b%ef%bc%89%e4%b9%8b%e5%91%bd%e4%bb%a4%e8%a1%8c%e7%a8%8b%e5%ba%8f%e8%af%b4%e6%98%8e%e4%ba%8c&u=http://blog.csdn.net/liminlu0314/article/details/7218543"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/7218543">
+        GDAL源码剖析（四）之命令行程序说明二            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/%e5%b7%a5%e5%85%b7' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">工具</a><a href='http://www.csdn.net/tag/csv' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">csv</a><a href='http://www.csdn.net/tag/%e7%ae%97%e6%b3%95' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">算法</a><a href='http://www.csdn.net/tag/distance' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">distance</a><a href='http://www.csdn.net/tag/%e5%a4%9a%e7%ba%bf%e7%a8%8b' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">多线程</a><a href='http://www.csdn.net/tag/%e5%ad%98%e5%82%a8' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">存储</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2012-01-29 21:49</span>
+            <span class="link_view" title="阅读次数">7380人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(11)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('GDAL%e6%ba%90%e7%a0%81%e5%89%96%e6%9e%90%ef%bc%88%e5%9b%9b%ef%bc%89%e4%b9%8b%e5%91%bd%e4%bb%a4%e8%a1%8c%e7%a8%8b%e5%ba%8f%e8%af%b4%e6%98%8e%e4%ba%8c','7218543');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(7218543,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('777646','liminlu0314','top','7218543');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">GDAL<em>（119）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777646"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777646">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:SimSun; font-size:16px; color:#990000">&nbsp; &nbsp; 接博客<a href="http://blog.csdn.net/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一" style="text-decoration:none; line-height:30px; text-align:left">GDAL源码剖析（四）之命令行程序说明一</a><a href="http://blog.csdn.net/liminlu0314/article/details/6978589">http://blog.csdn.net/liminlu0314/article/details/6978589</a></span></p>
+<p><span style="font-family:SimSun; font-size:16px; color:#990000">其中有个nearblack,gdalbuildvrt</span><span style="font-family:SimSun; font-size:16px"><span style="color:#990000">工具，没有做说明，以后加上，里面可能有很多不足，望大家批评指正，谢谢。</span></span></p>
+<p><span style="font-family:SimSun; font-size:16px; color:#990000"><br>
+</span></p>
+<p><span style="font-family:SimSun; font-size:16px"></span></p>
+<h3><span style="color:#3333ff">1.&nbsp;gdalwarp&nbsp;图像纠正</span></h3>
+<p></p>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdalwarp&nbsp;[--help-general]&nbsp;[--formats]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-s_srs&nbsp;srs_def]&nbsp;[-t_srs&nbsp;srs_def]&nbsp;[-to&nbsp;&quot;NAME=VALUE&quot;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-order&nbsp;n&nbsp;|&nbsp;-tps&nbsp;|&nbsp;-rpc&nbsp;|&nbsp;-geoloc]&nbsp;[-et&nbsp;err_threshold]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-refine_gcps&nbsp;tolerance&nbsp;[minimum_gcps]]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-te&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax]&nbsp;[-tr&nbsp;xres&nbsp;yres]&nbsp;[-tap]&nbsp;[-ts&nbsp;width&nbsp;height]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-wo&nbsp;&quot;NAME=VALUE&quot;]&nbsp;[-ot&nbsp;Byte/Int16/...]&nbsp;[-wt&nbsp;Byte/Int16]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-srcnodata&nbsp;&quot;value&nbsp;[value...]&quot;]&nbsp;[-dstnodata&nbsp;&quot;value&nbsp;[value...]&quot;]&nbsp;-dstalpha</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-r&nbsp;resampling_method]&nbsp;[-wm&nbsp;memory_in_mb]&nbsp;[-multi]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-cutline&nbsp;datasource]&nbsp;[-cl&nbsp;layer]&nbsp;[-cwhere&nbsp;expression]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-csql&nbsp;statement]&nbsp;[-cblend&nbsp;dist_in_pixels]&nbsp;[-crop_to_cutline]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*&nbsp;[-overwrite]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;srcfile*&nbsp;dstfile</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">gdalwarp<span style="font-family:宋体">工具是一个图像镶嵌、重投影、和纠正的工具。程序可以重投影到任何支持的投影。</span></span></p>
+<p><span style="color:#3333ff">-s_srs&nbsp;srs&nbsp;def:</span></p>
+<p><span style="color:#3333ff">设置原始空间参考，坐标系统是可以使用函数<span style="font-family:Calibri">OGRSpatialReference.SetFromUserInput()</span><span style="font-family:宋体">调用的就行，包括</span><span style="font-family:Calibri">EPSG</span>&nbsp;PCS<span style="font-family:宋体">，</span><span style="font-family:Calibri">PROJ4</span><span style="font-family:宋体">或者后缀名为</span>.prf<span style="font-family:宋体">的</span><span style="font-family:Calibri">wkt</span><span style="font-family:宋体">文本文件。</span></span></p>
+<p><span style="color:#3333ff">-t_srs&nbsp;srs_def:</span></p>
+<p><span style="color:#3333ff">设置目标空间参考，坐标系统是可以使用函数<span style="font-family:Calibri">OGRSpatialReference.SetFromUserInput()</span><span style="font-family:宋体">调用的就行，包括</span><span style="font-family:Calibri">EPSG</span>&nbsp;PCS<span style="font-family:宋体">，</span><span style="font-family:Calibri">PROJ4</span><span style="font-family:宋体">或者后缀名为</span>.prf<span style="font-family:宋体">的</span><span style="font-family:Calibri">wkt</span><span style="font-family:宋体">文本文件。</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-to&nbsp;NAME=VALUE:</span></p>
+<p><span style="color:#3333ff">设置转换参数选项，具体选项参考函数<a href="#94cd172f78dbc41d6f407d662914f2e3" title="Create image to image transformer.">GDALCreateGenImgProjTransformer2()</a>支持的选项。&nbsp;</span></p>
+<p><span style="color:#3333ff">-order&nbsp;n:</span></p>
+<p><span style="color:#3333ff">多项式纠正次数（<span style="font-family:Calibri">1</span><span style="font-family:宋体">到</span><span style="font-family:Calibri">3</span><span style="font-family:宋体">），默认的多项式次数根据输入的</span><span style="font-family:Calibri">GCP</span><span style="font-family:宋体">点个数自动计算。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-tps:</span></p>
+<p><span style="color:#3333ff">强制使用<span style="font-family:Calibri">TPS</span><span style="font-family:宋体">（</span>thin&nbsp;plate&nbsp;spline）纠正方法来纠正图像。&nbsp;</span></p>
+<p><span style="color:#3333ff">-rpc:&nbsp;</span></p>
+<p><span style="color:#3333ff">强制使用<span style="font-family:Calibri">RPC</span><span style="font-family:宋体">参数纠正。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-geoloc:</span></p>
+<p><span style="color:#3333ff">强制使用<span style="font-family:Calibri">Geolocation</span>数组。（这个没用过，不太清楚）</span></p>
+<p><span style="color:#3333ff">-et&nbsp;err_threshold:</span></p>
+<p><span style="color:#3333ff">指定变换的近&#20284;误差阈&#20540;，默认为<span style="font-family:Calibri">0.125</span><span style="font-family:宋体">个像元大小（使用像元为单位）。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-refine_gcps&nbsp;tolerance&nbsp;minimum_gcps:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.9.0)&nbsp;refines&nbsp;the&nbsp;GCPs&nbsp;by&nbsp;automatically&nbsp;eliminating&nbsp;outliers.&nbsp;Outliers&nbsp;will&nbsp;be&nbsp;eliminated&nbsp;until&nbsp;minimum_gcps&nbsp;are&nbsp;left&nbsp;or&nbsp;when&nbsp;no&nbsp;outliers&nbsp;can&nbsp;be&nbsp;detected.&nbsp;The&nbsp;tolerance&nbsp;is&nbsp;passed&nbsp;to&nbsp;adjust&nbsp;when&nbsp;a&nbsp;GCP&nbsp;will&nbsp;be&nbsp;eliminated.&nbsp;Not&nbsp;that&nbsp;GCP&nbsp;refinement&nbsp;only&nbsp;works&nbsp;with&nbsp;polynomial&nbsp;interpolation.&nbsp;The&nbsp;tolerance&nbsp;is&nbsp;in&nbsp;pixel&nbsp;units&nbsp;if&nbsp;no&nbsp;projection&nbsp;is&nbsp;available,&nbsp;otherwise&nbsp;it&nbsp;is&nbsp;in&nbsp;SRS&nbsp;units.&nbsp;If&nbsp;minimum_gcps&nbsp;is&nbsp;not&nbsp;provided,&nbsp;the&nbsp;minimum&nbsp;GCPs&nbsp;according&nbsp;to&nbsp;the&nbsp;polynomial&nbsp;model&nbsp;is&nbsp;used.&nbsp;<a name="OLE_LINK1"></a><a name="OLE_LINK2">（这个参数不太清楚，没用过）</a></span></p>
+<p><span style="color:#3333ff">-te&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax:</span></p>
+<p><span style="color:#3333ff">设置输出文件的地理范围（在目标空间参考中）。</span></p>
+<p><span style="color:#3333ff">-tr&nbsp;xres&nbsp;yres:</span></p>
+<p><span style="color:#3333ff">设置输出图像的分辨率。&nbsp;</span></p>
+<p><span style="color:#3333ff">-tap:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;(target&nbsp;aligned&nbsp;pixels)&nbsp;align&nbsp;the&nbsp;coordinates&nbsp;of&nbsp;the&nbsp;extent&nbsp;of&nbsp;the&nbsp;output&nbsp;file&nbsp;to&nbsp;the&nbsp;values&nbsp;of&nbsp;the&nbsp;-tr,&nbsp;such&nbsp;that&nbsp;the&nbsp;aligned&nbsp;extent&nbsp;includes&nbsp;the&nbsp;minimum&nbsp;extent.&nbsp;</span></p>
+<p><span style="color:#3333ff">-ts&nbsp;width&nbsp;height:</span></p>
+<p><span style="color:#3333ff">设置输出文件的宽高。如果宽或者高有一个为<span style="font-family:Calibri">0</span><span style="font-family:宋体">，</span>那么将自动计算一个&#20540;，注意<span style="font-family:Calibri">-ts</span><span style="font-family:宋体">和</span><span style="font-family:Calibri">-tr</span><span style="font-family:宋体">不能同时使用。</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-wo&nbsp;&quot;NAME=VALUE&quot;:</span></p>
+<p><span style="color:#3333ff">设置纠正选项。具体参考<a href="#0ed77f9917bb96c7a9aabd73d4d06e08" title="A string list of additional options controlling the warp operation in name=value...">GDALWarpOptions::papszWarpOptions</a>的帮助文档。&nbsp;</span></p>
+<p><span style="color:#3333ff">-ot&nbsp;type:</span></p>
+<p><span style="color:#3333ff">指定输出波段的数据类型。&nbsp;</span></p>
+<p><span style="color:#3333ff">-wt&nbsp;type:</span></p>
+<p><span style="color:#3333ff">计算的数据类型。&nbsp;</span></p>
+<p><span style="color:#3333ff">-r&nbsp;resampling_method:</span></p>
+<p><span style="color:#3333ff">重采样方式，主要有下面几种方式：</span></p>
+<p><span style="color:#3333ff">near:&nbsp;</span></p>
+<p><span style="color:#3333ff">最邻近采样方法（默认&#20540;，算法较快，但是质量较差）。</span></p>
+<p><span style="color:#3333ff">bilinear:&nbsp;</span></p>
+<p><span style="color:#3333ff">双线性内插采样。</span></p>
+<p><span style="color:#3333ff">cubic:&nbsp;</span></p>
+<p><span style="color:#3333ff">立方卷积采样。&nbsp;</span></p>
+<p><span style="color:#3333ff">cubicspline:&nbsp;</span></p>
+<p><span style="color:#3333ff">立方样条采样。&nbsp;</span></p>
+<p><span style="color:#3333ff">lanczos:&nbsp;</span></p>
+<p><span style="color:#3333ff">Lanczos&nbsp;<span style="font-family:宋体">窗口辛克采样。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-srcnodata&nbsp;value&nbsp;[value...]:</span></p>
+<p><span style="color:#3333ff">设置输入波段的<span style="font-family:Calibri">Nodata</span><span style="font-family:宋体">&#20540;，可以为不同的波段指定不同的&#20540;。</span>。如果有多个&#20540;，就需要把他们用双引号括起来，以保持在命令参数中作为单一参数输入。掩膜&#20540;不会在内插中处理。&nbsp;</span></p>
+<p><span style="color:#3333ff">-dstnodata&nbsp;value&nbsp;[value...]:</span></p>
+<p><span style="color:#3333ff">设置输出波段的<span style="font-family:Calibri">Nodata</span><span style="font-family:宋体">&#20540;。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-dstalpha:</span></p>
+<p><span style="color:#3333ff">创建一个<span style="font-family:Calibri">Alpha</span><span style="font-family:宋体">波段在输出文件中。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-wm&nbsp;memory_in_mb:</span></p>
+<p><span style="color:#3333ff">设置纠正<span style="font-family:Calibri">API</span><span style="font-family:宋体">使用的内存大小，以</span><span style="font-family:Calibri">MB</span><span style="font-family:宋体">为单位。</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-multi:</span></p>
+<p><span style="color:#3333ff">是否使用多线程纠正图像，多线程用来分块处理，同时在读取和写入图像均使用多线程技术。&nbsp;</span></p>
+<p><span style="color:#3333ff">-q:</span></p>
+<p><span style="color:#3333ff">不在控制台输出提示信息。</span></p>
+<p><span style="color:#3333ff">-of&nbsp;format:</span></p>
+<p><span style="color:#3333ff">输出文件&#26684;式，默认为<span style="font-family:Calibri">GeoTiff</span><span style="font-family:宋体">。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-co&nbsp;&quot;NAME=VALUE&quot;:</span></p>
+<p><span style="color:#3333ff">指定创建图像选项，具体参考不同的&#26684;式说明。&nbsp;</span></p>
+<p><span style="color:#3333ff">-cutline&nbsp;datasource:</span></p>
+<p><span style="color:#3333ff">使用使用<span style="font-family:Calibri">OGR</span><span style="font-family:宋体">支持的矢量数据进行裁切图像。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-cl&nbsp;layername:</span></p>
+<p><span style="color:#3333ff">指定裁切矢量的图层名称。</span></p>
+<p><span style="color:#3333ff">-cwhere&nbsp;expression:</span></p>
+<p><span style="color:#3333ff">从裁切矢量中根据属性表查询指定的要素来裁切图像。&nbsp;</span></p>
+<p><span style="color:#3333ff">-csql&nbsp;query:</span></p>
+<p><span style="color:#3333ff">使用<span style="font-family:Calibri">SQL</span><span style="font-family:宋体">语句来从裁切矢量的属性表中查询要素来裁切图像。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-cblend&nbsp;distance:</span></p>
+<p><span style="color:#3333ff">Set&nbsp;a&nbsp;blend&nbsp;distance&nbsp;to&nbsp;use&nbsp;to&nbsp;blend&nbsp;over&nbsp;cutlines&nbsp;(in&nbsp;pixels).<span style="font-family:宋体">（这个参数不太清楚，没用过）&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-crop_to_cutline:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;使用矢量边界的外接矩形大小作为输出影像的范围。</span></p>
+<p><span style="color:#3333ff">-overwrite:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;<span style="font-family:宋体">如果结果数据存在，那么覆盖结果数据。</span></span></p>
+<p><span style="color:#3333ff">srcfile:</span></p>
+<p><span style="color:#3333ff">输入数据文件名（可以为多个，使用空&#26684;隔开）。&nbsp;</span></p>
+<p><span style="color:#3333ff">dstfile:</span></p>
+<p><span style="color:#3333ff">输出数据文件名。&nbsp;</span></p>
+<p><span style="color:#3333ff">如果输出文件已经存在，那么镶嵌到这个文件是可以的。但是数据的空间范围等信息不会被修改，如果要修改为新的数据的空间信息，那么需要使用-overwrite选项来覆盖原文件。</span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">在此不再列举例子，后面会对gdalwarp做一个比较详细的介绍。</span></p>
+<h3><span style="color:#3333ff">2.&nbsp;gdaltindex&nbsp;<span style="font-family:宋体">创建一个栅&#26684;文件块索引</span><span style="font-family:Calibri">Shp</span><span style="font-family:宋体">文件</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdaltindex&nbsp;[-tileindex&nbsp;field_name]&nbsp;[-write_absolute_path]&nbsp;[-skip_different_projection]&nbsp;index_file&nbsp;[gdal_file]*</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">这个程序创建一个<span style="font-family:Arial">shape</span><span style="font-family:宋体">文件，里面记录每一个输入的栅&#26684;文件的文件路径，以及栅&#26684;数据的落图文件。这个输出文件主要是为</span><a href="http://mapserver.org/">MapServer</a>&nbsp;来使用的。应该是创建栅&#26684;图像的四至范围矢量文件。</span></p>
+<p><span style="color:#3333ff">·&nbsp;如果<span style="font-family:Arial">shape</span><span style="font-family:宋体">文件不存在会自己创建，如果存在，将被追加到存在的文件中。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">·&nbsp;默认的索引字段为<span style="font-family:Arial">location</span><span style="font-family:宋体">。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">·&nbsp;默认填写的是栅&#26684;文件名，如果指定了<span style="font-family:Arial">-write_absolute_path&nbsp;</span><span style="font-family:宋体">选项，那么写入的是栅&#26684;文件的绝对路径。</span></span></p>
+<p><span style="color:#3333ff">·&nbsp;如果指定<span style="font-family:Arial">-skip_different_projection</span><span style="font-family:宋体">参数，只用相同的投影的栅&#26684;文件会被插入到</span><span style="font-family:Arial">tileindex</span><span style="font-family:宋体">文件中。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">·&nbsp;生成一个简单的矩形多边形，其坐标系统和栅&#26684;的坐标系统相同。&nbsp;</span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">gdaltindex&nbsp;doq_index.shp&nbsp;doq/*.tif</span></p>
+<h3><span style="color:#3333ff">3.&nbsp;gdalbuildvrt&nbsp;创建<span style="font-family:Calibri">VRT</span><span style="font-family:宋体">数据</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdalbuildvrt&nbsp;[-tileindex&nbsp;field_name]&nbsp;[-resolution&nbsp;{highest|lowest|average|user}]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-tr&nbsp;xres&nbsp;yres]&nbsp;[-tap]&nbsp;[-separate]&nbsp;[-allow_projection_difference]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-te&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax]&nbsp;[-addalpha]&nbsp;[-hidenodata]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-srcnodata&nbsp;&quot;value&nbsp;[value...]&quot;]&nbsp;[-vrtnodata&nbsp;&quot;value&nbsp;[value...]&quot;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-input_file_list&nbsp;my_liste.txt]&nbsp;[-overwrite]&nbsp;output.vrt&nbsp;[gdalfile]*</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">从指定的输入栅&#26684;文件中创建一个<span style="font-family:Arial">VRT</span><span style="font-family:宋体">数据。从</span><span style="font-family:Arial">gdal1.6</span><span style="font-family:宋体">开始支持。</span></span></p>
+<p><span style="color:#3333ff">该工具没有进行说明。</span></p>
+<h3><span style="color:#3333ff">4.&nbsp;gdal_contour&nbsp;DEM<span style="font-family:宋体">生成等高线</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdal_contour&nbsp;[-b&nbsp;&lt;band&gt;]&nbsp;[-a&nbsp;&lt;attribute_name&gt;]&nbsp;[-3d]&nbsp;[-inodata]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-snodata&nbsp;n]&nbsp;[-f&nbsp;&lt;formatname&gt;]&nbsp;[-i&nbsp;&lt;interval&gt;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-off&nbsp;&lt;offset&gt;]&nbsp;[-fl&nbsp;&lt;level&gt;&nbsp;&lt;level&gt;...]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-nln&nbsp;&lt;outlayername&gt;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;src_filename&gt;&nbsp;&lt;dst_filename&gt;&nbsp;</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">使用<span style="font-family:Arial">DEM</span><span style="font-family:宋体">生成等高线矢量数据。</span></span></p>
+<p><span style="color:#3333ff">-b&nbsp;band:</span></p>
+<p><span style="color:#3333ff">指定要处理的波段序号，默认为第一个波段。</span></p>
+<p><span style="color:#3333ff">-a&nbsp;name:</span></p>
+<p><span style="color:#3333ff">指定一个属性表的字段名称用于保存高程&#20540;，如果不指定则不会在属性表中填写。&nbsp;</span></p>
+<p><span style="color:#3333ff">-3d:&nbsp;</span></p>
+<p><span style="color:#3333ff">强制使用<span style="font-family:Arial">3D</span><span style="font-family:宋体">定点而不是</span><span style="font-family:Arial">2D</span><span style="font-family:宋体">，即高程&#20540;将被写入等高线矢量中。</span></span></p>
+<p><span style="color:#3333ff">-inodata:&nbsp;</span></p>
+<p><span style="color:#3333ff">忽略任何<span style="font-family:Arial">nodata</span><span style="font-family:宋体">&#20540;。</span></span></p>
+<p><span style="color:#3333ff">-snodata&nbsp;value:</span></p>
+<p><span style="color:#3333ff">设置输入文件的<span style="font-family:Arial">nodata</span><span style="font-family:宋体">&#20540;。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-f&nbsp;format:&nbsp;</span></p>
+<p><span style="color:#3333ff">创建输出矢量的&#26684;式，默认为<span style="font-family:Arial">ESRI</span><span style="font-family:宋体">的</span><span style="font-family:Arial">shape</span><span style="font-family:宋体">文件。</span></span></p>
+<p><span style="color:#3333ff">-i&nbsp;interval:</span></p>
+<p><span style="color:#3333ff">等高线间距。</span></p>
+<p><span style="color:#3333ff">-off&nbsp;offset:</span></p>
+<p><span style="color:#3333ff">设置高程相对系数。</span></p>
+<p><span style="color:#3333ff">-fl&nbsp;level:&nbsp;</span></p>
+<p><span style="color:#3333ff">Name&nbsp;one&nbsp;or&nbsp;more&nbsp;&quot;fixed&nbsp;levels&quot;&nbsp;to&nbsp;extract.&nbsp;</span></p>
+<p><span style="color:#3333ff">-nln&nbsp;outlayername:&nbsp;</span></p>
+<p><span style="color:#3333ff">指定输出矢量文件的图层名称，默认为<span style="font-family:Arial">“contour”</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">使用dem.tif生成一个等高距为10米的等高线矢量文件contour.shp。</span></p>
+<p><span style="color:#3333ff">gdal_contour&nbsp;-a&nbsp;elev&nbsp;dem.tif&nbsp;contour.shp&nbsp;-i&nbsp;10.0</span></p>
+<h3><span style="color:#3333ff">5.&nbsp;gdaldem&nbsp;DEM<span style="font-family:宋体">算法</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;shaded&nbsp;relief&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster&nbsp;:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;hillshade&nbsp;input_dem&nbsp;output_hillshade</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-z&nbsp;ZFactor&nbsp;(default=1)]&nbsp;[-s&nbsp;scale*&nbsp;(default=1)]&quot;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-az&nbsp;Azimuth&nbsp;(default=315)]&nbsp;[-alt&nbsp;Altitude&nbsp;(default=45)]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-alg&nbsp;ZevenbergenThorne]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;slope&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster&nbsp;:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;slope&nbsp;input_dem&nbsp;output_slope_map&quot;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-p&nbsp;use&nbsp;percent&nbsp;slope&nbsp;(default=degrees)]&nbsp;[-s&nbsp;scale*&nbsp;(default=1)]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-alg&nbsp;ZevenbergenThorne]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;an&nbsp;aspect&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;Outputs&nbsp;a&nbsp;32-bit&nbsp;float&nbsp;raster&nbsp;with&nbsp;pixel&nbsp;values&nbsp;from&nbsp;0-360&nbsp;indicating&nbsp;azimuth&nbsp;:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;aspect&nbsp;input_dem&nbsp;output_aspect_map&quot;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-trigonometric]&nbsp;[-zero_for_flat]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-alg&nbsp;ZevenbergenThorne]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;color&nbsp;relief&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;color-relief&nbsp;input_dem&nbsp;color_text_file&nbsp;output_color_relief_map</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-alpha]&nbsp;[-exact_color_entry&nbsp;|&nbsp;-nearest_color_entry]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;color_text_file&nbsp;contains&nbsp;lines&nbsp;of&nbsp;the&nbsp;format&nbsp;&quot;elevation_value&nbsp;red&nbsp;green&nbsp;blue&quot;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;Terrain&nbsp;Ruggedness&nbsp;Index&nbsp;(TRI)&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;TRI&nbsp;input_dem&nbsp;output_TRI_map</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;Topographic&nbsp;Position&nbsp;Index&nbsp;(TPI)&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;TPI&nbsp;input_dem&nbsp;output_TPI_map</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="color:#3333ff">-&nbsp;To&nbsp;generate&nbsp;a&nbsp;roughness&nbsp;map&nbsp;from&nbsp;any&nbsp;GDAL-supported&nbsp;elevation&nbsp;raster:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;gdaldem&nbsp;roughness&nbsp;input_dem&nbsp;output_roughness_map</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-compute_edges]&nbsp;[-b&nbsp;Band&nbsp;(default=1)]&nbsp;[-of&nbsp;format]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">该工具提供了<span style="font-family:Arial">7</span><span style="font-family:宋体">个模块。分别如下：</span></span></p>
+<p><span style="color:#3333ff"><a href="#gdaldem_hillshade">hillshade</a>（山地阴影）</span></p>
+<p><span style="color:#3333ff">用来生成山地阴影图像。</span></p>
+<p><a href="#gdaldem_slope"><span style="color:#3333ff">slope</span></a></p>
+<p><span style="color:#3333ff">用来生成坡度图像。&nbsp;</span></p>
+<p><a href="#gdaldem_aspect"><span style="color:#3333ff">aspect</span></a></p>
+<p><span style="color:#3333ff">用来生成坡向图像。&nbsp;</span></p>
+<p><a href="#gdaldem_color_relief"><span style="color:#3333ff">color-relief</span></a></p>
+<p><span style="color:#3333ff">用来生成一个颜色渲染地图。</span></p>
+<p><a href="#gdaldem_TRI"><span style="color:#3333ff">TRI</span></a></p>
+<p><span style="color:#3333ff">用来生成地表耐用指数（<span style="font-family:Arial">TRI</span><span style="font-family:宋体">）图像。</span></span></p>
+<p><a href="#gdaldem_TPI"><span style="color:#3333ff">TPI</span></a></p>
+<p><span style="color:#3333ff">用来生成地形位置指数（<span style="font-family:Arial">TPI</span><span style="font-family:宋体">）图像。</span></span></p>
+<p><a href="#gdaldem_roughness"><span style="color:#3333ff">roughness</span></a></p>
+<p><span style="color:#3333ff">用来生成粗糙度图像。</span></p>
+<p><span style="color:#3333ff">下面这些选项是通用选项：</span></p>
+<p><span style="color:#3333ff">input_dem:</span></p>
+<p><span style="color:#3333ff">输入<span style="font-family:Arial">DEM</span><span style="font-family:宋体">数据。</span></span></p>
+<p><span style="color:#3333ff">output_xxx_map:</span></p>
+<p><span style="color:#3333ff">输出处理的结果数据。&nbsp;</span></p>
+<p><span style="color:#3333ff">-of&nbsp;format:</span></p>
+<p><span style="color:#3333ff">输出文件&#26684;式，默认为<span style="font-family:Arial">GeoTiff</span><span style="font-family:宋体">。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-compute_edges:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;<span style="font-family:宋体">处理栅&#26684;边界数据和</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">附近的数据。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-alg&nbsp;ZevenbergenThorne:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;<span style="font-family:宋体">使用</span><span style="font-family:Arial">Zevenbergen&nbsp;&amp;&nbsp;Thorne&nbsp;</span><span style="font-family:宋体">规则代替</span><span style="font-family:Arial">Horn</span><span style="font-family:宋体">规则计算坡度坡向。</span>研究表明Zevenbergen&nbsp;&amp;&nbsp;Thorne用于平缓的地形，而Horn在处理比较粗糙的地形比较好。</span></p>
+<p><span style="color:#3333ff">-b&nbsp;band:</span></p>
+<p><span style="color:#3333ff">选择要处理的波段序号，默认为<span style="font-family:Arial">1.</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-co&nbsp;&quot;NAME=VALUE&quot;:</span></p>
+<p><span style="color:#3333ff">创建输出文件选项，根据创建的文件&#26684;式不同而不同。&nbsp;</span></p>
+<p><span style="color:#3333ff">-q:</span></p>
+<p><span style="color:#3333ff">安静模式，不输出进度信息。</span></p>
+<p><span style="color:#3333ff">在所有的算法中，除了颜色渲染，其他的算法全部是基于一个<span style="font-family:Arial">3x3</span><span style="font-family:宋体">的窗口运算，如果在这个窗口中有一个&#20540;为</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">，那么结果&#20540;就是</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">，在</span><span style="font-family:Arial">GDAL1.8</span><span style="font-family:宋体">之后，如果指定了</span>-compute_edges<span style="font-family:宋体">那么会在遇到</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">&#20540;时，会使用插&#20540;方式来确定</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">&#20540;，然后再进行处理。</span></span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_modes"></a>算法模块<a name="gdaldem_hillshade"></a></span></p>
+<p><span style="color:#3333ff">山地阴影</span></p>
+<p><span style="color:#3333ff">这个模块输出是一个<span style="font-family:Arial">8</span><span style="font-family:宋体">位栅&#26684;图，他在地形可视化中非常有用。</span>您可以指定太阳高度角和太阳方位角海拔高度，垂直夸张因子和比例因子来改变结果。<span style="font-family:Arial">0</span><span style="font-family:宋体">作为输出的</span><span style="font-family:Arial">nodata</span><span style="font-family:宋体">&#20540;，具体的其他参数如下：</span></span></p>
+<p><span style="color:#3333ff">-z&nbsp;zFactor:</span></p>
+<p><span style="color:#3333ff">垂直夸张系数。</span></p>
+<p><span style="color:#3333ff">-s&nbsp;scale:</span></p>
+<p><span style="color:#3333ff">垂直系数的单位，如果水平单位是度，比如<span style="font-family:Arial">WGS84</span><span style="font-family:宋体">投影下的经纬度，可以将该参数设置为</span><span style="font-family:Arial">111120</span><span style="font-family:宋体">那么垂直单位是米，如果设置为</span><span style="font-family:Arial">370400</span><span style="font-family:宋体">，那么垂直单位为英尺。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-az&nbsp;azimuth:</span></p>
+<p><span style="color:#3333ff">光线方位角，度单位，<span style="font-family:Arial">0</span><span style="font-family:宋体">为正上方，</span><span style="font-family:Arial">90</span><span style="font-family:宋体">度为东边（右边）以此类推，默认&#20540;为</span><span style="font-family:Arial">315</span><span style="font-family:宋体">度。&nbsp;</span></span></p>
+<p><span style="color:#3333ff">-alt&nbsp;altitude:</span></p>
+<p><span style="color:#3333ff">光线的高度角，度单位，<span style="font-family:Arial">90</span><span style="font-family:宋体">度为</span><span style="font-family:Arial">DEM</span><span style="font-family:宋体">的正上方，</span><span style="font-family:Arial">0</span><span style="font-family:宋体">度为水平。&nbsp;</span></span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_slope"></a>坡度</span></p>
+<p><span style="color:#3333ff">此模块将<span style="font-family:Arial">DEM</span><span style="font-family:宋体">栅&#26684;计算输出坡度&#20540;是</span><span style="font-family:Arial">32</span><span style="font-family:宋体">位浮数的栅&#26684;图像。你必须指定你想要的坡度&#20540;类型的选项：度或百分比坡度。同时也可以提供一个比例因子。</span><span style="font-family:Arial">-9999</span><span style="font-family:宋体">的&#20540;是用来作为输出</span><span style="font-family:Arial">NODATA</span><span style="font-family:宋体">&#20540;。以下具体的选项可供选择：</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-p&nbsp;:</span></p>
+<p><span style="color:#3333ff">如果指定该选项，将使用坡度百分比计算，其他情况下使用度单位计算。&nbsp;</span></p>
+<p><span style="color:#3333ff">-s&nbsp;scale:</span></p>
+<p><span style="color:#3333ff">垂直系数的单位，如果水平单位是度，比如<span style="font-family:Arial">WGS84</span><span style="font-family:宋体">投影下的经纬度，可以将该参数设置为</span><span style="font-family:Arial">111120</span><span style="font-family:宋体">那么垂直单位是米，如果设置为</span><span style="font-family:Arial">370400</span><span style="font-family:宋体">，那么垂直单位为英尺。&nbsp;&nbsp;</span></span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_aspect"></a>坡向</span></p>
+<p><span style="color:#3333ff">该模块输出为一个<span style="font-family:Arial">32</span><span style="font-family:宋体">位浮点数的栅&#26684;数据，其&#20540;范围为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">度到</span><span style="font-family:Arial">360</span><span style="font-family:宋体">度之间</span>的坡向图，&nbsp;<span style="font-family:Arial">0°</span><span style="font-family:宋体">表示坡向超正北方，&nbsp;</span><span style="font-family:Arial">90°</span><span style="font-family:宋体">坡向朝向正东方，</span><span style="font-family:Arial">180°</span><span style="font-family:宋体">坡向朝向正南方，</span><span style="font-family:Arial">270°</span><span style="font-family:宋体">坡向朝向正西方。</span>-9999<span style="font-family:宋体">表示无效&#20540;包括平地即坡度等于</span><span style="font-family:Arial">0</span><span style="font-family:宋体">的地方，详细的参数说明如下：</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-trigonometric:</span></p>
+<p><span style="color:#3333ff">返回三角角度而不是方位，0<span style="font-family:宋体">°是指北，</span><span style="font-family:Arial">90</span><span style="font-family:宋体">°东，</span><span style="font-family:Arial">180</span><span style="font-family:宋体">°西，</span><span style="font-family:Arial">270</span><span style="font-family:宋体">°南。</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-zero_for_flat:</span></p>
+<p><span style="color:#3333ff">返回<span style="font-family:Arial">0</span><span style="font-family:宋体">表示平地，而不是</span><span style="font-family:Arial">-9999</span>。</span></p>
+<p><span style="color:#3333ff">如果使用这两个选项，使用<span style="font-family:Arial">gdaldem</span><span style="font-family:宋体">工具生成的坡度坡向结果同</span><span style="font-family:Arial">GRASS</span><span style="font-family:宋体">中的</span>r.slope.aspect工具生成的结果一致。否则结果和Matthew&nbsp;Perry的aspect.cpp工具计算的结果一致。</span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_color_relief"></a>color-relief</span></p>
+<p><span style="color:#3333ff">该功能是使用<span style="font-family:Arial">DEM</span><span style="font-family:宋体">数据和一个文本存储的颜色配置文件计算输出一个三波段（</span><span style="font-family:Arial">RGB</span><span style="font-family:宋体">）或者四波段（</span><span style="font-family:Arial">RGBA</span><span style="font-family:宋体">）的栅&#26684;图像。颜色配置文件中存储的是高程&#20540;和其对应的颜色&#20540;。默认情况下，给定的两个高程&#20540;之间的颜色使用该高程&#20540;对应的颜色插&#20540;来进行计算。参数</span>-<a name="OLE_LINK15"></a><a name="OLE_LINK16">exact</a>_color_entry或者参数-nearest_color_entry可以避免使用线性插&#20540;来确定从配置文件中没有找到对应的颜色&#20540;。</span></p>
+<p><span style="color:#3333ff">同时还有下面的选项可以使用：</span></p>
+<p><span style="color:#3333ff">color_text_file:</span></p>
+<p><span style="color:#3333ff">基于文本的颜色配置文件&nbsp;</span></p>
+<p><span style="color:#3333ff">-alpha&nbsp;:</span></p>
+<p><span style="color:#3333ff">在输出文件中添加<span style="font-family:Arial">Alpha</span><span style="font-family:宋体">通道</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-exact_color_entry&nbsp;:</span></p>
+<p><span style="color:#3333ff">使用严&#26684;的匹配，在配置文件中搜索对应的高程&#20540;，如果没有找到匹配的颜色，使用“<span style="font-family:Arial">0,0,0,0</span><span style="font-family:宋体">”来进行填充。</span>&nbsp;</span></p>
+<p><span style="color:#3333ff">-nearest_color_entry&nbsp;:</span></p>
+<p><span style="color:#3333ff">在颜色配置文件中使用与<span style="font-family:Arial">RGBA</span><span style="font-family:宋体">颜色相近的颜色进行填充</span><a name="OLE_LINK23"></a><a name="OLE_LINK24">。</a></span></p>
+<p><span style="color:#3333ff">color-relief是支持输出<span style="font-family:Arial">VRT</span><span style="font-family:宋体">&#26684;式的，在这种情形下，会将颜色配置文件转换为一个</span><span style="font-family:Arial">LUT</span><span style="font-family:宋体">（</span><span style="font-family:Arial">Look&nbsp;up&nbsp;table</span><span style="font-family:宋体">颜色查找表）。&#20540;得注意的是，使用百分比指定的高程&#20540;会被转换为绝对高程&#20540;。</span></span></p>
+<p><span style="color:#3333ff">基于文本&#26684;式的颜色配置文件一般每行都有四列，分别是：高程&#20540;，红，绿，蓝（<span style="font-family:Arial">0-255</span><span style="font-family:宋体">之间）。高程&#20540;可以是任何浮点数，或者使用</span><span style="font-family:Arial">nv</span><span style="font-family:宋体">来表示无效&#20540;。高程&#20540;统一可以使用百分比来表示，</span><span style="font-family:Arial">0%</span><span style="font-family:宋体">表示</span><span style="font-family:Arial">DEM</span><span style="font-family:宋体">中的最小&#20540;，</span><span style="font-family:Arial">100%</span><span style="font-family:宋体">表示</span><span style="font-family:Arial">DEM</span><span style="font-family:宋体">数据中的最大&#20540;。</span></span></p>
+<p><span style="color:#3333ff">此外还有一列是可选的就是<span style="font-family:Arial">Alpha</span><span style="font-family:宋体">部分，如果没有指定，默认&#20540;为</span><span style="font-family:Arial">255</span><span style="font-family:宋体">，表示不透明。同时每列之间的分隔符可以是：逗号（，），制表符（</span><span style="font-family:Arial">tab</span><span style="font-family:宋体">键），空&#26684;（&nbsp;），冒号（</span><span style="font-family:Arial">:</span><span style="font-family:宋体">），以上符合均为英文输入法下的符号。通常使用的颜色单词也可以用来替换</span><span style="font-family:Arial">RGB</span><span style="font-family:宋体">&#20540;，包括：</span>&nbsp;white白色,&nbsp;black黑色,&nbsp;red红色,&nbsp;green绿色,&nbsp;blue蓝色,&nbsp;yellow黄色,&nbsp;magenta品红,&nbsp;cyan青色,&nbsp;aqua浅绿<a name="OLE_LINK25"></a><a name="OLE_LINK26">色</a>,&nbsp;grey/gray灰色,&nbsp;orange橙色,&nbsp;brown棕色,&nbsp;purple/violet&nbsp;紫色和indigo靛蓝色。</span></p>
+<p><span style="color:#3333ff">从<span style="font-family:Arial">GDAL1.8.0</span><span style="font-family:宋体">开始，</span><span style="font-family:Arial">GMT</span><span style="font-family:宋体">的</span><span style="font-family:Arial">.cpt</span><span style="font-family:宋体">调色板文件页可以支持（仅在</span>COLOR_MODEL&nbsp;=&nbsp;RGB时可用）。</span></p>
+<p><span style="color:#3333ff">注意：颜色配置文件的句法同<span style="font-family:Arial">GRASS</span><span style="font-family:宋体">中的</span>r.colors工具一致，ESRI的HDR颜色表文件（<span style="font-family:Arial">.clr</span><span style="font-family:宋体">）也是这种&#26684;式，</span><span style="font-family:Arial">Alpha</span><span style="font-family:宋体">部分的支持是</span><span style="font-family:Arial">GDAL</span><span style="font-family:宋体">的一个特殊扩展。</span></span></p>
+<p><span style="color:#3333ff">颜色配置文件示例：&nbsp;</span></p>
+<p><span style="color:#3333ff">3500&nbsp;&nbsp;&nbsp;white</span></p>
+<p><span style="color:#3333ff">2500&nbsp;&nbsp;&nbsp;235:220:175</span></p>
+<p><span style="color:#3333ff">50%&nbsp;&nbsp;&nbsp;190&nbsp;185&nbsp;135</span></p>
+<p><span style="color:#3333ff">700&nbsp;&nbsp;&nbsp;&nbsp;240&nbsp;250&nbsp;150</span></p>
+<p><span style="color:#3333ff">0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50&nbsp;&nbsp;180&nbsp;&nbsp;50</span></p>
+<p><span style="color:#3333ff">nv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;</span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_TRI"></a>TRI</span></p>
+<p><span style="color:#3333ff"><a name="OLE_LINK3"></a><a name="OLE_LINK4">该工具生成一个单波段的栅&#26684;图像，<span style="font-family:Arial">TRI</span><span style="font-family:宋体">是地形粗糙指数（</span></a>Terrain&nbsp;Ruggedness&nbsp;Index）的缩写，代表的是中心点象元与周围<span style="font-family:Arial">8</span><span style="font-family:宋体">个象元点的高程差的绝对&#20540;的平均&#20540;。</span>(参考Wilson&nbsp;et&nbsp;al&nbsp;2007,&nbsp;Marine&nbsp;Geodesy&nbsp;30:3-35)。</span></p>
+<p><span style="color:#3333ff">输出文件中的<span style="font-family:Arial">-9999</span><span style="font-family:宋体">代表无效&#20540;。该功能没有其他选项。</span></span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_TPI"></a>TPI</span></p>
+<p><span style="color:#3333ff">该工具生成一个单波段的栅&#26684;图像，<span style="font-family:Arial">TPI</span><span style="font-family:宋体">是</span>地形方位指数（Topographic&nbsp;Position&nbsp;Index）的缩写，代表的是中心点象元高程与周围<span style="font-family:Arial">8</span><span style="font-family:宋体">个象元点的</span><a name="OLE_LINK9"></a><a name="OLE_LINK10">高程</a>平均&#20540;的差&#20540;。<a name="OLE_LINK13"></a><a name="OLE_LINK14">(</a>参考Wilson&nbsp;et&nbsp;al&nbsp;2007,&nbsp;Marine&nbsp;Geodesy&nbsp;30:3-35)。</span></p>
+<p><span style="color:#3333ff"><a name="OLE_LINK11"></a><a name="OLE_LINK12">输出文件中的<span style="font-family:Arial">-9999</span><span style="font-family:宋体">代表无效&#20540;。该功能没有其他选项。</span></a></span></p>
+<p><span style="color:#3333ff"><a name="gdaldem_roughness"></a>roughness</span></p>
+<p><span style="color:#3333ff">该工具使用<span style="font-family:Arial">DEM</span><span style="font-family:宋体">数据计算一个单波段的栅&#26684;图像，</span>&nbsp;粗糙度是指当前窗口中的最大&#20540;和最小&#20540;的差&#20540;。(参考Wilson&nbsp;et&nbsp;al&nbsp;2007,&nbsp;Marine&nbsp;Geodesy&nbsp;30:3-35)。</span></p>
+<p><span style="color:#3333ff">输出文件中的-9999代表无效&#20540;。该功能没有其他选项。</span></p>
+<h3><span style="color:#3333ff">6.&nbsp;gdal_rasterize&nbsp;矢量栅&#26684;化</span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdal_rasterize&nbsp;[-b&nbsp;band]*&nbsp;[-i]&nbsp;[-at]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-burn&nbsp;value]*&nbsp;|&nbsp;[-a&nbsp;attribute_name]&nbsp;[-3d]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-l&nbsp;layername]*&nbsp;[-where&nbsp;expression]&nbsp;[-sql&nbsp;select_statement]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-of&nbsp;format]&nbsp;[-a_srs&nbsp;srs_def]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]*</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-a_nodata&nbsp;value]&nbsp;[-init&nbsp;value]*</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-te&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax]&nbsp;[-tr&nbsp;xres&nbsp;yres]&nbsp;[-tap]&nbsp;[-ts&nbsp;width&nbsp;height]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-ot&nbsp;{Byte/Int16/UInt16/UInt32/Int32/Float32/Float64/</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CInt16/CInt32/CFloat32/CFloat64}]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;src_datasource&gt;&nbsp;&lt;dst_filename&gt;</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">该程序将矢量几何图形（点，线，面）栅&#26684;化到栅&#26684;波段中。矢量必须是<span style="font-family:Arial">OGR</span><span style="font-family:宋体">库支持的矢量&#26684;式。注意的是矢量数据和栅&#26684;数据必须具有相同的坐标系统，不支持动态重投影功能。从</span><span style="font-family:Arial">GDAL1.8.0</span><span style="font-family:宋体">开始，支持创建结果图像，必须使用</span><span style="font-family:Arial">-tr</span><span style="font-family:宋体">或者</span><span style="font-family:Arial">-ts</span><span style="font-family:宋体">选项才行。</span></span></p>
+<p><span style="color:#3333ff">-b&nbsp;band:</span></p>
+<p><span style="color:#3333ff">要写入的栅&#26684;波段，可以使用<span style="font-family:Arial">-b</span><span style="font-family:宋体">参数来进行多选，默认是写入第一个波段中。</span></span></p>
+<p><span style="color:#3333ff">-i:</span></p>
+<p><span style="color:#3333ff">栅&#26684;反转，.&nbsp;Burn&nbsp;the&nbsp;fixed&nbsp;burn&nbsp;value,&nbsp;or&nbsp;the&nbsp;burn&nbsp;value&nbsp;associated&nbsp;with&nbsp;the&nbsp;first&nbsp;feature&nbsp;into&nbsp;all&nbsp;parts&nbsp;of&nbsp;the&nbsp;image&nbsp;not&nbsp;inside&nbsp;the&nbsp;provided&nbsp;a&nbsp;polygon.</span></p>
+<p><span style="color:#3333ff">-at:</span></p>
+<p><span style="color:#3333ff">Enables&nbsp;the&nbsp;ALL_TOUCHED&nbsp;rasterization&nbsp;option&nbsp;so&nbsp;that&nbsp;all&nbsp;pixels&nbsp;touched&nbsp;by&nbsp;lines&nbsp;or&nbsp;polygons&nbsp;will&nbsp;be&nbsp;updated&nbsp;not&nbsp;just&nbsp;those&nbsp;one&nbsp;the&nbsp;line&nbsp;render&nbsp;path,&nbsp;or&nbsp;whose&nbsp;center&nbsp;point&nbsp;is&nbsp;within&nbsp;the&nbsp;polygon.&nbsp;Defaults&nbsp;to&nbsp;disabled&nbsp;for&nbsp;normal&nbsp;rendering&nbsp;rules.</span></p>
+<p><span style="color:#3333ff">-burn&nbsp;value:</span></p>
+<p><span style="color:#3333ff">栅&#26684;象元&#20540;，将所有的对象都用该&#20540;写入波段中，可以使用一个列表，来指定每个波段写入的象元&#20540;。</span></p>
+<p><span style="color:#3333ff">-a&nbsp;attribute_name:</span></p>
+<p><span style="color:#3333ff">指定属性字段中的字段&#20540;作为栅&#26684;&#20540;写入栅&#26684;文件中。</span></p>
+<p><span style="color:#3333ff">-3d:</span></p>
+<p><span style="color:#3333ff">将坐标点的<span style="font-family:Arial">Z</span><span style="font-family:宋体">&#20540;写入栅&#26684;中，假如参数</span><span style="font-family:Arial">-burn</span><span style="font-family:宋体">和</span>-a&nbsp;attribute_name&nbsp;被指定，那么该参数将会无效，目前仅仅支持<span style="font-family:Arial">3D</span><span style="font-family:宋体">的点和线数据。</span></span></p>
+<p><span style="color:#3333ff">-l&nbsp;layername:</span></p>
+<p><span style="color:#3333ff">指定矢量文件中的图层名作为输入要素，可以指定多次，但是至少有一个图层名或者<span style="font-family:Arial">-sql</span><span style="font-family:宋体">必须被指定。</span></span></p>
+<p><span style="color:#3333ff">-where&nbsp;expression:</span></p>
+<p><span style="color:#3333ff">SQL&nbsp;WHERE<span style="font-family:宋体">&#26684;式的查询语句，从指定的图层中选择特殊的要素。</span></span></p>
+<p><span style="color:#3333ff">-sql&nbsp;select_statement:</span></p>
+<p><span style="color:#3333ff">使用<span style="font-family:Arial">SQL</span><span style="font-family:宋体">语句来指定矢量数据中那些要素将要被栅&#26684;化。</span></span></p>
+<p><span style="color:#3333ff">-of&nbsp;format:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)输出文件&#26684;式，默认为<span style="font-family:Arial">GeoTiff</span><span style="font-family:宋体">&#26684;式，使用短&#26684;式名称。</span></span></p>
+<p><span style="color:#3333ff">-a_nodata&nbsp;value:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;指定输出文件的无效&#20540;。</span></p>
+<p><span style="color:#3333ff">-init&nbsp;value:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;指定初始化栅&#26684;波段中的象元&#20540;，但是该&#20540;不能作为输出文件的无效&#20540;，如果只指定了一个&#20540;，那么其他的波段都会使用该&#20540;来填充。</span></p>
+<p><span style="color:#3333ff">-a_srs&nbsp;srs_def:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;覆盖输出文件的投影，如果没有指定，将使用输入的矢量文件中的投影作为输出投影，如果输入和输出投影不一致，将尝试重投影矢量。该参数的&#26684;式可以是<span style="font-family:Arial">GDAL/OGR</span><span style="font-family:宋体">支持的各种投影&#26684;式，如完整的</span><span style="font-family:Arial">WKT</span><span style="font-family:宋体">，</span><span style="font-family:Arial">PROJ.4</span><span style="font-family:宋体">，</span><span style="font-family:Arial">EPSG:n</span><span style="font-family:宋体">或者存储</span><span style="font-family:Arial">WKT</span><span style="font-family:宋体">的文本文件。</span></span></p>
+<p><span style="color:#3333ff">-co&nbsp;&quot;NAME=VALUE&quot;:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;创建图像选项，具体参考不同的栅&#26684;&#26684;式。</span></p>
+<p><span style="color:#3333ff">-te&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax&nbsp;:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;设置地理范围，该&#20540;必须使用地理单位，如果没有指定，该范围同输入的矢量图层范围一致。</span></p>
+<p><span style="color:#3333ff">-tr&nbsp;xres&nbsp;yres&nbsp;:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)设置输出分辨率，该&#20540;必须是有地理单位，两个必须都是正数。</span></p>
+<p><span style="color:#3333ff">-tap:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;(target&nbsp;aligned&nbsp;pixels)&nbsp;align&nbsp;the&nbsp;coordinates&nbsp;of&nbsp;the&nbsp;extent&nbsp;of&nbsp;the&nbsp;output&nbsp;file&nbsp;to&nbsp;the&nbsp;values&nbsp;of&nbsp;the&nbsp;-tr,&nbsp;such&nbsp;that&nbsp;the&nbsp;aligned&nbsp;extent&nbsp;includes&nbsp;the&nbsp;minimum&nbsp;extent.（不清楚该参数，同<span style="font-family:Arial">gdalwarp</span><span style="font-family:宋体">中的</span><span style="font-family:Arial">-tap</span><span style="font-family:宋体">）</span></span></p>
+<p><span style="color:#3333ff">-ts&nbsp;width&nbsp;height:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;设置输出文件大小，注意使用<span style="font-family:Arial">-ts</span><span style="font-family:宋体">是不能同时使用</span><span style="font-family:Arial">-tr</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">-ot&nbsp;type:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;输出波段的数据类型，默认为<span style="font-family:Arial">64</span><span style="font-family:宋体">位浮点数。</span></span></p>
+<p><span style="color:#3333ff">-q:</span></p>
+<p><span style="color:#3333ff">(GDAL&nbsp;&gt;=&nbsp;1.8.0)&nbsp;不输出进度信息和错误信息。</span></p>
+<p><span style="color:#3333ff">src_datasource:</span></p>
+<p><span style="color:#3333ff">任何<span style="font-family:Arial">OGR</span><span style="font-family:宋体">支持的矢量数据。</span></span></p>
+<p><span style="color:#3333ff">dst_filename:</span></p>
+<p><span style="color:#3333ff">GDAL<span style="font-family:宋体">支持的输出文件，必须支持更新模式访问，在</span><span style="font-family:Arial">GDAL1.8.0</span><span style="font-family:宋体">之前，该工具不能创建结果图像。</span></span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">下面的例子，将<span style="font-family:Arial">mask.shp</span><span style="font-family:宋体">中的所有多边形栅&#26684;化为一个</span><span style="font-family:Arial">RGB</span><span style="font-family:宋体">的</span><span style="font-family:Arial">Tif</span><span style="font-family:宋体">图像</span><span style="font-family:Arial">work.tif</span><span style="font-family:宋体">，使用红色表示（</span>RGB&nbsp;=&nbsp;255,0,0）。</span></p>
+<p><span style="color:#3333ff">gdal_rasterize&nbsp;-b&nbsp;1&nbsp;-b&nbsp;2&nbsp;-b&nbsp;3&nbsp;-burn&nbsp;255&nbsp;-burn&nbsp;0&nbsp;-burn&nbsp;0&nbsp;-l&nbsp;mask&nbsp;mask.shp&nbsp;work.tif</span></p>
+<p><span style="color:#3333ff">下面的例子将所有的<span style="font-family:Arial">class</span><span style="font-family:宋体">属性&#20540;为</span><span style="font-family:Arial">A</span><span style="font-family:宋体">的全部要素输出到一个高程文件中，高程文件的高程&#20540;为属性字段</span>ROOF_H&nbsp;的属性&#20540;。</span></p>
+<p><span style="color:#3333ff">gdal_rasterize&nbsp;-a&nbsp;ROOF_H&nbsp;-where&nbsp;'class=&quot;A&quot;'&nbsp;-l&nbsp;footprints&nbsp;footprints.shp&nbsp;city_dem.tif</span></p>
+<h3><span style="color:#3333ff">7.&nbsp;gdaltransform&nbsp;坐标系转换工具</span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdaltransform&nbsp;[--help-general]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-i]&nbsp;[-s_srs&nbsp;srs_def]&nbsp;[-t_srs&nbsp;srs_def]&nbsp;[-to&nbsp;&quot;NAME=VALUE&quot;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-order&nbsp;n]&nbsp;[-tps]&nbsp;[-rpc]&nbsp;[-geoloc]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[-gcp&nbsp;pixel&nbsp;line&nbsp;easting&nbsp;northing&nbsp;[elevation]]*</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;[srcfile&nbsp;[dstfile]]</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">gdaltransform工具用来转换坐标，从支持的投影，包括<span style="font-family:Arial">GCP</span><span style="font-family:宋体">点的变换。</span></span></p>
+<p><span style="color:#3333ff">-s_srs&nbsp;srs&nbsp;def:</span></p>
+<p><span style="color:#3333ff">原始空间参考，<a name="OLE_LINK35"></a><a name="OLE_LINK36">该&#20540;将被</a>OGRSpatialReference.SetFromUserInput()函数调用，支持包括EPSG&nbsp;PCS&nbsp;和GCSes&nbsp;(如EPSG:4296),&nbsp;PROJ.4声明或者一个后缀名为.prf的文件存储的<span style="font-family:Arial">WKT</span><span style="font-family:宋体">串。</span></span></p>
+<p><span style="color:#3333ff">-t_srs&nbsp;srs_def:</span></p>
+<p><span style="color:#3333ff">目标空间参考，该&#20540;将被OGRSpatialReference.SetFromUserInput()函数调用，支持包括EPSG&nbsp;PCS&nbsp;和GCSes&nbsp;(如EPSG:4296),&nbsp;PROJ.4声明或者一个后缀名为.prf的文件存储的WKT串。</span></p>
+<p><span style="color:#3333ff">-to&nbsp;NAME=VALUE:</span></p>
+<p><span style="color:#3333ff">设置转换参数，将会使函数<a href="#a94cd172f78dbc41d6f407d662914f2e3" title="Create image to image transformer.">GDALCreateGenImgProjTransformer2()</a>来调用。</span></p>
+<p><span style="color:#3333ff">-order&nbsp;n:</span></p>
+<p><span style="color:#3333ff">几何多项式变换次数（<span style="font-family:Arial">1</span><span style="font-family:宋体">到</span><span style="font-family:Arial">3</span><span style="font-family:宋体">），默认情况下会根据输入的</span><span style="font-family:Arial">GCP</span><span style="font-family:宋体">点的个数自动确定。</span></span></p>
+<p><span style="color:#3333ff">-tps:</span></p>
+<p><span style="color:#3333ff">强制将<span style="font-family:Arial">GCP</span><span style="font-family:宋体">点使用</span><span style="font-family:Arial">TPS</span><span style="font-family:宋体">转换方式转换。</span></span></p>
+<p><span style="color:#3333ff">-rpc:</span></p>
+<p><span style="color:#3333ff">强制使用<span style="font-family:Arial">RPC</span><span style="font-family:宋体">参数转换。</span></span></p>
+<p><span style="color:#3333ff">-geoloc:</span></p>
+<p><span style="color:#3333ff">强制使用Geolocation数组转换。</span></p>
+<p><span style="color:#3333ff">-i</span></p>
+<p><span style="color:#3333ff">逆转换，从目标到原始投影转换。</span></p>
+<p><span style="color:#3333ff">-gcppixel&nbsp;line&nbsp;easting&nbsp;northing&nbsp;[elevation]:</span></p>
+<p><span style="color:#3333ff">指定<span style="font-family:Arial">GCP</span><span style="font-family:宋体">点，通常至少需要三个。</span></span></p>
+<p><span style="color:#3333ff">srcfile:</span></p>
+<p><span style="color:#3333ff">原始投影下定义的<span style="font-family:Arial">GCP</span><span style="font-family:宋体">点文件，如果没有指定，需要从命令行</span>-s_srs或者-gcp参数输入。</span></p>
+<p><span style="color:#3333ff">dstfile:</span></p>
+<p><span style="color:#3333ff">目标投影定义文件。</span></p>
+<p><span style="color:#3333ff">读取的坐标必须是成对出现（或者三个一组），输出也以同样的方式输出，所有的变换共<span style="font-family:Arial">gdalwarp</span><span style="font-family:宋体">相同，包括使用</span><span style="font-family:Arial">GCP</span><span style="font-family:宋体">的变换。注意输入输出必须使用十进制小数，当前不支持</span><span style="font-family:Arial">DMS</span><span style="font-family:宋体">（度分秒）的输入输出。如果指定了输入图像，那么输入的坐标是基于图像的行列号，如果输出图像指定，输出的坐标也是图像的行列号。</span></span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">重投影示例</span></p>
+<p><span style="color:#3333ff">简单的投影转换，从一个投影转换到另一个投影：</span></p>
+<p><span style="color:#3333ff">gdaltransform&nbsp;-s_srs&nbsp;EPSG:28992&nbsp;-t_srs&nbsp;EPSG:31370</span></p>
+<p><span style="color:#3333ff">177502&nbsp;311865</span></p>
+<p><span style="color:#3333ff">Produces&nbsp;the&nbsp;following&nbsp;output&nbsp;in&nbsp;meters&nbsp;in&nbsp;the&nbsp;&quot;Belge&nbsp;1972&nbsp;/&nbsp;Belgian&nbsp;Lambert&nbsp;72&quot;&nbsp;projection:</span></p>
+<p><span style="color:#3333ff">244510.77404604&nbsp;166154.532871342&nbsp;-1046.79270555763</span></p>
+<p><span style="color:#3333ff">图像<span style="font-family:Arial">RPC</span><span style="font-family:宋体">变换示例：</span></span></p>
+<p><span style="color:#3333ff">下面的命令行使用基于<span style="font-family:Arial">RPC</span><span style="font-family:宋体">变换，并且使用</span><span style="font-family:Arial">-i</span><span style="font-family:宋体">选项来将经纬度坐标转为图像的行列号：</span></span></p>
+<p><span style="color:#3333ff">gdaltransform&nbsp;-i&nbsp;-rpc&nbsp;06OCT20025052-P2AS-005553965230_01_P001.TIF</span></p>
+<p><span style="color:#3333ff">125.67206&nbsp;39.85307&nbsp;50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="color:#3333ff">Produces&nbsp;this&nbsp;output&nbsp;measured&nbsp;in&nbsp;pixels&nbsp;and&nbsp;lines&nbsp;on&nbsp;the&nbsp;image:</span></p>
+<p><span style="color:#3333ff">3499.49282422381&nbsp;2910.83892848414&nbsp;50</span></p>
+<h3><span style="color:#3333ff">8.&nbsp;nearblack</span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdalinfo&nbsp;[--help-general]&nbsp;[-mm]&nbsp;[-stats]&nbsp;[-hist]&nbsp;[-nogcp]&nbsp;[-nomd]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-noct]&nbsp;[-nofl]&nbsp;[-checksum]&nbsp;[-proj4]&nbsp;[-mdd&nbsp;domain]*</span></p>
+<p><span style="color:#3333ff">&nbsp;[-sd&nbsp;subdataset]&nbsp;datasetname</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">该工具没有进行说明。</span></p>
+<h3><span style="color:#3333ff">9.&nbsp;gdal_grid&nbsp;<span style="font-family:宋体">插&#20540;工具</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdal_grid&nbsp;[-ot&nbsp;{Byte/Int16/UInt16/UInt32/Int32/Float32/Float64/</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CInt16/CInt32/CFloat32/CFloat64}]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-of&nbsp;format]&nbsp;[-co&nbsp;&quot;NAME=VALUE&quot;]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-zfield&nbsp;field_name]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-a_srs&nbsp;srs_def]&nbsp;[-spat&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-clipsrc&nbsp;&lt;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax&gt;|WKT|datasource|spat_extent]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-clipsrcsql&nbsp;sql_statement]&nbsp;[-clipsrclayer&nbsp;layer]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-clipsrcwhere&nbsp;expression]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-l&nbsp;layername]*&nbsp;[-where&nbsp;expression]&nbsp;[-sql&nbsp;select_statement]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-txe&nbsp;xmin&nbsp;xmax]&nbsp;[-tye&nbsp;ymin&nbsp;ymax]&nbsp;[-outsize&nbsp;xsize&nbsp;ysize]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;[-a&nbsp;algorithm[:parameter1=value1]*]&nbsp;[-q]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&lt;src_datasource&gt;&nbsp;&lt;dst_filename&gt;</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">该程序从OGR<span style="font-family:宋体">支持的矢量数据中</span>创建一个规则的栅&#26684;数据。输入数据必须有用来插&#20540;的数据，可以选择下面的插&#20540;方法。</span></p>
+<p><span style="color:#3333ff">-ot&nbsp;type:</span></p>
+<p><span style="color:#3333ff">指定输出文件个数据类型。</span></p>
+<p><span style="color:#3333ff">-of&nbsp;format:</span></p>
+<p><span style="color:#3333ff">输出文件&#26684;式，默认为<span style="font-family:Arial">GeoTiff</span><span style="font-family:宋体">&#26684;式。</span></span></p>
+<p><span style="color:#3333ff">-txe&nbsp;xmin&nbsp;xmax:</span></p>
+<p><span style="color:#3333ff"><a name="OLE_LINK45"></a><a name="OLE_LINK46">设置输出文件的地理范围<span style="font-family:Arial">X</span><span style="font-family:宋体">。</span></a></span></p>
+<p><span style="color:#3333ff">-tye&nbsp;ymin&nbsp;ymax:</span></p>
+<p><span style="color:#3333ff">设置输出文件的地理范围<span style="font-family:Arial">Y</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">-outsize&nbsp;xsize&nbsp;ysize:</span></p>
+<p><span style="color:#3333ff">设置输出文件的大小。</span></p>
+<p><span style="color:#3333ff">-a_srs&nbsp;srs_def:</span></p>
+<p><span style="color:#3333ff">设置输出文件的投影，可以是<span style="font-family:Arial">WKT</span><span style="font-family:宋体">串，</span><span style="font-family:Arial">PROJ.4</span><span style="font-family:宋体">，</span><span style="font-family:Arial">EPSG:n</span><span style="font-family:宋体">或者含有</span><span style="font-family:Arial">wkt</span><span style="font-family:宋体">的文件。</span></span></p>
+<p><span style="color:#3333ff">-zfield&nbsp;field_name:</span></p>
+<p><span style="color:#3333ff">指定矢量要素中获取<span style="font-family:Arial">Z</span><span style="font-family:宋体">&#20540;的字段。</span></span></p>
+<p><span style="color:#3333ff">-a&nbsp;[algorithm[:parameter1=value1][:parameter2=value2]...]:</span></p>
+<p><span style="color:#3333ff">设置插&#20540;算法或者数据单位参数，具体参考&nbsp;<a href="#gdal_grid_algorithms">INTERPOLATION&nbsp;ALGORITHMS</a>&nbsp;和<a href="#gdal_grid_metrics">DATA&nbsp;METRICS</a>&nbsp;。</span></p>
+<p><span style="color:#3333ff">-spat&nbsp;xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax:</span></p>
+<p><span style="color:#3333ff">指定空间范围进行过滤(xmin,&nbsp;ymin)&nbsp;-&nbsp;(xmax,&nbsp;ymax)。</span></p>
+<p><span style="color:#3333ff">-clipsrc&nbsp;[xmin&nbsp;ymin&nbsp;xmax&nbsp;ymax]|WKT|datasource|spat_extent:</span></p>
+<p><span style="color:#3333ff">添加一个空间过滤来选择处理的要素，包括空间范围（SRS<span style="font-family:宋体">表示</span>），WKT<span style="font-family:宋体">几何形状（</span>POLYGON&nbsp;或MULTIPOLYGON），也可以使用下面的参数来进行过滤：-clipsrclayer，-clipsrcwhere或-clipsrcsql。</span></p>
+<p><span style="color:#3333ff">-clipsrcsql&nbsp;sql_statement:</span></p>
+<p><span style="color:#3333ff">使用SQL<span style="font-family:宋体">语句对原始数据进行查询过滤。</span></span></p>
+<p><span style="color:#3333ff">-clipsrclayer&nbsp;layername:</span></p>
+<p><span style="color:#3333ff">指定源数据中图层名称。</span></p>
+<p><span style="color:#3333ff">-clipsrcwhere&nbsp;expression:</span></p>
+<p><span style="color:#3333ff">使用属性表来限制几何体。</span></p>
+<p><span style="color:#3333ff">-l&nbsp;layername:</span></p>
+<p><span style="color:#3333ff">指定图层名称。</span></p>
+<p><span style="color:#3333ff">-where&nbsp;expression:</span></p>
+<p><span style="color:#3333ff">使用SQL&nbsp;WHERE<span style="font-family:宋体">方式来过滤图层中的数据。</span></span></p>
+<p><span style="color:#3333ff">-sql&nbsp;select_statement:</span></p>
+<p><span style="color:#3333ff">使用SQL<span style="font-family:宋体">语句来过滤图层中的数据。</span></span></p>
+<p><span style="color:#3333ff">-co&nbsp;&quot;NAME=VALUE&quot;:</span></p>
+<p><span style="color:#3333ff">创建文件参数选项。</span></p>
+<p><span style="color:#3333ff">-q:</span></p>
+<p><span style="color:#3333ff">不输出进度信息和错误信息。</span></p>
+<p><span style="color:#3333ff">src_datasource:</span></p>
+<p><span style="color:#3333ff">输入矢量，任何<span style="font-family:Arial">OGR</span><span style="font-family:宋体">库支持的矢量数据。</span></span></p>
+<p><span style="color:#3333ff">dst_filename:</span></p>
+<p><span style="color:#3333ff">输出栅&#26684;，<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">支持的栅&#26684;数据。</span></span></p>
+<p><span style="color:#3333ff">INTERPOLATION&nbsp;ALGORITHMS<a name="OLE_LINK47"></a><a name="OLE_LINK48">（插&#20540;算法）</a></span></p>
+<p><span style="color:#3333ff">插&#20540;算法可以选择下面几种：</span></p>
+<p><span style="color:#3333ff">invdist</span></p>
+<p><span style="color:#3333ff">距离次方反比法，这个是默认算法，该算法还有下列参数：</span></p>
+<p><span style="color:#3333ff">power:</span></p>
+<p><span style="color:#3333ff">权重指数，默认为<span style="font-family:Arial">2.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">smoothing:</span></p>
+<p><span style="color:#3333ff">平滑参数，默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">radius1:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第一半径（<span style="font-family:Arial">X</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">radius2:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第二半径（<span style="font-family:Arial">Y</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">angle:</span></p>
+<p><span style="color:#3333ff">搜索椭圆的旋转角度，使用度单位。默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">，逆时针方向。</span></span></p>
+<p><span style="color:#3333ff">max_points:</span></p>
+<p><span style="color:#3333ff">使用的数据点的最大个数，不会搜索多余这个数字的点，如果搜索椭圆设置将会使用该&#20540;（两个半径均不为<span style="font-family:Arial">0</span><span style="font-family:宋体">时）。默认为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">，为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">表示使用所有的点。</span></span></p>
+<p><span style="color:#3333ff">min_points:</span></p>
+<p><span style="color:#3333ff">使用的最小数据点个数，如果数据点小于该&#20540;，并且找到的网络节点&#20540;为空，将使用Nodata<span style="font-family:宋体">&#20540;来标记。该&#20540;仅仅当搜索椭圆设置（即两个半径均不为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），默认该&#20540;为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">nodata:</span></p>
+<p><span style="color:#3333ff">设置NODATA&#20540;，默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">average</span></p>
+<p><span style="color:#3333ff">移动均&#20540;算法，该算法参数如下：</span></p>
+<p><span style="color:#3333ff">radius1:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第一半径（<span style="font-family:Arial">X</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">radius2:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第二半径（<span style="font-family:Arial">Y</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">angle:</span></p>
+<p><span style="color:#3333ff">搜索椭圆的旋转角度，使用度单位。默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">，逆时针方向。</span></span></p>
+<p><span style="color:#3333ff">min_points:</span></p>
+<p><span style="color:#3333ff">使用数据点的最小个数，如果数据点小于该&#20540;，并且找到的网络节点&#20540;为空，将使用Nodata<span style="font-family:宋体">&#20540;来标记，默认该&#20540;为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">nodata:</span></p>
+<p><span style="color:#3333ff">设置NODATA&#20540;。默认&#20540;为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">注意：使用移动均&#20540;算法必须设置搜索椭圆，当计算网&#26684;节点&#20540;时使用窗口的均&#20540;。</span></p>
+<p><span style="color:#3333ff">nearest</span></p>
+<p><span style="color:#3333ff">最邻近算法。该算法参数如下：</span></p>
+<p><span style="color:#3333ff">radius1:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第一半径（<span style="font-family:Arial">X</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">radius2:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第二半径（<span style="font-family:Arial">Y</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">angle:</span></p>
+<p><span style="color:#3333ff">搜索椭圆的旋转角度，使用度单位。默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">，逆时针方向。</span></span></p>
+<p><span style="color:#3333ff">nodata:</span></p>
+<p><span style="color:#3333ff">设置NODATA&#20540;。默认&#20540;为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">DATA&nbsp;METRICS（数据单位）</span></p>
+<p><span style="color:#3333ff">Besides&nbsp;the&nbsp;interpolation&nbsp;functionality&nbsp;<a href="http://liml/gdal/html/gdal_grid.html">gdal_grid</a>&nbsp;除了插&#20540;功能外，还有使用指定窗口和输出网&#26684;来计算一些数据指标，这些指标有：</span></p>
+<p><span style="color:#3333ff">minimum:</span></p>
+<p><span style="color:#3333ff">搜索椭圆中网&#26684;节点的最小&#20540;。</span></p>
+<p><span style="color:#3333ff">maximum:</span></p>
+<p><span style="color:#3333ff">搜索椭圆中网&#26684;节点的最大&#20540;。</span></p>
+<p><span style="color:#3333ff">range:</span></p>
+<p><span style="color:#3333ff">在搜索椭圆中查找到的最大&#20540;和最小&#20540;的差&#20540;。</span></p>
+<p><span style="color:#3333ff">count:</span></p>
+<p><span style="color:#3333ff">在搜索椭圆中找到的点个数。</span></p>
+<p><span style="color:#3333ff">average_distance:</span></p>
+<p><span style="color:#3333ff">网&#26684;节点（搜索椭圆中心）和所有在网&#26684;节点搜索椭圆的数据点之间的平均距离。&nbsp;</span></p>
+<p><span style="color:#3333ff">average_distance_pts:</span></p>
+<p><span style="color:#3333ff">在网&#26684;节点搜索椭圆中发现的数据点之间的平均距离。椭圆内每对点之间距离的计算和所有的距离平均是作为一个网&#26684;节点的&#20540;设置。&nbsp;</span></p>
+<p><span style="color:#3333ff">所有的指标都具有下面相同的选项：</span></p>
+<p><span style="color:#3333ff">radius1:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第一半径（<span style="font-family:Arial">X</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">radius2:</span></p>
+<p><span style="color:#3333ff">搜索椭圆第二半径（<span style="font-family:Arial">Y</span><span style="font-family:宋体">轴的旋转角度为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">），设置该参数为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时将使用所有的点数组，默认为</span><span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">angle:</span></p>
+<p><span style="color:#3333ff">搜索椭圆的旋转角度，使用度单位。默认为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">，逆时针方向。</span></span></p>
+<p><span style="color:#3333ff">min_points:</span></p>
+<p><span style="color:#3333ff">使用的数据点的最小个数。如果找到的数据点小于将设置为<span style="font-family:Arial">NODATA</span><span style="font-family:宋体">&#20540;，该&#20540;仅仅用于设置搜索椭圆时可用（两个半径均不为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">时）。默认&#20540;为</span><span style="font-family:Arial">0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">nodata:</span></p>
+<p><span style="color:#3333ff">设置NODATA&#20540;。默认&#20540;为<span style="font-family:Arial">0.0</span><span style="font-family:宋体">。</span></span></p>
+<p><span style="color:#3333ff">READING&nbsp;COMMA&nbsp;SEPARATED&nbsp;VALUES（读取逗号分割符文件CSV）</span></p>
+<p><span style="color:#3333ff">通常使用一个文本文件，使用逗号分隔XYZ<span style="font-family:宋体">&#20540;，该文件通常叫做</span><span style="font-family:Arial">CSV</span><span style="font-family:宋体">文件。可以在</span><a href="http://liml/gdal/html/gdal_grid.html">gdal_grid</a>中使用该文件。你需要做的就是要对你的CSV<span style="font-family:宋体">文件</span>创建一个VRT<span style="font-family:宋体">文件头，并将该文件作为</span><a href="http://liml/gdal/html/gdal_grid.html">gdal_grid</a>的输入数据。关于VRT<span style="font-family:宋体">&#26684;式详情参考</span>&nbsp;<a href="http://liml/gdal/html/ogr/drv_vrt.html">Virtual&nbsp;Format</a>&nbsp;页面。</span></p>
+<p><span style="color:#3333ff">下面有个小例子。假如我们有个<span style="font-family:Arial">CSV</span><span style="font-family:宋体">文件叫</span>dem.csv&nbsp;，里面内容为：</span></p>
+<p><span style="color:#3333ff">Easting,Northing,Elevation</span></p>
+<p><span style="color:#3333ff">86943.4,891957,139.13</span></p>
+<p><span style="color:#3333ff">87124.3,892075,135.01</span></p>
+<p><span style="color:#3333ff">86962.4,892321,182.04</span></p>
+<p><span style="color:#3333ff">87077.6,891995,135.01</span></p>
+<p><span style="color:#3333ff">...</span></p>
+<p><span style="color:#3333ff">对于上面的数据，创建一个dem.vrt&nbsp;的头文件，内容如下：</span></p>
+<p><span style="color:#3333ff">&lt;OGRVRTDataSource&gt;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&lt;OGRVRTLayer&nbsp;name=&quot;dem&quot;&gt;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SrcDataSource&gt;dem.csv&lt;/SrcDataSource&gt;&nbsp;</span></p>
+<p><span style="color:#3333ff">&lt;GeometryType&gt;wkbPoint&lt;/GeometryType&gt;&nbsp;</span></p>
+<p><span style="color:#3333ff">&lt;GeometryField&nbsp;encoding=&quot;PointFromColumns&quot;&nbsp;x=&quot;Easting&quot;&nbsp;y=&quot;Northing&quot;&nbsp;z=&quot;Elevation&quot;/&gt;&nbsp;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/OGRVRTLayer&gt;</span></p>
+<p><span style="color:#3333ff">&lt;/OGRVRTDataSource&gt;</span></p>
+<p><span style="color:#3333ff">该说明是一个叫做2.5D<span style="font-family:宋体">的几何数据，含有三个坐标</span><span style="font-family:Arial">XYZ</span><span style="font-family:宋体">，</span><span style="font-family:Arial">Z</span><span style="font-family:宋体">&#20540;将被用来插&#20540;。现在可以使用</span><span style="font-family:Arial">dem.vrt</span><span style="font-family:宋体">来进行测试，可以先使用</span><a href="http://liml/gdal/html/ogrinfo.html">ogrinfo</a>来测试该文件是否可用。数据中包括一个叫<span style="font-family:Calibri">dem</span><span style="font-family:宋体">的点图层，数据包括在</span><span style="font-family:Calibri">CSV</span><span style="font-family:宋体">文件中。使用这种方式，可以处理超过三列，交换列的</span><span style="font-family:Calibri">CSV</span><span style="font-family:宋体">文件。</span></span></p>
+<p><span style="color:#3333ff">如果你的CSV<span style="font-family:宋体">文件不包括列头，那么可以在</span><span style="font-family:Arial">VRT</span><span style="font-family:宋体">头文件中加入下面的内容来进行处理：</span>&lt;GeometryField&nbsp;encoding=&quot;PointFromColumns&quot;&nbsp;x=&quot;field_1&quot;&nbsp;y=&quot;field_2&quot;&nbsp;z=&quot;field_3&quot;/&gt;</span></p>
+<p><span style="color:#3333ff"><a href="http://liml/gdal/html/ogr/drv_csv.html">Comma&nbsp;Separated&nbsp;Value</a>&nbsp;页面描述了OGR<span style="font-family:宋体">库对</span><span style="font-family:Arial">CSV</span><span style="font-family:宋体">文件的支持描述信息。</span></span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">下面将创建一个TIFF<span style="font-family:宋体">的图像数据，使用</span><span style="font-family:Arial">VRT</span><span style="font-family:宋体">数据源，从一个</span><span style="font-family:Arial">CSV</span><span style="font-family:宋体">文件中，使用反距离次方算法来进行插&#20540;。</span></span></p>
+<p><span style="color:#3333ff">gdal_grid&nbsp;-a&nbsp;invdist:power=2.0:smoothing=1.0&nbsp;-txe&nbsp;85000&nbsp;89000&nbsp;-tye&nbsp;894000&nbsp;890000&nbsp;-outsize&nbsp;400&nbsp;400&nbsp;-of&nbsp;GTiff&nbsp;-ot&nbsp;Float64&nbsp;-l&nbsp;dem&nbsp;dem.vrt&nbsp;dem.tiff</span></p>
+<p><span style="color:#3333ff">下面的命令行同上面的类&#20284;，但是读取的数据是使用-zfield&nbsp;选项来指定的。</span></p>
+<p><span style="color:#3333ff">gdal_grid&nbsp;-zfield&nbsp;&quot;Elevation&quot;&nbsp;-a&nbsp;invdist:power=2.0:smoothing=1.0&nbsp;-txe&nbsp;85000&nbsp;89000&nbsp;-tye&nbsp;894000&nbsp;890000&nbsp;-outsize&nbsp;400&nbsp;400&nbsp;-of&nbsp;GTiff&nbsp;-ot&nbsp;Float64&nbsp;-l&nbsp;dem&nbsp;dem.vrt&nbsp;dem.tiff</span></p>
+<h3><span style="color:#3333ff">10.&nbsp;gdallocationinfo&nbsp;栅&#26684;查询工具</span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdallocationinfo&nbsp;[--help-general]&nbsp;[-xml]&nbsp;[-lifonly]&nbsp;[-valonly]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-b&nbsp;band]*&nbsp;[-l_srs&nbsp;srs_def]&nbsp;[-geoloc]&nbsp;[-wgs84]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;srcfile&nbsp;[x&nbsp;y]</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">Gdallocationinfo程序通过指定一种坐标系中的坐标来进行对其位置的像元&#20540;进行输出显示。</span></p>
+<p><span style="color:#3333ff">-xml:</span></p>
+<p><span style="color:#3333ff">输出<span style="font-family:Arial">XML</span><span style="font-family:宋体">&#26684;式，方便后期处理。</span></span></p>
+<p><span style="color:#3333ff">-lifonly:</span></p>
+<p><span style="color:#3333ff">输出<span style="font-family:Arial">LocationInfo&nbsp;</span><span style="font-family:宋体">中的信息。</span></span></p>
+<p><span style="color:#3333ff">-valonly:</span></p>
+<p><span style="color:#3333ff">仅仅输出指定位置的每个波段的像元&#20540;。</span></p>
+<p><span style="color:#3333ff">-b&nbsp;band:</span></p>
+<p><span style="color:#3333ff">选择一个波段进行处理，多波段文件将被列出显示。默认是查询所有的波段。</span></p>
+<p><span style="color:#3333ff">-l_srs&nbsp;srs&nbsp;def:</span></p>
+<p><span style="color:#3333ff">指定输入的x,y<span style="font-family:宋体">坐标的坐标系。</span></span></p>
+<p><span style="color:#3333ff">-geoloc:</span></p>
+<p><span style="color:#3333ff">表示输入的x,y<span style="font-family:宋体">坐标是地理参考坐标系。</span></span></p>
+<p><span style="color:#3333ff">-wgs84:</span></p>
+<p><span style="color:#3333ff">表示输入的x,y<span style="font-family:宋体">是</span><span style="font-family:Arial">WGS84</span><span style="font-family:宋体">坐标系下的经纬度坐标。</span></span></p>
+<p><span style="color:#3333ff">srcfile:</span></p>
+<p><span style="color:#3333ff">输入栅&#26684;图像的名称。</span></p>
+<p><span style="color:#3333ff">x:</span></p>
+<p><span style="color:#3333ff">查询的<span style="font-family:Arial">X</span><span style="font-family:宋体">坐标。默认为图像行列号，如果使用</span>-l_srs,-wgs84<span style="font-family:宋体">或者</span><span style="font-family:Arial">-geoloc</span><span style="font-family:宋体">时按照指定的坐标来处理。</span></span></p>
+<p><span style="color:#3333ff">y:</span></p>
+<p><span style="color:#3333ff">查询的<span style="font-family:Arial">Y</span><span style="font-family:宋体">坐标。默认为图像行列号，如果使用</span>-l_srs,-wgs84<span style="font-family:宋体">或者</span><span style="font-family:Arial">-geoloc</span><span style="font-family:宋体">时按照指定的坐标来处理</span></span></p>
+<p><span style="color:#3333ff">该工具的目的是输出一个像素的各种信息。目前支持下面四项：</span></p>
+<p><span style="color:#3333ff">·&nbsp;像素的行列号。</span></p>
+<p><span style="color:#3333ff">·&nbsp;输出元数据中的<span style="font-family:Arial">LocationInfo&nbsp;</span><span style="font-family:宋体">信息，目前只支持</span><span style="font-family:Arial">VRT</span><span style="font-family:宋体">文件。</span></span></p>
+<p><span style="color:#3333ff">·&nbsp;全部波段或子文件中的所有波段中的像元&#20540;。</span></p>
+<p><span style="color:#3333ff">·&nbsp;未缩放的像元&#20540;，如果对波段进行了缩放和偏移操作。</span></p>
+<p><span style="color:#3333ff">输入<span style="font-family:Arial">x</span><span style="font-family:宋体">和</span><span style="font-family:Arial">y</span><span style="font-family:宋体">坐标是，是通过命令行来进行输入的，一般是先</span><span style="font-family:Arial">x</span><span style="font-family:宋体">后</span><span style="font-family:Arial">y</span><span style="font-family:宋体">，即先列号后行号；如果使用</span><span style="font-family:Arial">-geoloc,&nbsp;-wgs84,&nbsp;</span><span style="font-family:宋体">或</span><span style="font-family:Arial">-l_srs&nbsp;</span><span style="font-family:宋体">选项后，会自动根据输入进行交换。默认的输出信息是纯文本文件，也可以使用</span><span style="font-family:Arial">-xml</span><span style="font-family:宋体">选项将其使用</span><span style="font-family:Arial">xml</span><span style="font-family:宋体">&#26684;式进行输出。将来会添加其他的信息。</span></span></p>
+<h3><span style="color:#3333ff">11.&nbsp;gdalsrsinfo&nbsp;将给定的<span style="font-family:Calibri">CRS</span><span style="font-family:宋体">按照不同的&#26684;式显示</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdalsrsinfo&nbsp;[options]&nbsp;srs_def</span></p>
+<p><span style="color:#3333ff">列出给定的<span style="font-family:Arial">CRS</span><span style="font-family:宋体">的各种表示方法。如</span><span style="font-family:Arial">ESRI</span><span style="font-family:宋体">的</span><span style="font-family:Arial">wkt</span><span style="font-family:宋体">&#26684;式，</span><span style="font-family:Arial">OGC</span><span style="font-family:宋体">的</span><span style="font-family:Arial">wkt</span><span style="font-family:宋体">&#26684;式</span>和<span style="font-family:Arial">Proj4</span><span style="font-family:宋体">的&#26684;式等。</span></span></p>
+<p><span style="color:#3333ff">srs_def&nbsp;<span style="font-family:宋体">可以是一个</span><span style="font-family:Arial">GDAL</span><span style="font-family:宋体">或者</span><span style="font-family:Arial">OGR</span><span style="font-family:宋体">支持的文件，或者是任何</span><span style="font-family:Arial">GDAL</span><span style="font-family:宋体">和</span><span style="font-family:Arial">OGR</span><span style="font-family:宋体">支持的</span><span style="font-family:Arial">CRS</span><span style="font-family:宋体">&#26684;式（包括</span><span style="font-family:Arial">WKT,PROJ4,EPSG:n</span><span style="font-family:宋体">等）。</span></span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">Options:&nbsp;</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;[--help-general]&nbsp;[-h]&nbsp;&nbsp; 显示帮助信息并退出</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;[-p]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出信息（如<span style="font-family:Arial">WKT</span><span style="font-family:宋体">字串&#26684;式）</span></span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;[-V]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:宋体">验证</span><span style="font-family:Arial">SRS</span></span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;[-o&nbsp;out_type]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:宋体">输出类型，默认为</span><span style="font-family:Arial">all</span><span style="font-family:宋体">，所有类型见下：</span></span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{all,proj4,wkt,wkt_simple,wkt_old,wkt_esri,mapinfo,xml}</span></p>
+<p><span style="color:#3333ff">举例：</span></p>
+<p><span style="color:#3333ff">gdalsrsinfo&nbsp;&nbsp;-o&nbsp;all&nbsp;&nbsp;&quot;EPSG:4326&quot;</span></p>
+<p><span style="color:#3333ff">PROJ.4&nbsp;:&nbsp;'&#43;proj=longlat&nbsp;&#43;datum=WGS84&nbsp;&#43;no_defs&nbsp;'</span></p>
+<p><span style="color:#3333ff">OGC&nbsp;WKT&nbsp;:</span></p>
+<p><span style="color:#3333ff">GEOGCS[&quot;WGS&nbsp;84&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;DATUM[&quot;WGS_1984&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPHEROID[&quot;WGS&nbsp;84&quot;,6378137,298.257223563,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;PRIMEM[&quot;Greenwich&quot;,0,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;UNIT[&quot;degree&quot;,0.0174532925199433,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]</span></p>
+<p><span style="color:#3333ff">OGC&nbsp;WKT&nbsp;(simple)&nbsp;:</span></p>
+<p><span style="color:#3333ff">GEOGCS[&quot;WGS&nbsp;84&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;DATUM[&quot;WGS_1984&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPHEROID[&quot;WGS&nbsp;84&quot;,6378137,298.257223563]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;PRIMEM[&quot;Greenwich&quot;,0],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;UNIT[&quot;degree&quot;,0.0174532925199433]]</span></p>
+<p><span style="color:#3333ff">ESRI&nbsp;WKT&nbsp;:</span></p>
+<p><span style="color:#3333ff">GEOGCS[&quot;GCS_WGS_1984&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;DATUM[&quot;D_WGS_1984&quot;,</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPHEROID[&quot;WGS_1984&quot;,6378137,298.257223563]],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;PRIMEM[&quot;Greenwich&quot;,0],</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;UNIT[&quot;Degree&quot;,0.017453292519943295]]</span></p>
+<h3><span style="color:#3333ff">12.&nbsp;gdal-config&nbsp;GDAL<span style="font-family:宋体">配置参数</span></span></h3>
+<p><span style="color:#3333ff">用法：</span></p>
+<p><span style="color:#3333ff">gdal-config&nbsp;[OPTIONS]</span></p>
+<p><span style="color:#3333ff">Options:</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--prefix[=DIR]]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--libs]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--cflags]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--version]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--ogr-enabled]</span></p>
+<p><span style="color:#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[--formats]</span></p>
+<p><span style="color:#3333ff">参数说明：</span></p>
+<p><span style="color:#3333ff">该脚本工具可以用来查看关于<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">的一些安装信息等内容。</span></span></p>
+<p><span style="color:#3333ff">--prefix:</span></p>
+<p><span style="color:#3333ff">显示<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">的安装目录。</span></span></p>
+<p><span style="color:#3333ff">--libs:</span></p>
+<p><span style="color:#3333ff">显示<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">所依赖的库。</span></span></p>
+<p><span style="color:#3333ff">--cflags:</span></p>
+<p><span style="color:#3333ff">编译<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">时包括的宏定义等信息。</span></span></p>
+<p><span style="color:#3333ff">--version:</span></p>
+<p><span style="color:#3333ff">显示<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">版本信息。</span></span></p>
+<p><span style="color:#3333ff">--ogr-enabled:</span></p>
+<p><span style="color:#3333ff">显示是否包含<span style="font-family:Arial">OGR</span><span style="font-family:宋体">库，如果输出</span><span style="font-family:Arial">&quot;yes&quot;</span><span style="font-family:宋体">说明</span><span style="font-family:Arial">OGR</span><span style="font-family:宋体">可以使用，如果是</span><span style="font-family:Arial">&quot;no&quot;</span><span style="font-family:宋体">则不能使用</span><span style="font-family:Arial">OGR</span><span style="font-family:宋体">库中的东西。</span></span></p>
+<p><span style="color:#3333ff">--formats:</span></p>
+<p><span style="color:#3333ff">输出<span style="font-family:Arial">GDAL</span><span style="font-family:宋体">支持的&#26684;式。</span></span></p>
+<br>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="7218543" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/7169339';">上一篇</span><a href="/liminlu0314/article/details/7169339" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">写给自己的2011</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/7218552';">下一篇</span><a href="/liminlu0314/article/details/7218552" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">GDAL源码剖析（五）之Python命令行程序</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/wsh6759/article/details/7429793" title="GDAL源码剖析（四）之命令行程序说明一" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（四）之命令行程序说明一</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/taor1/article/details/8263232" title="GDAL源码剖析之命令行程序说明" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析之命令行程序说明</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（四）之命令行程序说明一</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/7218552" title="GDAL源码剖析（五）之Python命令行程序" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（五）之Python命令行程序</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/wsh6759/article/details/7429846" title="GDAL源码剖析（五）之Python命令行程序" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（五）之Python命令行程序</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/clever101/article/details/10419911" title="gdal的矢量栅格化接口GDALRasterizeLayers使用(一)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">gdal的矢量栅格化接口GDALRasterizeLayers使用(一)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/wowdd1/article/details/44574431" title="我爱机器学习网机器学习类别文章汇总" strategy="recommend_sim_0" target="_blank" style="width: 290px;">我爱机器学习网机器学习类别文章汇总</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u011455899/article/details/51332086" title="我爱机器学习网机器学习类别文章汇总" strategy="recommend_sim_0" target="_blank" style="width: 290px;">我爱机器学习网机器学习类别文章汇总</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/shuimanting520/article/details/45748505" title="我爱机器学习网机器学习类别文章汇总" strategy="recommend_sim_0" target="_blank" style="width: 290px;">我爱机器学习网机器学习类别文章汇总</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/7218543",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "7218543",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '7218543';
+    var commentscount = 11;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='GDAL源码剖析（四）之命令行程序说明二';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847182次</span></li>
+    <li>积分：<span>10752</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10752 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

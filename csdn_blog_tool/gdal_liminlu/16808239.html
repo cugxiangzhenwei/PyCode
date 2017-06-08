@@ -1,0 +1,1344 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/16808239"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>Ceres-Solver库入门 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="示例1：求极值	首先我们以Ceres库官网中的Hello World例子来进行说明。这里例子的目的是为了计算方程取得最小值时x的值。从这个方程很容易看出来当x=10时，f(x)取得最小值0。这个方程虽然没有什么实际意义，但是为了演示Ceres库还是很不错的例子。	1、编写一个g(x)=10-x的残差方程。代码如下：structCostFunctor {   template    bool o" />
+
+    <meta name="keywords" content="非线性最小二乘,CERES,后方交会" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=Ceres-Solver%e5%ba%93%e5%85%a5%e9%97%a8&u=http://blog.csdn.net/liminlu0314/article/details/16808239"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/16808239">
+        Ceres-Solver库入门            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/%e9%9d%9e%e7%ba%bf%e6%80%a7%e6%9c%80%e5%b0%8f%e4%ba%8c%e4%b9%98' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">非线性最小二乘</a><a href='http://www.csdn.net/tag/CERES' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">CERES</a><a href='http://www.csdn.net/tag/%e5%90%8e%e6%96%b9%e4%ba%a4%e4%bc%9a' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">后方交会</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-11-18 18:29</span>
+            <span class="link_view" title="阅读次数">6589人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(8)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('Ceres-Solver%e5%ba%93%e5%85%a5%e9%97%a8','16808239');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(16808239,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1525737','liminlu0314','top','16808239');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">最小二乘<em>（3）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/1525737"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1525737">                            
+                            </ul>
+                        </div>
+                    </label>                    
+                    <label>
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">后方交会<em></em></span>                       
+                    </label>      
+                    <label>
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">CERES<em></em></span>                       
+                    </label>      
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+<h2><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">示例1：求极值</span></span></h2><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>首先我们以Ceres库官网中的Hello World例子来进行说明。这里例子的目的是为了计算方程<img src="http://img.blog.csdn.net/20131118184844031" alt="" />取得最小值时x的值。从这个方程很容易看出来当x=10时，f(x)取得最小值0。这个方程虽然没有什么实际意义，但是为了演示Ceres库还是很不错的例子。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>1、编写一个g(x)=10-x的残差方程。代码如下：</span></span></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="cpp">structCostFunctor {
+   template &lt;typename T&gt;
+   bool operator()(const T* const x, T* residual) const {
+     residual[0] = T(10.0) - x[0];
+     return true;
+   }
+};</pre><p></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>这里值得注意的是，必须要编写一个重载()运算，而且必须使用模板类型，所有的输入参数和输出参数都要使用T类型。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>2、当我们写完了上面的计算残差的方程，接下来就可以使用Ceres库来构造一个求解非线性最小二乘法的Problem来进行求解未知数了。代码如下：</span></span></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="cpp">int main(int argc, char** argv) 
+{
+  google::InitGoogleLogging(argv[0]);
+
+  // 指定求解的未知数的初值，这里设置为5.0
+  double initial_x = 5.0;
+  double x = initial_x;
+
+  // 建立Problem
+  Problem problem;
+
+   // 建立CostFunction（残差方程）
+   CostFunction* cost_function =
+       new AutoDiffCostFunction&lt;CostFunctor, 1, 1&gt;(new CostFunctor);
+   problem.AddResidualBlock(cost_function, NULL, &amp;x);
+
+   // 求解方程!
+   Solver::Options options;
+   options.linear_solver_type = ceres::DENSE_QR;
+   options.minimizer_progress_to_stdout = true;
+   Solver::Summary summary;
+   Solve(options, &amp;problem, &amp;summary);
+
+   std::cout &lt;&lt; summary.BriefReport() &lt;&lt; &quot;\n&quot;;
+   std::cout &lt;&lt; &quot;x : &quot; &lt;&lt; initial_x
+             &lt;&lt; &quot; -&gt; &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;;
+   return 0;
+}</pre><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"><span style="white-space:pre">	</span>AutoDiffCostFunction需要CostFunctor作为输入。</span><span style="color: rgb(0, 0, 153);">上面的例子编译执行后，会输出下面的信息：</span></span><p></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="plain">   0: f: 1.250000e+01 d: 0.00e+00 g: 5.00e+00h: 0.00e+00 rho: 0.00e+00 mu: 1.00e+04 li: 0 it: 6.91e-06 tt: 1.91e-03
+   1: f: 1.249750e-07 d: 1.25e+01 g: 5.00e-04h: 5.00e+00 rho: 1.00e+00 mu: 3.00e+04 li: 1 it: 2.81e-05 tt: 1.99e-03
+   2: f: 1.388518e-16 d: 1.25e-07 g: 1.67e-08h: 5.00e-04 rho: 1.00e+00 mu: 9.00e+04 li: 1 it: 1.00e-05 tt: 2.01e-03
+CeresSolver Report: Iterations: 2, Initial cost: 1.250000e+01, Final cost:1.388518e-16, Termination: PARAMETER_TOLERANCE.
+x : 5-&gt; 10</pre><p></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>3、从上面的输出信息中可以看出，经过三次迭代计算，求得的x值为10时可以取得最小值。接下来我们分析下main函数中的代码。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第2行代码为Google的log库，详细内容请参考Google log库的相关说明。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第5、6行为定义了求解未知数的初值，初值设置为5。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第9行，声明一个Problem对象，用于求解。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第12行，声明一个残差方程，CostFunction通过模板类AutoDiffCostFunction来进行构造，第一个<a target=_blank target="_blank" name="OLE_LINK6"></a><a target=_blank target="_blank" name="OLE_LINK5">模板</a>参数为残差对象，也就是最开始写的那个那个带有重载()运算符的结构体，第二个模板参数为残差个数，第三个模板参数为未知数个数，最后参数是结构体对象。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第14行，将观测值和残差方程加入Problem对象中，如果有多个观测值，都需要加进去，这点可以看后面的示例。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第16~19行，定义一个求解选项，里面主要包括对方程线性化的方式，迭代次数等，具体参考官网帮助文档。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第20行，定义一个求解结果报告。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第21行，调用Solve函数进行求解，第一个参数就是求解选项，第二个参数为Problem指针，第三个参数为求解报告指针。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第23行，输出求解报告信息。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>第24行，输出求解前的初值和求解后的值。</span></span></p><h2><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">示例2：曲线拟合</span></span></h2><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>下面的例子是指定一系列的点对来拟合一个曲线的系数。这一系列点对是通过曲线<img src="http://img.blog.csdn.net/20131118185016781" alt="" />插值的点然后添加了标准差的高斯噪声。我们要拟合的曲线形式为：</span></span></p><p align="center"><img src="http://img.blog.csdn.net/20131118185051406" alt="" /></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>首先我们定义一个残差结构体，用于计算每一个观测值的残差。代码如下：</span></span></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="cpp">struct ExponentialResidual {
+  ExponentialResidual(double x, double y)
+      : x_(x), y_(y) {}
+ 
+  template &lt;typename T&gt;
+  bool operator()(const T* const m, const T* const c, T* residual) const {
+    residual[0] = T(y_) - exp(m[0] * T(x_) + c[0]);
+    return true;
+  }
+ 
+ private:
+  // 观测值
+  const double x_;
+  const double y_;
+};</pre><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>假设观测点对全部存在数组data中，data中共有2n个数，下面的代码用来演示如何将每个观测点对都加入到Problem中用于后续求解。</span></span><p></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="cpp">double m = 0.0;
+double c = 0.0;
+
+Problem problem;
+for (int i = 0; i &lt; kNumObservations; ++i) 
+{
+  CostFunction* cost_function =
+       new AutoDiffCostFunction&lt;ExponentialResidual, 1, 1, 1&gt;(
+           new ExponentialResidual(data[2 * i], data[2 * i + 1]));
+  problem.AddResidualBlock(cost_function, NULL, &amp;m, &amp;c);
+}</pre><p></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>对上面的代码大致说明下，首先定义m和c的初值都为0，然后定义一个Problem对象，用于后续求解。观测点的个数共有kNumObservations个，遍历每个观测点对，然后new一个残差方程并将其加入Problem中。过程和示例1一样，只不过这里的观测值比较多，需要用一个循环来进行处理。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>后续的处理和示例1完全一样，定义一个求解选项和求解报告，然后调用Solve函数进行求解即可。下面时输出的求解过程以及m和c的结果。</span></span></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"></span></span></p><pre name="code" class="plain">   0: f: 1.211734e+02 d: 0.00e+00 g: 3.61e+02 h: 0.00e+00 rho: 0.00e+00 mu: 1.00e+04 li:  0 it: 0.00e+00 tt: 0.00e+00
+   1: f: 1.211734e+02 d:-2.21e+03 g: 3.61e+02 h: 7.52e-01 rho:-1.87e+01 mu: 5.00e+03 li:  1 it: 0.00e+00 tt: 0.00e+00
+   2: f: 1.211734e+02 d:-2.21e+03 g: 3.61e+02 h: 7.51e-01 rho:-1.86e+01 mu: 1.25e+03 li:  1 it: 0.00e+00 tt: 0.00e+00
+   3: f: 1.211734e+02 d:-2.19e+03 g: 3.61e+02 h: 7.48e-01 rho:-1.85e+01 mu: 1.56e+02 li:  1 it: 0.00e+00 tt: 0.00e+00
+   4: f: 1.211734e+02 d:-2.02e+03 g: 3.61e+02 h: 7.22e-01 rho:-1.70e+01 mu: 9.77e+00 li:  1 it: 0.00e+00 tt: 0.00e+00
+   5: f: 1.211734e+02 d:-7.34e+02 g: 3.61e+02 h: 5.78e-01 rho:-6.32e+00 mu: 3.05e-01 li:  1 it: 0.00e+00 tt: 0.00e+00
+   6: f: 3.306595e+01 d: 8.81e+01 g: 4.10e+02 h: 3.18e-01 rho: 1.37e+00 mu: 9.16e-01 li:  1 it: 0.00e+00 tt: 0.00e+00
+   7: f: 6.426770e+00 d: 2.66e+01 g: 1.81e+02 h: 1.29e-01 rho: 1.10e+00 mu: 2.75e+00 li:  1 it: 0.00e+00 tt: 0.00e+00
+   8: f: 3.344546e+00 d: 3.08e+00 g: 5.51e+01 h: 3.05e-02 rho: 1.03e+00 mu: 8.24e+00 li:  1 it: 0.00e+00 tt: 0.00e+00
+   9: f: 1.987485e+00 d: 1.36e+00 g: 2.33e+01 h: 8.87e-02 rho: 9.94e-01 mu: 2.47e+01 li:  1 it: 0.00e+00 tt: 0.00e+00
+  10: f: 1.211585e+00 d: 7.76e-01 g: 8.22e+00 h: 1.05e-01 rho: 9.89e-01 mu: 7.42e+01 li:  1 it: 0.00e+00 tt: 0.00e+00
+  11: f: 1.063265e+00 d: 1.48e-01 g: 1.44e+00 h: 6.06e-02 rho: 9.97e-01 mu: 2.22e+02 li:  1 it: 0.00e+00 tt: 0.00e+00
+  12: f: 1.056795e+00 d: 6.47e-03 g: 1.18e-01 h: 1.47e-02 rho: 1.00e+00 mu: 6.67e+02 li:  1 it: 0.00e+00 tt: 0.00e+00
+  13: f: 1.056751e+00 d: 4.39e-05 g: 3.79e-03 h: 1.28e-03 rho: 1.00e+00 mu: 2.00e+03 li:  1 it: 0.00e+00 tt: 0.00e+00
+Ceres Solver Report: Iterations: 13, Initial cost: 1.211734e+02, Final cost: 1.056751e+00, Termination: FUNCTION_TOLERANCE.
+Initial m: 0 c: 0
+Final   m: 0.291861 c: 0.131439</pre><p></p><p><span style="font-size:14px;"><span style="color: rgb(0, 0, 153);"><span style="white-space:pre">	</span>从上面输出信息可以看出，开始m和c均为0时，残差大小为121.173，迭代结束m=0.291861，c=0.131439时残差大小为1.05675。计算和m和c的值与我们的理论值</span><a target=_blank target="_blank" name="OLE_LINK14" style="color: rgb(0, 0, 153); background-color: rgb(255, 255, 255);"></a><a target=_blank target="_blank" name="OLE_LINK13" style="color: rgb(0, 0, 153); background-color: rgb(255, 255, 255);">m=3</a><span style="color: rgb(0, 0, 153);">，c=0.1有不小的差异，当我们将m=3，c=0.1带入方程计算的残差大小为1.082425。可以看出m=3，c=0.1时的残差比我们计算的m和c的值的残差还要大。所以说这些点最精确的值应该是我们计算的值，而不是理论值（与添加的高斯噪声有很大的关系）。下面是观测点、拟合点以及曲线的图像。</span></span></p><p align="center"><span style="font-size:14px;"><img src="http://img.blog.csdn.net/20131118182716531?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" width="700" /></span></p><h2><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">示例3：单像空间后方交会</span></span></h2><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>通过上面两个示例大致应该熟悉了Ceres库的使用方式，下面我们编写一个求解摄影测量学里面最基础的一个问题，也就是单张像片的空间后方交会程序。学过《摄影测量学》的人肯定知道，后方交会的求解过程，是非常的麻烦，需要将共线方程求偏导数线性化，然后迭代计算外方位元素。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>首先给出共线方程：</span></span></p><p style="text-align: center;"><img src="http://img.blog.csdn.net/20131118185251015" alt="" /></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>式中：x0<span style="color: rgb(0, 0, 153); font-size: 14px;">、</span>y0和f为内方位元素，一般为已知量，abc为旋转矩阵，使用<img src="http://img.blog.csdn.net/20131118185511953" alt="" />三个角元素来表示为：</span></span></p><p style="text-align: center;"><img src="http://img.blog.csdn.net/20131118185340906" alt="" /></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>按照教科书上的求解外方位元素的步骤，都需要10步左右，而且中间还需要求改正数迭代计算，非常复杂。这部分内容可以参考下面基本教科书中的内容：</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">[1]《摄影测量学》张剑清 潘励 王树根武汉大学出版社 P17-P23</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">[2]《摄影测量学》王佩军 徐亚明 武汉大学出版社 P60-P67</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">[3]《摄影测量学》林君建 苍桂华 国防工业出版社 P49-P55</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">&nbsp;</span></span><span style="font-size: 14px; color: rgb(0, 0, 153); white-space: pre;">	</span><span style="font-size: 14px; color: rgb(0, 0, 153);">下面我们按照Ceres库的方法来编写后方交会的代码，首先编写一个带有模板重载函数()的结构体，用于计算残差。</span></p><p align="left"></p><pre name="code" class="cpp">struct BackCrossResidual
+{
+  /*
+  * X, Y, Z, x, y 分别为观测值，f为焦距
+  */
+  BackCrossResidual(double X, double Y, double Z, double x, double y, double f)
+      :_X(X), _Y(Y), _Z(Z), _x(x), _y(y), _f(f){}
+ 
+  /*
+  * pBackCrossParameters：-2分别为Xs、Ys、Zs,3-5分别为Phi、Omega、Kappa
+  */
+  template &lt;typename T&gt;
+  bool operator () (const T * const pBackCrossParameters, T* residual) const
+  {
+      T dXs = pBackCrossParameters[0];
+      T dYs = pBackCrossParameters[1];
+      T dZs = pBackCrossParameters[2];
+      T dPhi = pBackCrossParameters[3];
+      T dOmega = pBackCrossParameters[4];
+      T dKappa = pBackCrossParameters[5];
+ 
+      T a1  = cos(dPhi)*cos(dKappa) - sin(dPhi)*sin(dOmega)*sin(dKappa);
+      T a2  = -cos(dPhi)*sin(dKappa) - sin(dPhi)*sin(dOmega)*cos(dKappa);
+      T a3  = -sin(dPhi)*cos(dOmega);
+      T b1 = cos(dOmega)*sin(dKappa);
+      T b2 = cos(dOmega)*cos(dKappa);
+      T b3 = -sin(dOmega);
+      T c1 = sin(dPhi)*cos(dKappa) + cos(dPhi)*sin(dOmega)*sin(dKappa);
+      T c2 = -sin(dPhi)*sin(dKappa) + cos(dPhi)*sin(dOmega)*cos(dKappa);
+      T c3 = cos(dPhi)*cos(dOmega);
+ 
+      // 有两个残差
+      residual[0]= T(_x) +T(_f) * T( (a1*(_X-dXs) + b1*(_Y-dYs) + c1*(_Z-dZs)) / ((a3*(_X-dXs) + b3*(_Y-dYs) + c3*(_Z-dZs))));
+      residual[1]= T(_y) +T(_f) * T( (a2*(_X-dXs) + b2*(_Y-dYs) + c2*(_Z-dZs)) / ((a3*(_X-dXs) + b3*(_Y-dYs) + c3*(_Z-dZs))));
+ 
+      return true;
+  }
+ 
+private:
+  const double _X;
+  const double _Y;
+  const double _Z;
+  const double _x;
+  const double _y;
+  const double _f;
+};</pre><span style="font-size: 14px;"><br /><span style="color: rgb(0, 0, 153);"><span style="white-space:pre">	</span>对上面的代码解释下，首先有个构造函数，传入的参数共有6个，其中五个是控制点坐标（像方坐标两个xy和物方坐标三个XYZ），另外一个是相机的焦距f。</span></span><p></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>在重载()函数中，需要的参数初值和残差。初值一共有六个，三个线元素和三个角元素。将三个角元素处理成旋转矩阵所需要的九个参数。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>最后按照共线方程编写残差计算公式，这里需要注意的是，一组点可以计算出两个残差，分别是X和Y。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>接下来是调用函数，使用的数据是参考书[1]P39第9题（或参考书[2]P89第3题）。题目中给定的相机焦距为153.24mm，坐标点如下表：</span></span></p><table border="1" cellspacing="0" cellpadding="0"> <tbody><tr>  <td rowspan="2" valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">点号</span></span></p></td>  <td width="189" colspan="2" valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">像点坐标</span></span></p></td>  <td width="284" colspan="3" valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">地面坐标</span></span></p></td> </tr> <tr>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">x(mm)</span></span></p></td>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">y(mm)</span></span></p></td>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">X(m)</span></span></p></td>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">Y(m)</span></span></p></td>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">Z(m)</span></span></p></td> </tr> <tr>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">1</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">-86.15</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">-68.99</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">36589.41</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">25273.32</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">2195.17</span></span></p></td> </tr> <tr>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">2</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">-53.40</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">82.21</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">37631.08</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">31324.51</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">728.69</span></span></p></td> </tr> <tr>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">3</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">-14.78</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">-76.63</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">39100.97</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">24934.98</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">2386.50</span></span></p></td> </tr> <tr>  <td valign="top"><p align="center"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">4</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">10.46</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">64.43</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">40426.54</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">30319.81</span></span></p></td>  <td valign="top"><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;">757.31</span></span></p></td> </tr></tbody></table><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>代码如下：</span></span></p><p align="left"></p><pre name="code" class="cpp">int main(int argc, char** argv)
+{
+  google::InitGoogleLogging(argv[0]);
+ 
+  const char *pszFilename= &quot;C:\\后方交会\\sourcedata.txt&quot;;
+ 
+  FILE* fid = fopen(pszFilename,&quot;rt&quot;);
+  if(!fid)
+      return NULL;
+ 
+  int nCount = 4;
+  double* pData = new double[5 * nCount];
+  memset(pData, 0, sizeof(double)* 5 * nCount);
+ 
+  double dBackCrossParameters[6] = {0};   //初值
+  for(int i=0;i&lt;nCount;i++)
+  {
+      double* pTmp = pData+5*i;
+      fscanf(fid,&quot;%lf %lf %lf%lf %lf&quot;,pTmp,pTmp+1,pTmp+2,pTmp+3,pTmp+4);
+ 
+      dBackCrossParameters[0]+= pTmp[2]; //X
+      dBackCrossParameters[1]+= pTmp[3]; //Y
+  }
+ 
+  fclose(fid);
+ 
+  dBackCrossParameters[0]/= nCount;
+  dBackCrossParameters[1]/= nCount;
+ 
+  double df = 153.24; //mm
+  dBackCrossParameters[2]= 50*df;
+ 
+  Problem problem;
+  for (int i = 0; i &lt; nCount;++i)
+  {
+      double* pPoint = pData+ 5*i;
+ 
+      BackCrossResidual*pResidualX = newBackCrossResidual(pPoint[2],pPoint[3], pPoint[4],pPoint[0]/1000, pPoint[1]/1000,df/1000);
+      problem.AddResidualBlock(newAutoDiffCostFunction&lt;BackCrossResidual, 2, 6&gt;(pResidualX), NULL,dBackCrossParameters);
+  }
+ 
+  Solver::Options m_options;
+  Solver::Summary m_summary;
+  m_options.max_num_iterations = 25;
+  m_options.linear_solver_type = ceres::DENSE_QR;
+  m_options.minimizer_progress_to_stdout = true;
+ 
+  Solve(m_options, &amp;problem,&amp;m_summary);
+ 
+  fprintf(stdout,&quot;Xs=%lfYs=%lf Zs=%lf\n&quot;,dBackCrossParameters[0],dBackCrossParameters[1],dBackCrossParameters[2]);
+  fprintf(stdout,&quot;Phi=%lfOmega=%lf Kappa=%lf\n&quot;,dBackCrossParameters[3],dBackCrossParameters[4],dBackCrossParameters[5]);
+  fprintf(stdout,&quot;%s\n&quot;,m_summary.FullReport().c_str());
+ 
+  return 0;
+}</pre><p></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>接下来对上面的代码进行说明，首先读取坐标点对，一共有4对。一对点包含五个值。将所有的点都读到数组pData中。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>接下来定义一个数组用来保存未知数和迭代初值。根据后方交会流程，三个角元素的初值在垂直摄影时可以认为其值为0，而对于三个线元素，Xs和Ys初值用所有的控制点的物方横坐标和纵坐标的均值，而Zs根据焦距和摄影比例尺坟墓共同决定。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>然后构造一个Problem对象，并将每个控制点作为观测值构造一个误差方程，需要注意的是像平面坐标单位要和物方坐标单位一致，由于像方坐标和焦距都是毫米，所以都要除以1000换算为米。</span></span></p><p><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><span style="white-space:pre">	</span>程序执行的结果如下图所示，计算的结果与参考书[1]中给出的参考答案完全一样。此外用我之前用偏导数线性化求解的结果也是一致的，从上面的代码可以看出，使用Ceres库完全可以将很复杂的非线性问题用非常简单的代码来求解。</span></span></p><p style="text-align: center;"><span style="color: rgb(0, 0, 153);"><span style="font-size:14px;"><img src="http://img.blog.csdn.net/20131118182850890?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGltaW5sdTAzMTQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /><br /></span></span></p><p></p>   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.13-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="16808239" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>6</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/15887371';">上一篇</span><a href="/liminlu0314/article/details/15887371" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">ceres-solver库使用示例</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/17357499';">下一篇</span><a href="/liminlu0314/article/details/17357499" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">CSDN2013年度博客之星评选</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yizhou2010/article/details/52596280" title="Ceres-Solver库使用（一）--windows下安装配置" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Ceres-Solver库使用（一）--windows下安装配置</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/shenshen211/article/details/53160480" title="ceres solver 学习笔记" strategy="recommend_sim_new" target="_blank" style="width: 290px;">ceres solver 学习笔记</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sinat_26917383/article/details/54141697" title="利用Caffe训练模型(solver、deploy、train_val)+python使用已训练模型" strategy="recommend_sim_new" target="_blank" style="width: 290px;">利用Caffe训练模型(solver、deploy、train_val)+python使用已训练模型</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/streamchuanxi/article/details/52944652" title="VS2013+64位win7系统ceres solver编译教程" strategy="recommend_sim_new" target="_blank" style="width: 290px;">VS2013+64位win7系统ceres solver编译教程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yizhou2010/article/details/52749890" title="Ceres-Solver库使用（四）-- 一些例子" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Ceres-Solver库使用（四）-- 一些例子</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yizhou2010/article/details/52618968" title="Ceres-Solver库使用（二）--HelloWorld" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Ceres-Solver库使用（二）--HelloWorld</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/yizhou2010/article/details/52712202" title="Ceres-Solver库使用（三）--导数(Derivatives)" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Ceres-Solver库使用（三）--导数(Derivatives)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/a1154761720/article/details/52201620" title="Caffe solver.prototxt学习" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Caffe solver.prototxt学习</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/fuwenyan/article/details/62046296" title="Caffe学习系列(8)：solver优化方法" strategy="recommend_sim_new" target="_blank" style="width: 290px;">Caffe学习系列(8)：solver优化方法</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/junmuzi/article/details/52619585" title="caffe的Solver介绍 以及 max_iter迭代的具体代码实现" strategy="recommend_sim_new" target="_blank" style="width: 290px;">caffe的Solver介绍 以及 max_iter迭代的具体代码实现</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/16808239",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "16808239",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '16808239';
+    var commentscount = 8;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='Ceres-Solver库入门';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847208次</span></li>
+    <li>积分：<span>10752</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10752 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

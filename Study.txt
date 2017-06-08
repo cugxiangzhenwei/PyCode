@@ -1,0 +1,254 @@
+函数的定义 def a(param):空行结束函数的定义
+for 循环的定义 for i in len(a):结束后的下一语句与for语句平齐
+代码的语法缩进
+线程threading库的使用threading.Thread(target=func,args=(a,b,c,))
+线程的的同步join,阻止主线程退出，直到当前线程执行完毕
+可变参数*
+list,tuple,两种元组，前者可变，后者不可变
+tuple 定义： args = (1, 2, 3, 4)
+dict定义：kw = {'x': 99}
+
+list方法，append,len,pop,[]取下标
+tuple方法,len，[]取下标
+
+默认参数,使用不可变参数，str或者None,否则默认参数被修改就不正确了
+
+dict 字典（关键字），不随着数据量的增加而降低查找速率，类似于C++的map
+可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
+
+在Python中定义函数，可以用必选参数、默认参数、可变参数和关键字参数，这4种参数都可以一起使用，或者只用其中某些，但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数和关键字参数。
+def func(a, b, c=0, *args, **kw):
+    print 'a =', a, 'b =', b, 'c =', c, 'args =', args, 'kw =', kw
+
+
+Python的函数具有非常灵活的参数形态，既可以实现简单的调用，又可以传入非常复杂的参数。
+
+默认参数一定要用不可变对象，如果是可变对象，运行会有逻辑错误！
+
+要注意定义可变参数和关键字参数的语法：
+
+*args是可变参数，args接收的是一个tuple；
+
+**kw是关键字参数，kw接收的是一个dict。
+
+使用*args和**kw是Python的习惯写法，当然也可以用其他参数名，但最好使用习惯用法。
+
+
+
+可以通过切片轻松取出某一段数列。比如前10个数：
+
+>>> L[:10]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+后10个数：
+
+>>> L[-10:]
+[90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+前11-20个数：
+
+>>> L[10:20]
+[10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+前10个数，每两个取一个：
+
+>>> L[:10:2]
+[0, 2, 4, 6, 8]
+所有数，每5个取一个：
+
+>>> L[::5]
+[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]
+
+最后一个小问题，如果要对list实现类似Java那样的下标循环怎么办？Python内置的enumerate函数可以把一个list变成索引-元素对，这样就可以在for循环中同时迭代索引和元素本身：
+
+>>> for i, value in enumerate(['A', 'B', 'C']):
+...     print i, value
+...
+0 A
+1 B
+2 C
+
+上面的for循环里，同时引用了两个变量，在Python里是很常见的，比如下面的代码：
+
+>>> for x, y in [(1, 1), (2, 4), (3, 9)]:
+...     print x, y
+...
+1 1
+2 4
+3 9
+小结
+
+任何可迭代对象都可以作用于for循环，包括我们自定义的数据类型，只要符合迭代条件，就可以使用for循环。
+
+列表生成器用法举例:
+[x * x for x in range(1, 11)]
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+还可以使用两层循环，可以生成全排列：
+
+>>> [m + n for m in 'ABC' for n in 'XYZ']
+['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']
+
+generator是非常强大的工具，在Python中，可以简单地把列表生成式改成generator，也可以通过函数实现复杂逻辑的generator。
+
+要理解generator的工作原理，它是在for循环的过程中不断计算出下一个元素，并在适当的条件结束for循环。对于函数改成的generator来说，遇到return语句或者执行到函数体最后一行语句，就是结束generator的指令，for循环随之结束。
+
+函数本身也可以赋值给变量，即：变量可以指向函数。
+abs()这个函数，完全可以把函数名abs看成变量，它指向一个可以计算绝对值的函数！
+dd(x, y, f):
+    return f(x) + f(y)
+
+把函数作为参数传入，这样的函数称为高阶函数，函数式编程就是指这种高度抽象的编程范式。
+
+map reduce 综合应用：
+def str2int(s):
+    def fn(x, y):
+        return x * 10 + y
+    def char2num(s):
+        return {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}[s]
+    return reduce(fn, map(char2num, s))
+
+还可以用lambda函数进一步简化成：
+
+def char2num(s):
+    return {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}[s]
+
+def str2int(s):
+    return reduce(lambda x,y: x*10+y, map(char2num, s))
+
+包装器保留函数属性和名称：
+wrapper()的前面加上@functools.wraps(func)
+
+和静态语言不同，Python允许对实例变量绑定任何数据，也就是说，对于两个实例变量，虽然它们都是同一个类的不同实例，但拥有的变量名称都可能不同：
+
+setattr,getattr,hasattr判读设置读取对象的属性
+>>> hasattr(obj, 'x') # 有属性'x'吗？
+True
+>>> obj.x
+9
+>>> hasattr(obj, 'y') # 有属性'y'吗？
+False
+>>> setattr(obj, 'y', 19) # 设置一个属性'y'
+>>> hasattr(obj, 'y') # 有属性'y'吗？
+True
+>>> getattr(obj, 'y') # 获取属性'y'
+19
+>>> obj.y # 获取属性'y'
+19
+
+__slots__ = ('name','age') 限制当前类的属性只有name和age两个
+除非在子类中也定义__slots__，这样，子类允许定义的属性就是自身的__slots__加上父类的__slots__。
+
+type()函数既可以返回一个对象的类型，又可以创建出新的类型，比如，我们可以通过type()函数创建出Hello类，而无需通过class Hello(object)...的定义：
+
+>>> def fn(self, name='world'): # 先定义函数
+...     print('Hello, %s.' % name)
+...
+>>> Hello = type('Hello', (object,), dict(hello=fn)) # 创建Hello class
+>>> h = Hello()
+>>> h.hello()
+Hello, world.
+>>> print(type(Hello))
+<type 'type'>
+>>> print(type(h))
+<class '__main__.Hello'>
+
+要创建一个class对象，type()函数依次传入3个参数：
+
+class的名称；
+继承的父类集合，注意Python支持多重继承，如果只有一个父类，别忘了tuple的单元素写法；
+class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上。
+
+
+程序中如果到处充斥着assert，和print相比也好不到哪去。不过，启动Python解释器时可以用-O参数来关闭assert：
+python 调试:
+python -m pdb err.py
+
+import pdb
+pdb.set_trace()
+
+运行单元测试
+
+一旦编写好单元测试，我们就可以运行单元测试。最简单的运行方式是在mydict_test.py的最后加上两行代码：
+单元测试：
+import unittest
+from mydict import Dict
+class TestDict(unittest.TestCase):
+ def test_init(self):
+        d = Dict(a=1, b='test')
+        self.assertEquals(d.a, 1)
+        self.assertEquals(d.b, 'test')
+        self.assertTrue(isinstance(d, dict))
+
+    def test_key(self):
+        d = Dict()
+        d['key'] = 'value'
+        self.assertEquals(d.key, 'value')
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+文件操作
+f = open('./test.txt','r') // 只读方式打开以ASCII编码的文本文件
+f.read() //一次性读取所有
+f.read(size) // 一次读取指定字节数
+f.readline()//一次读取一行
+f.readlines() // 一次读取所有行，返回list类型
+f = open('./test.jpg','rb') //以二进制形式打开图片文件
+字符编码
+
+要读取非ASCII编码的文本文件，就必须以二进制模式打开，再解码。比如GBK编码的文件：
+ f = open('/Users/michael/gbk.txt', 'rb')
+ u = f.read().decode('gbk')
+
+写文件和读文件是一样的，唯一区别是调用open()函数时，传入标识符'w'或者'wb'表示写文本文件或写二进制文件：
+
+>>> f = open('/Users/michael/test.txt', 'w')
+>>> f.write('Hello, world!')
+>>> f.close()
+close()来关闭文件。当我们写文件时，操作系统往往不会立刻把数据写入磁盘，而是放到内存缓存起来，空闲的时候再慢慢写入。只有调用close()方法时，操作系统才保证把没有写入的数据全部写入磁盘。忘记调用close()的后果是数据可能只写了一部分到磁盘，剩下的丢失了。所以，还是用with语句来得保险：
+
+with open('/Users/michael/test.txt', 'w') as f:
+    f.write('Hello, world!')
+
+在Python中，文件读写是通过open()函数打开的文件对象完成的。使用with语句操作文件IO是个好习惯。
+
+
+[x for x in os.listdir('.') if os.path.isdir(x)]
+['.lein', '.local', '.m2', '.npm', '.ssh', '.Trash', '.vim', 'Adlm', 'Applications', 'Desktop', ...]
+
+[x for x in os.listdir('.') if os.path.isfile(x) and os.path.splitext(x)[1]=='.py']
+['apis.py', 'config.py', 'models.py', 'pymonitor.py', 'test_db.py', 'urls.py', 'wsgiapp.py']
+
+# 对文件重命名:
+>>> os.rename('test.txt', 'test.py')
+# 删掉文件:
+>>> os.remove('test.py')
+
+对象转换为json
+def student2dict(std):
+    return {
+        'name': std.name,
+        'age': std.age,
+        'score': std.score
+    }
+
+print(json.dumps(s, default=student2dict))
+
+json转换为对象
+def dict2student(d):
+    return Student(d['name'], d['age'], d['score'])
+
+json_str = '{"age": 20, "score": 88, "name": "Bob"}'
+print(json.loads(json_str, object_hook=dict2student))
+
+
+lock = threading.Lock()
+lock.acquire()
+lock.releaser()
+
+当多个线程同时执行lock.acquire()时，只有一个线程能成功地获取锁，然后继续执行代码，其他线程就继续等待直到获得锁为止。
+
+获得锁的线程用完后一定要释放锁，否则那些苦苦等待锁的线程将永远等待下去，成为死线程。所以我们用try...finally来确保锁一定会被释放。
+
+协程
+对应到Python语言，单进程的异步编程模型称为协程，有了协程的支持，就可以基于事件驱动编写高效的多任务程序
+

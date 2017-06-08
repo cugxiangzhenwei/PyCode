@@ -1,0 +1,1576 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/14484033"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>OpenStack Nova-cell服务的源码解析（2） - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="在上一篇博客中，我们解析了OpenStack Nova-cell服务的源码结构，在这篇博客中我将以几个例子对nova-cell服务的源码架构和nova-cell服务的具体实现流程进行解析。1.以实例说明，nova-cell源码结构/nova/cells/manager.py----class CellsManager(manager.Manager):" />
+
+    <meta name="keywords" content="OpenStack,nova,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=OpenStack+Nova-cell%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%882%ef%bc%89&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/14484033"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/14484033">
+        OpenStack Nova-cell服务的源码解析（2）            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/nova' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">nova</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-11-08 01:41</span>
+            <span class="link_view" title="阅读次数">2492人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(1)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('OpenStack+Nova-cell%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%882%ef%bc%89','14484033');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(14484033,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[{&quot;name&quot;:&quot;OpenStack知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/33?source=blogtop&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1481875458834_834.jpg&quot;}]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1461395','gaoxingnengjisuan','top','14484033');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-NOVA<em>（35）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1461395"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1461395">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">在上一篇博客中，我们解析了OpenStack Nova-cell服务的源码结构，在这篇博客中我将以几个例子对nova-cell服务的源码架构和nova-cell服务的具体实现流程进行解析。</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:24px">1.以示例说明，nova-cell源码结构</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/manager.py----class CellsManager(manager.Manager):</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_7_4582730"  name="code" class="python">def schedule_run_instance(self, ctxt, host_sched_kwargs):
+    &quot;&quot;&quot;
+    选择一个合适的cell来建立新的实例，并转发相应的请求；
+    &quot;&quot;&quot;
+    # 首先获取本cell的信息；
+    our_cell = self.state_manager.get_my_state()
+    self.msg_runner.schedule_run_instance(ctxt, our_cell, host_sched_kwargs)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这里调用了/nova/cells/messaging.py----class MessageRunner(object)中的方法schedule_run_instance，类MessageRunner是建立消息和调用方法处理消息的主要接口类。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_2_1507660"  name="code" class="python">def schedule_run_instance(self, ctxt, target_cell, host_sched_kwargs):
+    &quot;&quot;&quot;
+    这个方法被调度器所调用，通知子cell来调度一个新的实例用于建立；
+    &quot;&quot;&quot;
+    method_kwargs = dict(host_sched_kwargs=host_sched_kwargs)
+    message = _TargetedMessage(self, ctxt, 'schedule_run_instance',
+                               method_kwargs, 'down',
+                               target_cell)
+    message.process()</pre><span style="font-family:KaiTi_GB2312; font-size:18px">类_TargetedMessage是针对于发送目标是特定的cell的情况，它继承自cell通信模块的基类_BaseMessage。在这个方法中调用类_TargetedMessage中的方法process，来实现调用类class _TargetedMessageMethods(_BaseMessageMethods)中的方法schedule_run_instance。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_3_1125976"  name="code" class="python">def schedule_run_instance(self, message, host_sched_kwargs):
+    &quot;&quot;&quot;
+    父cell通知本cell来调度新的实例用于建立；
+    &quot;&quot;&quot;
+    # scheduler是类nova.cells.scheduler.CellsScheduler的实例化对象；
+    # 所以这里调用的是类nova.cells.scheduler.CellsScheduler下的run_instance方法；
+    self.msg_runner.scheduler.run_instance(message, host_sched_kwargs)
+</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">类_TargetedMessageMethods定义了当路由信息到特定的cell上时，需要调用的方法。</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">这个示例说明了OpenStack Nova-cell服务中类CellsManager、类MessageRunner、类_TargetedMessage和类_TargetedMessageMethods之间的方法调用流程。</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"><br>
+</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">再来看一个示例：</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/manager.py----class CellsManager(manager.Manager):</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_4_2696139"  name="code" class="python">def instance_update_at_top(self, ctxt, instance):
+    &quot;&quot;&quot;
+    在top等级的cell上，更新实例；
+    &quot;&quot;&quot;
+    self.msg_runner.instance_update_at_top(ctxt, instance)</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这里调用了/nova/cells/messaging.py----class MessageRunner(object)中的方法instance_update_at_top，类MessageRunner是建立消息和调用方法处理消息的主要接口类。</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_5_2314455"  name="code" class="python">def instance_update_at_top(self, ctxt, instance):
+    &quot;&quot;&quot;
+    在top等级的cell上，更新实例；
+    这里实际上执行的是/nova/cell/messaging.py中的类_BroadcastMessageMethods下的方法instance_update_at_top；
+    &quot;&quot;&quot;
+    message = _BroadcastMessage(self, ctxt, 'instance_update_at_top',
+                                dict(instance=instance), 'up',
+                                run_locally=False)
+    message.process()</pre><span style="font-family:KaiTi_GB2312; font-size:18px">类_BroadcastMessage是针对于发送目标是特定的cell的情况，它继承自cell通信模块的基类_BaseMessage。在这个方法中调用类_BroadcastMessage中的方法process，来实现调用类class _BroadcastMessageMethods(_BaseMessageMethods)中的方法instance_update_at_top。</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px"></span></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_6_1932772"  name="code" class="python">def instance_update_at_top(self, message, instance, **kwargs):
+    &quot;&quot;&quot;
+    如果是top级别的cell，则更新数据库中的实例；
+    &quot;&quot;&quot;
+    # 确定是否是API级别cell；
+    if not self._at_the_top():
+        return
+    # 获取实例的uuid值；
+    instance_uuid = instance['uuid']
+
+    # 在顶层cell中，删除不能更新的信息；
+    items_to_remove = ['id', 'security_groups', 'volumes', 'cell_name',
+                       'name', 'metadata']
+    # 删除instance中在items_to_remove中标注的各个元素；
+    for key in items_to_remove:
+        instance.pop(key, None)
+    instance['cell_name'] = _reverse_path(message.routing_path)
+
+    # 如果instance字典中有'info_cache'元素，则删除它，并且返回None值；
+    info_cache = instance.pop('info_cache', None)
+    if info_cache is not None:
+        info_cache.pop('id', None)
+        info_cache.pop('instance', None)
+
+    if ('system_metadata' in instance and isinstance(instance['system_metadata'], list)):
+        sys_metadata = dict([(md['key'], md['value']) 
+        for md in instance['system_metadata']])
+            instance['system_metadata'] = sys_metadata
+
+    LOG.debug(_(&quot;Got update for instance %(instance_uuid)s: &quot;
+            &quot;%(instance)s&quot;) % locals())
+
+    with utils.temporary_mutation(message.ctxt, read_deleted=&quot;yes&quot;):
+        try:
+            # 在一个实例上设置给定的属性并更新它；
+            # 如果实例没有找到，则引发异常；
+            # 返回更新信息后的实例；
+            self.db.instance_update(message.ctxt, instance_uuid, instance, update_cells=False)
+        except exception.NotFound:
+            # 根据context和values建立一个新的实例，并记录在数据库中
+            # 建立了实例相关的数据表；
+            # 补充修正字典values（instance）中的参数信息；
+            self.db.instance_create(message.ctxt, instance)
+    if info_cache:
+        try:
+            # 更新数据表中表示实例缓存信息的记录；
+            self.db.instance_info_cache_update(message.ctxt,
+                    instance_uuid, info_cache, update_cells=False)
+        except exception.InstanceInfoCacheNotFound:
+            pass</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">类_BroadcastMessageMethods定义了当以广播的方式路由信息到所有的cell上时，需要调用的方法。</span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个示例说明了OpenStack Nova-cell服务中类CellsManager、类MessageRunner、类_BroadcastMessage和类_BroadcastMessageMethods之间的方法调用流程。</span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="font-family:KaiTi_GB2312; font-size:24px">2.以示例说明，nova-cell服务的具体实现流程</span></strong><br>
+</span></span></span></span></p>
+<span style="font-family:KaiTi_GB2312; font-size:18px">这里我们来分析一下在nova-cell服务上，如何在树形结构的cell上选取合适的cell，实现建立虚拟机实例，以此来进一步理解nova-cell服务的具体实现流程。</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">/nova/cells/manager.py----class CellsManager(manager.Manager):</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_7_4582730"  name="code" class="python">def schedule_run_instance(self, ctxt, host_sched_kwargs):
+    &quot;&quot;&quot;
+    选择一个合适的cell来建立新的实例，并转发相应的请求；
+    &quot;&quot;&quot;
+    # 首先获取本cell的信息；
+    our_cell = self.state_manager.get_my_state()
+    self.msg_runner.schedule_run_instance(ctxt, our_cell, host_sched_kwargs)</pre><pre code_snippet_id="153708" snippet_file_name="blog_20140112_8_5280841"  name="code" class="python">def schedule_run_instance(self, ctxt, target_cell, host_sched_kwargs):
+    &quot;&quot;&quot;
+    这个方法被调度器所调用，通知子cell来调度一个新的实例用于建立；
+    &quot;&quot;&quot;
+    method_kwargs = dict(host_sched_kwargs=host_sched_kwargs)
+    message = _TargetedMessage(self, ctxt, 'schedule_run_instance',
+                               method_kwargs, 'down', target_cell)
+    message.process()</pre><span style="font-family:KaiTi_GB2312; font-size:18px">对于执行方法schedule_run_instance的cell来讲，这个方法schedule_run_instance实现了父cell通知本cell来调度新的实例用于建立。具体来看方法schedule_run_instance的代码实现：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_9_4550493"  name="code" class="python">def schedule_run_instance(self, message, host_sched_kwargs):
+    &quot;&quot;&quot;
+    父cell通知本cell来调度新的实例用于建立；
+    &quot;&quot;&quot;
+    # scheduler是类nova.cells.scheduler.CellsScheduler的实例化对象；
+    # 所以这里调用的是类nova.cells.scheduler.CellsScheduler下的run_instance方法；
+    self.msg_runner.scheduler.run_instance(message, host_sched_kwargs)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">这里调用了类nova.cells.scheduler.CellsScheduler下的run_instance方法来执行在cell上虚拟机实例的建立操作。具体来看方法run_instance的代码实现：</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_10_7756859"  name="code" class="python">def run_instance(self, message, host_sched_kwargs):
+    &quot;&quot;&quot;
+    选择一个cell，在它上面我们要建立一个新的实例；
+    &quot;&quot;&quot;
+    try:
+        # scheduler_retries：这个参数定义了当没有找到cell的时候，要重复的次数；
+        # 参数的默认值为10；
+        # 所以这里应该是进行10次for循环操作；
+        for i in xrange(max(0, CONF.cells.scheduler_retries) + 1):
+            try:
+                return self._run_instance(message, host_sched_kwargs)
+            except exception.NoCellsAvailable:
+                if i == max(0, CONF.cells.scheduler_retries):
+                    raise
+                sleep_time = max(1, CONF.cells.scheduler_retry_delay)
+                LOG.info(_(&quot;No cells available when scheduling.  Will &quot;
+                        &quot;retry in %(sleep_time)s second(s)&quot;), locals())
+                time.sleep(sleep_time)
+                continue
+    except Exception:
+        request_spec = host_sched_kwargs['request_spec']
+        instance_uuids = request_spec['instance_uuids']
+        LOG.exception(_(&quot;Error scheduling instances %(instance_uuids)s&quot;),
+                locals())
+        ctxt = message.ctxt
+        for instance_uuid in instance_uuids:
+            self.msg_runner.instance_update_at_top(ctxt,
+                        {'uuid': instance_uuid,
+                         'vm_state': vm_states.ERROR})
+            try:
+                self.db.instance_update(ctxt,
+                                        instance_uuid,
+                                        {'vm_state': vm_states.ERROR})
+            except Exception:
+                pass</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中，若干次尝试调用方法_run_instance来实现虚拟机实例的建立操作。具体来看方法_run_instance的代码实现：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_11_1278871"  name="code" class="python">def _run_instance(self, message, host_sched_kwargs):
+    &quot;&quot;&quot;
+    尝试调度实例；
+    如果没有合适的cell使用，则引发异常；
+    &quot;&quot;&quot;
+    ctxt = message.ctxt
+    request_spec = host_sched_kwargs['request_spec']
+
+    # 获取所有合适的cell；
+    cells = self._get_possible_cells()
+    if not cells:
+        raise exception.NoCellsAvailable()
+    cells = list(cells)
+
+    # 随即选择合适的cell；
+    # 这里现在只是随即选取cell，以后会改进的；
+    random.shuffle(cells)
+    target_cell = cells[0]
+
+    LOG.debug(_(&quot;Scheduling with routing_path=%(routing_path)s&quot;),
+            locals())
+
+    # 如果合适的cell是本cell，则：
+    # 建立实例DB条目作为host调度器；
+    # 获取instance_uuids中各个实例的启动信息，并把这些信息加入到要启动的实例属性中；
+    # 实现发送要建立实例请求到指定的节点，之后会由指定的计算节点执行建立实例的操作；
+    if target_cell.is_me:
+        # 需要建立实例DB条目作为host调度器，除非实例已经存在；
+        self._create_instances_here(ctxt, request_spec)
+        # 获取instance_uuids中各个实例的启动信息；
+        # 并把这些信息加入到要启动的实例属性中；
+        self._create_action_here(ctxt, request_spec['instance_uuids'])
+        # 实现发送要建立实例请求到指定的节点，之后会由指定的计算节点执行建立实例的操作；  
+        self.scheduler_rpcapi.run_instance(ctxt, **host_sched_kwargs)
+        return
+    # schedule_run_instance：选择一个合适的cell来建立新的实例，并转发相应的请求；
+    self.msg_runner.schedule_run_instance(ctxt, target_cell, host_sched_kwargs)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中，我们来对几条重要的语句进行代码实现的解析工作。</span>
+<p></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">2.1 cells = self._get_possible_cells()</span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:18px">这条语句调用了方法_get_possible_cells实现了获取所有合适的cell的操作（从本cell中的子cell中获取），具体来看方法_get_possible_cells的代码实现：</span></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_12_6121439"  name="code" class="python">def _get_possible_cells(self):
+    &quot;&quot;&quot;
+    获取所有合适的cell；
+    &quot;&quot;&quot;
+    # get_child_cells：获取本cell的子cell信息；
+    cells = set(self.state_manager.get_child_cells())
+    # get_my_state：获取本cell的信息；
+    our_cell = self.state_manager.get_my_state()
+    if not cells or our_cell.capacities:
+        cells.add(our_cell)
+    return cells</pre><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>2.2 self._create_instances_here(ctxt, request_spec)</strong></span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句调用了方法_create_instances_here实现了为建立新的实例在数据库中建立新的条目，并对实例进行更新操作。具体来看方法_create_instances_here的代码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_13_1279653"  name="code" class="python">def _create_instances_here(self, ctxt, request_spec):
+    instance_values = request_spec['instance_properties']
+    num_instances = len(request_spec['instance_uuids'])
+    # 为建立新的实例在数据库中建立新的条目，并对实例进行更新；
+    for i, instance_uuid in enumerate(request_spec['instance_uuids']):
+        instance_values['uuid'] = instance_uuid
+        # create_db_entry_for_new_instance：为新的实例在数据库中建立新的条目，包括任何更新的表（如安全组等等）；
+        # 这个方法将会被scheduler调用的，当一个实例的位置确定之后。
+        instance = self.compute_api.create_db_entry_for_new_instance(
+                    ctxt,
+                    request_spec['instance_type'],
+                    request_spec['image'],
+                    instance_values,
+                    request_spec['security_group'],
+                    request_spec['block_device_mapping'],
+                    num_instances, i)
+
+        # 在top等级的cell上，更新实例；
+        self.msg_runner.instance_update_at_top(ctxt, instance)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">在这个方法中，我们来看语句：</span>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">instance=self.compute_api.create_db_entry_for_new_instance(......)</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句调用了方法create_db_entry_for_new_instance实现了为新的实例在数据库中建立新的条目，包括任何更新的表（如安全组等等），这个方法将会被scheduler调用的，当一个实例的位置确定之后。具体来看方法create_db_entry_for_new_instance的代码实现：</span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_14_6437867"  name="code" class="python">def create_db_entry_for_new_instance(self, context, instance_type, image,
+            base_options, security_group, block_device_mapping, num_instances,
+            index):
+    &quot;&quot;&quot;
+    为新的实例在数据库中建立新的条目，包括任何更新的表（如安全组等等）；
+    这个方法将会被scheduler调用的，当一个实例的位置确定之后。
+    &quot;&quot;&quot;
+        
+    #_populate_instance_for_create：建立一个新的实例的开端；
+    #也就是首先执行instance = base_options；
+    #然后再补充一些实例的相关信息到instance这个字典中；
+    #返回设置好信息的实例字典给；                         
+    #期间还进行了一些操作，包括：
+    #存储image镜像的属性信息，以便后面我们能够用到它们；
+    #对目前这个image镜像实例的来源，即那个基础镜像的记录信息进行保存；          
+    instance = self._populate_instance_for_create(base_options,image, security_group)
+
+    #确定实例的显示名称和主机名称（display_name和hostname）；
+    self._populate_instance_names(instance, num_instances)
+
+    #确定实例的关机和终止状态信息（shutdown_terminate）；
+    #如果块设备映射（block_device_mapping）为真或者是镜像属性信息中的映射属性（image_properties.get('mappings')）为真
+    #或者是镜像属性信息中的块设备映射属性（image_properties.get('block_device_mapping')）为真的时候，
+    #实例的关机和终止状态instance['shutdown_terminate']就为假（是不是就是表示实例系统正在创建或者是运行中）；
+    self._populate_instance_shutdown_terminate(instance, image,block_device_mapping)
+
+    # ensure_default安全组在实例建立前会被调用；
+    # ensure_default：确保context有一个安全组，如果没有就建立一个；
+    self.security_group_api.ensure_default(context)
+        
+    #根据context和values建立一个新的实例，并记录在数据库中
+    #建立了实例相关的数据表；
+    #补充修正字典instance中的参数信息；
+    instance = self.db.instance_create(context, instance)
+
+    # 如果要建立实例的最大数目大于1；
+    # 这里涉及到一个一个请求生成多个实例的情况，这种情况下实例的命名相关遵循名称模板来进行；
+    # 当一个请求创建多个实例的时候，multi_instance_display_name_template这个参数的设置能够使所有的实例都具有唯一的主机名和DISPLAY_NAME；
+    # 默认的格式是'%(name)s-%(uuid)s'；
+    # 我的理解是uuid应该是不同的；
+    # 根据名称模板生成实例的相关名称属性，并更新实例的这个属性；
+    if num_instances &gt; 1:
+        instance = self._apply_instance_name_template(context, instance, index)
+
+    # 确定实例块设备映射信息；
+    self._populate_instance_for_bdm(context, instance, instance_type, image, block_device_mapping)
+
+    return instance</pre><span style="font-family:KaiTi_GB2312; font-size:18px">具体来看方法中的语句instance= self.db.instance_create(context,instance)，实现了根据context和values建立一个新的实例，并记录在数据库中，建立了实例相关的数据表，补充修正字典instance中的参数信息。具体来看方法instance_create的代码实现：</span>
+<p align="left"></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_15_2991520"  name="code" class="python">def instance_create(context, values):
+    &quot;&quot;&quot;
+    根据values这个字典建立一个实例；
+    &quot;&quot;&quot;
+    return IMPL.instance_create(context, values)</pre><pre code_snippet_id="153708" snippet_file_name="blog_20140112_16_1737785"  name="code" class="python">def instance_create(context, values):
+    &quot;&quot;&quot;
+    根据context和values建立一个新的实例，并记录在数据库中
+    建立了实例相关的数据表；
+    补充修正字典values（instance）中的参数信息；
+    
+    注：在/nova/compute/api.py的create_db_entry_for_new_instance方法中，是这样调用这个方法的：
+    instance_create(context, instance)
+    所以说这个values传进来的是字典instance；
+    &quot;&quot;&quot;
+    
+    # 补充修正字典values（instance）中的参数信息；
+    # （？？？）为什么拷贝，拷贝过后也都是指向同一个对象；
+    values = values.copy()
+    
+    # 获取values（instance）的'metadata'；
+    # _metadata_refs返回的是一个列表，作为values['metadata']的key-values中的values；
+    # 列表中每一个值都是一个models.InstanceMetadata建立的数据结构；
+    # _metadata_refs把values.get('metadata')这个字典中的key-values对对应的赋值到了models.InstanceMetadata所建立的数据结构中的字段key和字段values中；
+    # 每一个新建数据结构都是列表（字典values（instance）中'metadata'所对应的的键值是一个列表）中的一个元素；
+    # 目前values（instance）的数据结构是：本身是字典，字典的每个键值是列表，列表中的每个元素是models.InstanceMetadata所建立的数据表；
+    values['metadata'] = _metadata_refs(values.get('metadata'), models.InstanceMetadata)
+    
+    # 获取values（instance）的'system_metadata'；
+    values['system_metadata'] = _metadata_refs(values.get('system_metadata'), models.InstanceSystemMetadata)
+
+    # Instance：表示一个来宾VM的类；
+    # 构建数据表instances的数据结构；
+    instance_ref = models.Instance()
+    
+    # 如果values（instance）的uuid值没有定义，则随机生成一个uuid值；
+    if not values.get('uuid'):
+        values['uuid'] = str(uuid.uuid4())
+        
+    # 从InstanceInfoCache类中获取实例的缓存信息；
+    # InstanceInfoCache：表示一个实例的缓存信息的类；
+    # 构建数据表instance_info_caches的数据结构；
+    instance_ref['info_cache'] = models.InstanceInfoCache()
+    info_cache = values.pop('info_cache', None)
+    if info_cache is not None:
+        instance_ref['info_cache'].update(info_cache)
+    
+    # 获取安全组的相关信息，以字典的形式存储；
+    security_groups = values.pop('security_groups', [])
+    # 注：这里是否应该是instance_ref.update(security_groups)
+    instance_ref.update(values)</pre><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>2.3 self._create_action_here(ctxt, request_spec['instance_uuids'])</strong></span>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句调用方法_create_action_here实现了获取instance_uuids中各个实例的启动信息，并把这些信息加入到要启动的实例属性中。具体来看方法_create_action_here的代码实现：</span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_17_4944150"  name="code" class="python">def _create_action_here(self, ctxt, instance_uuids):
+    &quot;&quot;&quot;
+    获取instance_uuids中各个实例的启动信息；
+    并把这些信息加入到要启动的实例属性中；
+    &quot;&quot;&quot;
+    for instance_uuid in instance_uuids:
+        # 获取实例启动的一些信息，并以字典的形式返回；
+        action = compute_utils.pack_action_start(ctxt, instance_uuid,
+                 instance_actions.CREATE)
+        # 获取要启动的实例action的一些相关信息；
+        self.db.action_start(ctxt, action)</pre><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>2.4 self.scheduler_rpcapi.run_instance(ctxt, **host_sched_kwargs)</strong></span>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句调用方法run_instance实现了发送要建立实例的请求信息到消息队列，再由合适的节点从消息队列中取出请求信息，在本地执行建立虚拟机实例的操作。具体来看方法run_instance的代码解析：</span></p>
+<pre code_snippet_id="153708" snippet_file_name="blog_20140112_18_2926264"  name="code" class="python">def run_instance(self, ctxt, request_spec, admin_password,
+            injected_files, requested_networks, is_first_time,
+            filter_properties):
+    # 实现了发送要运行实例（'run_instance'）的请求消息到远程节点；
+    # make_msg：封装所要运行实例的这个请求的所有信息到make_msg；
+    # 调用这个远程方法cast，但是不返回任何信息；
+    # 发送一个主题的消息make_msg，不用等待任何信息的返回；
+    #注：远程节点会在队列中提取这条消息，然后调用相应资源，实现运行实例的这个请求，这部分代码只是实现了请求信息的发送；
+    return self.cast(ctxt, self.make_msg('run_instance',
+            request_spec=request_spec, admin_password=admin_password,
+            injected_files=injected_files,
+            requested_networks=requested_networks,
+            is_first_time=is_first_time,
+            filter_properties=filter_properties))</pre><span style="font-family:KaiTi_GB2312; font-size:18px">以前的博客中，我们对建立虚拟机实例的相关代码进行过解析，这里就不对后面的代码进行解析了。</span>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>2.5 self.msg_runner.schedule_run_instance(ctxt, target_cell, host_sched_kwargs)</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">我们回到方法_run_instance中，我们可以看到，如果要建立虚拟机实例的目标cell不是本cell，则在方法的最后再一次调用了方法schedule_run_instance，实现继续在本cell的子cell中进行建立虚拟机的操作（这里就是应用cell的树形结构）。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">到此为止，就完成了在树形结构的cell服务中进行虚拟机建立的代码解析工作。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">好啦，现在我们完成了以示例对nova-cell服务的源码架构和nova-cell服务的具体实现流程进行解析的工作。</span><br>
+</p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.13-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="14484033" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/14216977';">上一篇</span><a href="/gaoxingnengjisuan/article/details/14216977" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack Nova-cell服务的源码解析（1）</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/15615743';">下一篇</span><a href="/gaoxingnengjisuan/article/details/15615743" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">OpenStack Nova-scheduler组件的源码解析（1）</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/14216977" title="OpenStack Nova-cell服务的源码解析（1）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-cell服务的源码解析（1）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-scheduler组件的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37338635" title="OpenStack Nova-scheduler组件的源码解析（2）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-scheduler组件的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gtianqgg/article/details/50524237" title="OpenStack Nova hacking和读书笔记" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova hacking和读书笔记</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/38062411" title="nova源码整体文件结构分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">nova源码整体文件结构分析</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37339217" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/38062481" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dingdingwolf/article/details/44806007" title="from nova to ironic" strategy="recommend_sim_0" target="_blank" style="width: 290px;">from nova to ironic</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dingdingwolf/article/details/44903863" title="from nova to ironic(3)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">from nova to ironic(3)</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/14484033",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "14484033",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '14484033';
+    var commentscount = 1;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='OpenStack Nova-cell服务的源码解析（2）';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466774次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

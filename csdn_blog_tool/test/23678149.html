@@ -1,0 +1,1887 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23678149"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>Openstack Cinder中建立volume过程的源码解析（6）----以及taskflow相关解析 - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="在博客 Openstack Cinder中建立volume过程的源码解析（4）----以及taskflow相关解析" />
+
+    <meta name="keywords" content="OpenStack,cinder,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=Openstack+Cinder%e4%b8%ad%e5%bb%ba%e7%ab%8bvolume%e8%bf%87%e7%a8%8b%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%886%ef%bc%89----%e4%bb%a5%e5%8f%8ataskflow%e7%9b%b8%e5%85%b3%e8%a7%a3%e6%9e%90&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/23678149"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/23678149">
+        Openstack Cinder中建立volume过程的源码解析（6）----以及taskflow相关解析            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/cinder' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">cinder</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2014-04-14 22:31</span>
+            <span class="link_view" title="阅读次数">2514人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(1)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('Openstack+Cinder%e4%b8%ad%e5%bb%ba%e7%ab%8bvolume%e8%bf%87%e7%a8%8b%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%886%ef%bc%89----%e4%bb%a5%e5%8f%8ataskflow%e7%9b%b8%e5%85%b3%e8%a7%a3%e6%9e%90','23678149');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(23678149,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[{&quot;name&quot;:&quot;OpenStack知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/33?source=blogtop&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1481875458834_834.jpg&quot;}]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1853287','gaoxingnengjisuan','top','23678149');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-CINDER<em>（25）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1853287"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1853287">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366ff; line-height:26px">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！</span><br style="color:rgb(51,102,255); font-family:KaiTi_GB2312; font-size:18px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366ff; line-height:26px">如果转载，请保留作者信息。</span><br style="color:rgb(51,102,255); font-family:KaiTi_GB2312; font-size:18px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366ff; line-height:26px">博客地址：http://blog.csdn.net/gaoxingnengjisuan</span><br style="color:rgb(51,102,255); font-family:KaiTi_GB2312; font-size:18px; line-height:26px">
+<span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366ff; line-height:26px">邮箱地址：dong.liu@siat.ac.cn</span></span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">在博客<a target="_blank" target="_blank" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23607813"> Openstack Cinder中建立volume过程的源码解析（4）----以及taskflow相关解析</a>中我们曾经说过，在方法/cinder/volume/api.py----class
+ API----def create中，主要通过4步实现了应用taskflow进行卷的建立操作，也就是：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><a target="_blank" target="_blank" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23607813"></a></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">1.构建字典create_what，实现整合建立卷的具体参数；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">2.构建并返回用于建立卷的flow；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">3.执行构建的用于建立卷的flow；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">4.从flow中获取建立卷的反馈信息；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">其中前2个步骤的解析已经完成，这里来看第3个步骤的实现，即如何来运行已经构建好的flow；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看方法/cinder/volume/api.py----class API----def create的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_1_1721798"  code_snippet_id="292458" snippet_file_name="blog_20140414_1_1721798" name="code" class="python">    def create(self, context, size, name, description, snapshot=None,  
+               image_id=None, volume_type=None, metadata=None,  
+               availability_zone=None, source_volume=None,  
+               scheduler_hints=None, backup_source_volume=None):  
+        &quot;&quot;&quot; 
+        实现建立卷的操作； 
+        &quot;&quot;&quot;  
+      
+        def check_volume_az_zone(availability_zone):  
+            &quot;&quot;&quot; 
+            验证availability_zone是否是可用的（即是否包含在可用zone的列表中）； 
+            &quot;&quot;&quot;  
+            try:  
+                # _valid_availabilty_zone：验证availability_zone是否是可用的（即是否包含在可用zone的列表中）；  
+                return self._valid_availabilty_zone(availability_zone)  
+            except exception.CinderException:  
+                LOG.exception(_(&quot;Unable to query if %s is in the &quot;  
+                                &quot;availability zone set&quot;), availability_zone)  
+                return False  
+      
+        # 所要建立卷的规格数据信息；  
+        create_what = {  
+            'size': size,  
+            'name': name,  
+            'description': description,  
+            'snapshot': snapshot,  
+            'image_id': image_id,  
+            'volume_type': volume_type,  
+            'metadata': metadata,  
+            'availability_zone': availability_zone,  
+            'source_volume': source_volume,  
+            'scheduler_hints': scheduler_hints,  
+            'key_manager': self.key_manager,  
+            'backup_source_volume': backup_source_volume,  
+        }  
+          
+        # 构建并返回用于建立卷的flow；  
+        # self.scheduler_rpcapi = scheduler_rpcapi.SchedulerAPI()；  
+        # self.volume_rpcapi = volume_rpcapi.VolumeAPI()；  
+        # self.image_service = (image_service or glance.get_default_image_service())  
+        # check_volume_az_zone：验证availability_zone是否是可用的（即是否包含在可用zone的列表中）；  
+        # create_what：所要建立卷的规格数据信息；  
+        (flow, uuid) = create_volume.get_api_flow(self.scheduler_rpcapi,  
+                                                  self.volume_rpcapi,  
+                                                  self.db,  
+                                                  self.image_service,  
+                                                  check_volume_az_zone,  
+                                                  create_what)  
+      
+        # 应用assert关键字来声明flow是真的；  
+        assert flow, _('Create volume flow not retrieved')  
+          
+          
+        # 运行用于建立卷的flow；  
+        flow.run(context)  
+          
+        # 如果flow的运行状态不为states.SUCCESS，则引发异常；  
+        if flow.state != states.SUCCESS:  
+            raise exception.CinderException(_(&quot;Failed to successfully complete&quot;  
+                                              &quot; create volume workflow&quot;))  
+      
+        # Extract the volume information from the task uuid that was specified  
+        # to produce said information.  
+        # 通过task的uuid值获取建立卷的信息；  
+        volume = None  
+        try:  
+            volume = flow.results[uuid]['volume']  
+        except KeyError:  
+            pass  
+      
+        # Raise an error, nobody provided it??  
+        # 应用assert关键字来声明volume是真的；  
+        assert volume, _('Expected volume result not found')  
+          
+        return volume  </pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们来看语句：</span>
+<p></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">flow.run(context)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">就实现了构建的flow的执行操作；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们具体来看方法run的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_2_8766602"  code_snippet_id="292458" snippet_file_name="blog_20140414_2_8766602" name="code" class="python">def run(self, context, *args, **kwargs):
+      &quot;&quot;&quot;
+      工作流（workflow）的执行操作；
+      context = &lt;cinder.context.RequestContext object at 0x382fd50&gt; //从cinder请求中获取上下文环境信息；
+      args = ()
+      kwargs = {}
+      &quot;&quot;&quot;
+        super(Flow, self).run(context, *args, **kwargs)
+
+        def resume_it():
+            # self._leftoff_at = None
+            if self._leftoff_at is not None:
+                return ([], self._leftoff_at)
+            
+            # self.resumer = None
+            # 注：这里还没有应用恢复策略，因为类的初始化过程中赋值为None；
+            if self.resumer:
+                # self._ordering()：获取迭代器包装的任务运行列表；
+                (finished, leftover) = self.resumer.resume(self, self._ordering())
+            else:
+                finished = []
+                # self._ordering()：获取迭代器包装的任务运行列表；
+                leftover = self._ordering()
+            
+            # leftover：获取迭代器包装的任务运行列表；
+            # finished = []
+            # leftover = &lt;listiterator object at 0x441fa50&gt;
+            return (finished, leftover)
+
+        # 改变目前的flow状态为新的状态STARTED，并执行通知操作；
+        # flow状态标志为STARTED，表示任务开始运行操作；
+        self._change_state(context, states.STARTED)
+        try:
+            # leftover：获取迭代器包装的任务运行列表；
+            # those_finished = []
+            # leftover = &lt;listiterator object at 0x40c1990&gt;
+            those_finished, leftover = resume_it()
+        except Exception:
+            with excutils.save_and_reraise_exception():
+                self._change_state(context, states.FAILURE)
+
+        def run_it(runner, failed=False, result=None, simulate_run=False):
+           
+            try:
+                # Add the task to be rolled back *immediately* so that even if
+                # the task fails while producing results it will be given a
+                # chance to rollback.
+                
+                # RollbackTask：实现调用任务对应的可用的逆转回滚方法；
+                # runner.task = cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0
+                rb = utils.RollbackTask(context, runner.task, result=None)
+                
+                # 在回滚方法累加器中添加逆转回滚方法任务；
+                self._accumulator.add(rb)
+
+                self.task_notifier.notify(states.STARTED, details={
+                    'context': context,
+                    'flow': self,
+                    'runner': runner,
+                })
+                
+                # simulate_run = False
+                if not simulate_run:
+                    result = runner(context, *args, **kwargs)
+
+                else:
+                    if failed:
+                        if not result:
+                            result = &quot;%s failed running.&quot; % (runner.task)
+                        if isinstance(result, basestring):
+                            result = exc.InvalidStateException(result)
+                        if not isinstance(result, Exception):
+                            LOG.warn(&quot;Can not raise a non-exception&quot;
+                                     &quot; object: %s&quot;, result)
+                            result = exc.InvalidStateException()
+                        raise result
+                rb.result = result
+                runner.result = result
+                self.results[runner.uuid] = result
+                
+                self.task_notifier.notify(states.SUCCESS, details={
+                    'context': context,
+                    'flow': self,
+                    'runner': runner,
+                })
+            except Exception as e:
+                runner.result = e
+                cause = utils.FlowFailure(runner, self, e)
+                with excutils.save_and_reraise_exception():
+                    self.task_notifier.notify(states.FAILURE, details={
+                        'context': context,
+                        'flow': self,
+                        'runner': runner,
+                    })
+                    self.rollback(context, cause)
+
+        # those_finished = []
+        if len(those_finished):
+            self._change_state(context, states.RESUMING)
+            for (r, details) in those_finished:
+                failed = states.FAILURE in details.get('states', [])
+                result = details.get('result')
+                run_it(r, failed=failed, result=result, simulate_run=True)
+
+        # leftover：获取迭代器包装的任务运行列表；
+        # leftover = &lt;listiterator object at 0x40c1990&gt;
+        self._leftoff_at = leftover
+        # 改变目前的flow状态为新的状态RUNNING，并执行通知操作；
+        self._change_state(context, states.RUNNING)
+               
+        # 如果状态为中断，则返回；
+        if self.state == states.INTERRUPTED:
+            return
+
+        # 标志任务运行状态不为states.INTERRUPTED；
+        was_interrupted = False
+        
+        # leftover：获取迭代器包装的任务运行列表；
+        # leftover = &lt;listiterator object at 0x40c1990&gt;
+        for r in leftover:
+            r.reset()
+            run_it(r)
+            if self.state == states.INTERRUPTED:
+                was_interrupted = True
+                break
+
+        if not was_interrupted:
+            # Only gets here if everything went successfully.
+            self._change_state(context, states.SUCCESS)
+            self._leftoff_at = None</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们来分析这个方法的实现过程；</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">首先来看语句：</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">try:<br>
+&nbsp;&nbsp;&nbsp; # leftover：获取迭代器包装的任务运行列表；<br>
+&nbsp;&nbsp;&nbsp; # those_finished = []<br>
+&nbsp;&nbsp;&nbsp; # leftover = &lt;listiterator object at 0x40c1990&gt;<br>
+&nbsp;&nbsp;&nbsp; those_finished, leftover = resume_it()</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这部分语句的功能是实现获取迭代器包装的task列表，以及已经完成的task列表；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们具体来看方法resume_it的实现过程：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_3_2289396"  code_snippet_id="292458" snippet_file_name="blog_20140414_3_2289396" name="code" class="python">        def resume_it():
+            # self._leftoff_at = None
+            if self._leftoff_at is not None:
+                return ([], self._leftoff_at)
+            
+            # self.resumer = None
+            # 注：这里还没有应用恢复策略，因为类的初始化过程中赋值为None；
+            if self.resumer:
+                # self._ordering()：获取迭代器包装的任务运行列表；
+                (finished, leftover) = self.resumer.resume(self, self._ordering())
+            else:
+                finished = []
+                # self._ordering()：获取迭代器包装的任务运行列表；
+                leftover = self._ordering()
+            
+            # leftover：获取迭代器包装的任务运行列表；
+            # finished = []
+            # leftover = &lt;listiterator object at 0x441fa50&gt;
+            return (finished, leftover)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看方法_ordering的源码实现：</span>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_4_8636089"  code_snippet_id="292458" snippet_file_name="blog_20140414_4_8636089" name="code" class="python">    def _ordering(self):        
+        # 返回迭代器包装的任务运行列表；
+        return iter(self._connect())
+
+&nbsp;&nbsp;&nbsp; def _connect(self):
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # self._runners：所有要运行的任务集合；
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # self._connected = False
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if self._connected:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return self._runners
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for r in self._runners:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r.providers = {}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for r in reversed(self._runners):
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._associate_providers(r)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; self._connected = True
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return self._runners
+</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到在方法_connect中，由类Flow的初始化方法中可以知道，变量self._runners表示的是所有要运行的任务的集合；我们在语句for r in reversed(self._runners)下面添加了一条输出调试语句，获得以下的输出实例：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">r = Runner: cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-a41753ed-a9b4-4999-8aab-979d244425d1; 1.0<br>
+r = Runner: cinder.volume.flows.create_volume.OnFailureChangeStatusTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-c689085f-df0a-4459-a8a9-c2518c6e471c; 1.0<br>
+r = Runner: cinder.volume.flows.create_volume.QuotaCommitTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-adea0991-6fc9-4a74-9c2f-33848c77b29c; 1.0<br>
+r = Runner: cinder.volume.flows.create_volume.EntryCreateTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-c05d7892-7cb0-4e80-b17b-5777ca0ae167; 1.0<br>
+r = Runner: cinder.volume.flows.create_volume.QuotaReserveTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-4d1c0c90-b6ac-4406-a3ae-50943fb22cd3; 1.0<br>
+r = Runner: cinder.volume.flows.create_volume.ExtractVolumeRequestTask;volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-d7175a90-de39-40c2-853f-462a4c566d8f; 1.0<br>
+r = Runner: cinder.volume.flows.base.InjectTask;volume:create==1.0; <br>
+&nbsp;&nbsp;&nbsp; r-77f89843-25d6-4dc1-b8c5-4d13816b62fa; 1.0</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到此时，<span style="font-family:KaiTi_GB2312; font-size:18px">self._runners</span>中集合了所有要运行的task，当然这里暂时调用了<span style="font-family:KaiTi_GB2312; font-size:18px">reversed</span>方法进行了逆序排序的操作，是为了下面的验证操作做准备的，而<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">self._runners</span></span>中task的排序还是顺序的；输出实例：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">self._runners = [&lt;cinder.taskflow.utils.Runner object at 0x2ca86d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x2ca8750&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x2ca87d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x2ca8850&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x2ca88d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x2ca8950&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x28e6490&gt;]<br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">所以获取了task的集合的变量<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">self._runners</span></span>，再经过_ordering方法的迭代器包装，最后返回给变量leftover；</span></p>
+<p><br>
+<span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">下面我们再来看语句：</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">for r in leftover:</span></strong></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; r.reset()</span></strong></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; run_it(r)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">显然，这里完成的就是按照task集合中的顺序，逐个执行所要执行的task，从而成功实现卷的建立；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">从上面的调试输出我们可以知道，self._runners为cinder.taskflow.utils.Runner对象的集合，即为要运行的任务的集合，所以这里我们来看一下类Runner的初始化方法：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_5_7142373"  code_snippet_id="292458" snippet_file_name="blog_20140414_5_7142373" name="code" class="python">class Runner(object):
+    def __init__(self, task, uuid=None):
+        assert isinstance(task, collections.Callable)
+        self.task = task
+        self.providers = {}
+        self.runs_before = []
+        self.result = None
+        if not uuid:
+            self._id = uuidutils.generate_uuid()
+        else:
+            self._id = str(uuid)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">所以我们在这里可以做以下的调试输出，具体看一下各个变量的作用，这有利于后续代码的理解：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================<br>
+r = Runner: cinder.volume.flows.base.InjectTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;
+<br>
+&nbsp;&nbsp;&nbsp; r-dfc38a9a-a67f-44b9-8297-48dc586806ce; 1.0<br>
+r.task = cinder.volume.flows.base.InjectTask;volume:create==1.0 # 表示当前任务的类名和任务描述；<br>
+r.providers = {}<br>
+r.runs_before = [] # 表示当前任务之前的所有任务集合；<br>
+r.result = None<br>
+r._id = dfc38a9a-a67f-44b9-8297-48dc586806ce<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.ExtractVolumeRequestTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-920b4ad9-edd8-436b-bfce-18f940d714a7; 1.0<br>
+r.task = cinder.volume.flows.create_volume.ExtractVolumeRequestTask;volume:create==1.0<br>
+r.providers = {'backup_source_volume': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volume': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'image_id': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'key_manager': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'metadata': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = 920b4ad9-edd8-436b-bfce-18f940d714a7<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.QuotaReserveTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-49eb28ff-4da0-4e17-bf89-c9d82abc4eb8; 1.0<br>
+r.task = cinder.volume.flows.create_volume.QuotaReserveTask;volume:create==1.0<br>
+r.providers = {'volume_type_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = 49eb28ff-4da0-4e17-bf89-c9d82abc4eb8<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.EntryCreateTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-b338cd2d-282b-4da2-9f10-7cd79f9de18d; 1.0<br>
+r.task = cinder.volume.flows.create_volume.EntryCreateTask;volume:create==1.0<br>
+r.providers = {'size': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'description': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'reservations': &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volid': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption_key_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'metadata': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'name': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = b338cd2d-282b-4da2-9f10-7cd79f9de18d<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.QuotaCommitTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-11bfeedf-6cc7-46f6-b257-472114132cb5; 1.0<br>
+r.task = cinder.volume.flows.create_volume.QuotaCommitTask;volume:create==1.0<br>
+r.providers = {'reservations': &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_properties': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = 11bfeedf-6cc7-46f6-b257-472114132cb5<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.OnFailureChangeStatusTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp; r-255b5031-abb0-4c02-9c1d-ddb59fe4066b; 1.0<br>
+r.task = cinder.volume.flows.create_volume.OnFailureChangeStatusTask;volume:create==1.0<br>
+r.providers = {'volume_id': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a28850&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = 255b5031-abb0-4c02-9c1d-ddb59fe4066b<br>
+========================================================================================<br>
+r = Runner: cinder.volume.flows.create_volume.VolumeCastTask;</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">&nbsp;&nbsp;&nbsp; volume:create==1.0;
+<br>
+&nbsp;&nbsp;&nbsp; r-68318d88-aecb-4ac4-b80d-26f6e91b9b95; 1.0<br>
+r.task = cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0<br>
+r.providers = {'image_id': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volid': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_id': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_properties': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'scheduler_hints': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;}<br>
+r.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a288d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28850&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]<br>
+r.result = None<br>
+r._id = 68318d88-aecb-4ac4-b80d-26f6e91b9b95<br>
+========================================================================================</span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们接着来看方法run_it的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_6_5125269"  code_snippet_id="292458" snippet_file_name="blog_20140414_6_5125269" name="code" class="python">        def run_it(runner, failed=False, result=None, simulate_run=False):
+         &quot;&quot;&quot;
+         以其中之一为例：
+         runner = Runner: cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0; 
+                  r-68318d88-aecb-4ac4-b80d-26f6e91b9b95; 1.0
+         runner.task = cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0
+         runner.providers = {'image_id': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;, 
+                           'snapshot_id': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, 
+                           'source_volid': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, 
+                           'volume_id': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, 
+                           'volume_properties': &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, 
+                           'volume_type': &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, 
+                           'scheduler_hints': &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;}
+         runner.runs_before = [&lt;cinder.taskflow.utils.Runner object at 0x3a288d0&gt;, 
+                             &lt;cinder.taskflow.utils.Runner object at 0x3a28850&gt;, 
+                             &lt;cinder.taskflow.utils.Runner object at 0x3a287d0&gt;, 
+                             &lt;cinder.taskflow.utils.Runner object at 0x3a28750&gt;, 
+                             &lt;cinder.taskflow.utils.Runner object at 0x3a286d0&gt;, 
+                             &lt;cinder.taskflow.utils.Runner object at 0x3a28650&gt;]
+         runner.result = None
+         runner._id = 68318d88-aecb-4ac4-b80d-26f6e91b9b95
+
+         runner = Runner: cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0; 
+                  r-6865ee0d-c5dc-4b62-972b-6ad3af46d147; 1.0
+         failed = False
+         result = None
+         simulate_run = False
+         &quot;&quot;&quot;
+            try:                
+                # RollbackTask：实现调用任务对应的可用的逆转回滚方法；
+                # runner.task = cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0
+                rb = utils.RollbackTask(context, runner.task, result=None)
+                
+                # 在回滚方法累加器中添加逆转回滚方法任务；
+                self._accumulator.add(rb)
+                
+                self.task_notifier.notify(states.STARTED, details={
+                    'context': context,
+                    'flow': self,
+                    'runner': runner,
+                     })
+                
+                # simulate_run = False
+                if not simulate_run:
+                    result = runner(context, *args, **kwargs)
+<span style="font-family:KaiTi_GB2312;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span>else:
+                    if failed:
+                        if not result:
+                            result = &quot;%s failed running.&quot; % (runner.task)
+                        if isinstance(result, basestring):
+                            result = exc.InvalidStateException(result)
+                        if not isinstance(result, Exception):
+                            LOG.warn(&quot;Can not raise a non-exception&quot;
+                                     &quot; object: %s&quot;, result)
+                            result = exc.InvalidStateException()
+                        raise result
+                rb.result = result
+                runner.result = result
+                self.results[runner.uuid] = result
+                
+                self.task_notifier.notify(states.SUCCESS, details={
+                    'context': context,
+                    'flow': self,
+                    'runner': runner,
+                      })
+            except Exception as e:
+                runner.result = e
+                cause = utils.FlowFailure(runner, self, e)
+                with excutils.save_and_reraise_exception():
+                    # Notify any listeners that the task has errored.
+                    self.task_notifier.notify(states.FAILURE, details={
+                        'context': context,
+                        'flow': self,
+                        'runner': runner,
+                           })
+                    self.rollback(context, cause)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">首先来看语句：</span>
+<p></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">rb = utils.RollbackTask(context, runner.task, result=None)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">其中类<span style="font-family:KaiTi_GB2312; font-size:18px">RollbackTask实现调用任务对应的可用的逆转回滚方法；我们具体来看类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">RollbackTask</span></span>的实现代码：</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"></span></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_7_4187960"  code_snippet_id="292458" snippet_file_name="blog_20140414_7_4187960" name="code" class="python">class RollbackTask(object):
+    &quot;&quot;&quot;
+    A helper task that on being called will call the underlying callable
+    tasks revert method (if said method exists).
+    实现调用任务对应的可用的逆转回滚方法；
+    &quot;&quot;&quot;
+
+    def __init__(self, context, task, result):
+        # task = cinder.volume.flows.create_volume.VolumeCastTask;volume:create==1.0
+        self.task = task
+        self.result = result
+        self.context = context
+
+    def __str__(self):
+        return str(self.task)
+
+    def __call__(self, cause):
+        &quot;&quot;&quot;
+        实现调用任务对应的可用的逆转回滚方法；
+        &quot;&quot;&quot;
+        if ((hasattr(self.task, &quot;revert&quot;) and
+             isinstance(self.task.revert, collections.Callable))):
+            #注：这里有几种不同的回滚方法；
+            self.task.revert(self.context, self.result, cause)</pre>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">类RollbackTask实现调用任务对应的可用的逆转回滚方法，调用task类中对应的revert方法都需要经过这个类中的__call__方法来实现，后面我们会解析到的。</span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看语句：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>self._accumulator.add(rb)</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这条语句实现了在回滚方法累加器中添加逆转回滚方法任务；在类Flow的初始化方法中可以看到，self._accumulator = utils.RollbackAccumulator()，所以我们先来看类<span style="font-family:KaiTi_GB2312; font-size:18px">RollbackAccumulator</span>的源码实现：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"></span></p>
+<pre code_snippet_id="292458" snippet_file_name="blog_20140414_8_4679111"  code_snippet_id="292458" snippet_file_name="blog_20140414_8_4679111" name="code" class="python">class RollbackAccumulator(object):
+    def __init__(self):
+        self._rollbacks = []
+
+    def add(self, *callables):
+        self._rollbacks.extend(callables)
+
+    def reset(self):
+        self._rollbacks = []
+
+    def __len__(self):
+        return len(self._rollbacks)
+
+    def __iter__(self):
+        # Rollbacks happen in the reverse order that they were added.
+        return reversed(self._rollbacks)
+
+    def __enter__(self):
+        return self
+
+    def rollback(self, cause):
+        LOG.warn(&quot;Activating %s rollbacks due to %s.&quot;, len(self), cause)
+        
+        for (i, f) in enumerate(self):
+            LOG.debug(&quot;Calling rollback %s: %s&quot;, i + 1, f)
+            try:
+                f(cause)
+            except Exception:
+                LOG.exception((&quot;Failed rolling back %s: %s due &quot;
+                               &quot;to inner exception.&quot;), i + 1, f)
+
+    def __exit__(self, type, value, tb):
+        if any((value, type, tb)):
+            self.rollback(value)</pre><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到语句self._accumulator.add(rb)实现了把将要执行的回滚任务添加到变量self._rollbacks中；所以这里可以测试self._accumulator._rollbacks：</span>
+<p></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">self._accumulator._rollbacks = [&lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6d10&gt;]<br>
+self._accumulator._rollbacks = [&lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6d10&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6e50&gt;]</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:14px">......<br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">self._accumulator._rollbacks = [&lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6d10&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6e50&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3749150&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3ae6dd0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3dac3d0&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3df2f50&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;cinder.taskflow.utils.RollbackTask object at 0x3df2610&gt;]</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们可以看到，随着执行任务的增加，其对应的回滚任务也是对应增加的，并存储在变量self._accumulator._rollbacks中；</span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">我们再来看语句：</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"># simulate_run = False<br>
+if not simulate_run:<br>
+&nbsp;&nbsp;&nbsp; result = runner(context, *args, **kwargs)</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这里实现的就是执行指定的task任务，并获取返回结果；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这里我们可以得到如下的输出实例：</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span><span style="font-size:14px"><br>
+</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">runner = Runner: cinder.volume.flows.base.InjectTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-bf0f8b30-c2a0-4c22-ada2-22698adc71b9; 1.0<br>
+result = {'backup_source_volume': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'description': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volume': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'name': u'shinian01', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'image_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'metadata': {}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': 1, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'key_manager': &lt;cinder.keymgr.conf_key_mgr.ConfKeyManager object at 0x373f790&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'scheduler_hints': None}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ runner = Runner:cinder.volume.flows.create_volume.ExtractVolumeRequestTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-c88edccb-d78b-4cfa-ae68-5d8b72bd173d;1.0<br>
+result = {'volume_type_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'qos_specs': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption_key_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type': {}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': 'nova', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volid': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': 1}<br>
+<span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br>
+runner = Runner: cinder.volume.flows.create_volume.QuotaReserveTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-4b407b9a-c1a4-4778-8125-751ebe8e3c2b; 1.0<br>
+result = {'reservations': ['6fd57073-e9b6-49b9-bed4-a57b82fced51', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '365c158b-d291-4ac5-9d2d-5b7fb8a63dd6']}<br>
+<span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br>
+runner = Runner: cinder.volume.flows.create_volume.EntryCreateTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-9ee48341-945d-4905-9b1d-31122cc9745e; 1.0<br>
+result = {'volume': &lt;cinder.db.sqlalchemy.models.Volume object at 0x3ae6f10&gt;, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_properties': {'status': 'creating', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'user_id': u'ef073287176048bd861dcd9d9c4d9808', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': 'nova', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'reservations': ['6fd57073-e9b6-49b9-bed4-a57b82fced51',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '365c158b-d291-4ac5-9d2d-5b7fb8a63dd6'],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_admin_metadata': [], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'attach_status': 'detached', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'display_description': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_metadata': [], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'metadata': {}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption_key_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volid': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'display_name': u'shinian01', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'project_id': u'6c3c74779a614d3b81dd75518824e25c',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'id': '431b1c64-4e43-4731-b052-ff10aefae850', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': 1}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_id': '431b1c64-4e43-4731-b052-ff10aefae850'}<span style="font-family:KaiTi_GB2312; font-size:14px"><br>
+</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br>
+runner = Runner: cinder.volume.flows.create_volume.QuotaCommitTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-50d91e70-67fe-42f3-911f-1f59d4173b8b; 1.0<br>
+result = {'volume_properties': {'status': 'creating', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_type_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'user_id': u'ef073287176048bd861dcd9d9c4d9808', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'availability_zone': 'nova', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'reservations': ['6fd57073-e9b6-49b9-bed4-a57b82fced51',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '365c158b-d291-4ac5-9d2d-5b7fb8a63dd6'],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_admin_metadata': [], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'attach_status': 'detached', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'display_description': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_metadata': [], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'metadata': {}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption_key_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'source_volid': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'snapshot_id': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'display_name': u'shinian01', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'project_id': u'6c3c74779a614d3b81dd75518824e25c',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'id': '431b1c64-4e43-4731-b052-ff10aefae850', <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'size': 1}}</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+runner = Runner:cinder.volume.flows.create_volume.OnFailureChangeStatusTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-9cd4bfa9-3170-4713-a6ac-2daf984185b2;1.0<br>
+result = {'volume_spec': None, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'volume_id': '431b1c64-4e43-4731-b052-ff10aefae850'}</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+runner = Runner: cinder.volume.flows.create_volume.VolumeCastTask;</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; volume:create==1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r-6865ee0d-c5dc-4b62-972b-6ad3af46d147; 1.0<br>
+result = None</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-size:14px"><span style="font-family:KaiTi_GB2312; font-size:14px">========================================================================================</span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">可见这里runner指明了要执行的类的__call__方法，即运行先前添加的task任务；<br>
+result是运行task任务后获取的结果信息；<br>
+具体的task的实现过程需解析各个task任务类中的__call__方法，之前的博客中我们已经进行了简单的解析，这里不再进行赘述；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">好了，到这里方法</span><span style="font-family:KaiTi_GB2312; font-size:18px">def run(self, context, *args, **kwargs)中关于flow中task执行的重要语句的实现基本解析完成，在下一篇博客中，我将重点解析在这个方法中，如果卷的建立出现异常，则如何执行相关的逆转回滚操作。</span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="23678149" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>1</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/23628117';">上一篇</span><a href="/gaoxingnengjisuan/article/details/23628117" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">Openstack Cinder中建立volume过程的源码解析（5）----以及taskflow相关解析</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/23710551';">下一篇</span><a href="/gaoxingnengjisuan/article/details/23710551" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">Openstack Cinder中建立volume过程的源码解析（7）----以及taskflow相关解析</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23607813" title="Openstack Cinder中建立volume过程的源码解析（4）----以及taskflow相关解析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（4）----以及taskflow相关解析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23628117" title="Openstack Cinder中建立volume过程的源码解析（5）----以及taskflow相关解析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（5）----以及taskflow相关解析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23710551" title="Openstack Cinder中建立volume过程的源码解析（7）----以及taskflow相关解析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（7）----以及taskflow相关解析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22835959" title="Openstack Cinder中建立volume过程的源码解析（3）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（3）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23794279" title="Openstack Cinder中建立volume过程的源码解析（9）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（9）</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22518045" title="Openstack Cinder中建立volume过程的源码解析（1）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（1）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/23789533" title="Openstack Cinder中建立volume过程的源码解析（8）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（8）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/22834873" title="Openstack Cinder中建立volume过程的源码解析（2）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Openstack Cinder中建立volume过程的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/i_chips/article/details/32326987" title="OpenStack Cinder源码流程简析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Cinder源码流程简析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/21722111" title="OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之一" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Cinder服务启动过程中的资源加载和扩展源码解析之一</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/23678149",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "23678149",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '23678149';
+    var commentscount = 1;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='Openstack Cinder中建立volume过程的源码解析（6）----以及taskflow相关解析';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466757次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

@@ -1,0 +1,1708 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/14216977"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>OpenStack Nova-cell服务的源码解析（1） - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="上篇博客中对nova-cell服务的架构和配置进行了介绍，这篇博客我将对nova-cell服务的源码进行解析。1.nova-cell服务的源码结构图2.nova-cell服务的源码结构解析/nova/cells/driver.pyclass BaseCellsDriver(object):cells通讯驱动基类，这个类主要实现了消息消费者处理的相关方法；&#160;&#160;&#160; def" />
+
+    <meta name="keywords" content="OpenStack,nova,源代码" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=OpenStack+Nova-cell%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%881%ef%bc%89&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/14216977"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/14216977">
+        OpenStack Nova-cell服务的源码解析（1）            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/nova' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">nova</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-11-06 13:05</span>
+            <span class="link_view" title="阅读次数">3003人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('OpenStack+Nova-cell%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%ba%90%e7%a0%81%e8%a7%a3%e6%9e%90%ef%bc%881%ef%bc%89','14216977');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(14216977,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1461395','gaoxingnengjisuan','top','14216977');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-NOVA<em>（35）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1461395"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1461395">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">上篇博客中对nova-cell服务的架构和配置进行了介绍，这篇博客我将对nova-cell服务的源码进行解析。需要说明的是，这里我都是以OpenStack的Grizzly版本为例进行解析，在这个版本中，默认是不启动这个服务的，而且在具体的cell虚拟机建立应用中，调度器还只是以随机的方式来选择建立虚拟机实例的cell，在后续的版本中，具体的调度器算法将会改进。</span></p>
+<p><span style="font-size:24px"><strong><span style="font-family:KaiTi_GB2312">1.nova-cell服务的源码结构图</span></strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="http://img.blog.csdn.net/20131106011652859?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></span></p>
+<p><span style="font-size:24px"><strong><span style="font-family:KaiTi_GB2312">2.nova-cell服务的源码结构解析</span></strong></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/driver.py</span></strong></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class BaseCellsDriver(object):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">cells通讯驱动基类，这个类主要实现了消息消费者处理的相关方法；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def start_consumers(self, msg_runner):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 启动处理消息的消费者服务；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def stop_consumers(self):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 关闭处理消息的消费者服务；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def send_message_to_cell(self, cell_state, message):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 发送消息到一个cell；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/manager.py</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">注：在这个文件中，只有一个类CellsManager，定义和实现了cell管理的API方法；<span style="font-family:KaiTi_GB2312; font-size:18px">在类CellsManager所定义的方法中主要分为两种类型，即针对特定cell的处理方法和针对所有cell的处理方法；</span><br>
+</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class CellsManager(manager.Manager):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类主要定义和实现了用于管理cell的API；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">大多数的方法属于“有针对性”或者“广播”的消息处理方式，分别对应于路由信息到特定的cell和路由信息到多个cell之上；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def post_start_hook(self):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为通过RPC来处理cell间的通讯，启动了两个独立的消费者；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如果本cell有子cell；<br>
+&nbsp;&nbsp;&nbsp; 通知子cell发送它们的capabilities&#20540;和capacities&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 并对子cell的所有父cell的capabilities&#20540;和capacities&#20540;相关信息进行更新操作；<br>
+&nbsp;&nbsp;&nbsp; 如果本cell在cell树的底层（即没有子cell）；<br>
+&nbsp;&nbsp;&nbsp; 发送本cell的capabilities&#20540;和capacities&#20540;到所有父cell，并对所有父cell的相关信息进行更新操作；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def _update_our_parents(self, ctxt):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如果本cell在cell树的底层（即没有子cell），则更新本cell的所有父cell，应用本cell的capabilities&#20540;和capacity&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 发送本cell的capabilities&#20540;到父cell，并对父cell的相关信息进行更新操作；<br>
+&nbsp;&nbsp;&nbsp; 发送本cell的capacities&#20540;到父cell，并对父cell的相关信息进行更新操作；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def _heal_instances(self, ctxt):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为一些实例周期性的发送更新任务到父cell；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def _sync_instance(self, ctxt, instance):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 广播instance_update或instance_destroy操作信息给父cell来执行；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def schedule_run_instance(self, ctxt, host_sched_kwargs):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 选择一个合适的cell来建立新的实例，并转发相应的请求；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def get_cell_info_for_neighbors(self, _ctxt):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回所有相邻cell的信息（本cell的所有父cell和所有子cell）；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def run_compute_api_method(self, ctxt, cell_name, method_info, call):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在特定的cell中调用一个compute API方法；<br>
+&nbsp;&nbsp;&nbsp; 运行变量compute_api指定的类中一个指定的方法；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def instance_update_at_top(self, ctxt, instance):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在top等级的cell上，更新实例；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def instance_destroy_at_top(self, ctxt, instance):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在cell树的顶层删除一个实例；<br>
+&nbsp;&nbsp;&nbsp; 这里实际上执行的是/nova/cell/messaging.py中的类_BroadcastMessageMethods下的方法instance_destroy_at_top；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def instance_delete_everywhere(self, ctxt, instance, delete_type):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在每一个cell中调用compute API的delete()或者soft_delete()方法；<br>
+&nbsp;&nbsp;&nbsp; 这个方法应用于当我们不知道一个实例属于哪个cell，但是还是需要删除或软删除这个实例的情况；<br>
+&nbsp;&nbsp;&nbsp; 所以，我们需要在所有的cell上运行这个方法；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def instance_fault_create_at_top(self, ctxt, instance_fault):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在顶层cell上建立一个实例的断点（？？？）；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def bw_usage_update_at_top(self, ctxt, bw_update_info):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 更新DB中的带宽使用率信息，如果本cell是一个顶层的cell；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def sync_instances(self, ctxt, project_id, updated_since, deleted):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 强制对所有实例实行同步操作；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def service_get_all(self, ctxt, filters):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回在本cell中和所有子cell中的服务；<br>
+&nbsp;&nbsp;&nbsp; 并把每个服务以及相关的计算节点都和cell相关联起来；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def service_get_by_compute_host(self, ctxt, host_name):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在当前的cell中为计算主机返回获取的服务入口，主要执行了以下的步骤：<br>
+&nbsp;&nbsp;&nbsp; 通过host_name获取cell_name的信息；<br>
+&nbsp;&nbsp;&nbsp; 根据compute host信息获取相关服务；<br>
+&nbsp;&nbsp;&nbsp; 把获取的服务和计算节点和cell关联起来；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def proxy_rpc_to_manager(self, ctxt, topic, rpc_message, call, timeout):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的compute topic代理PRC；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def task_log_get_all(self, ctxt, task_name, period_beginning, period_ending, host=None, state=None):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 从所有的cell或者特定的一个cell的数据库中获取任务日志；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def compute_node_get(self, ctxt, compute_id):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在一个特定的cell上，通过ID&#20540;获取计算节点；<br>
+&nbsp;&nbsp;&nbsp; 并把计算节点和这个cell相关联起来；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def compute_node_get_all(self, ctxt, hypervisor_match=None):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回所有cell中的计算节点列表；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def compute_node_stats(self, ctxt):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过各个cell的各自计算操作，实现获取所有cell上的各个资源参数的总和；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def actions_get(self, ctxt, cell_name, instance_uuid):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的实例获取所有的实例操作；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def action_get_by_request_id(self, ctxt, cell_name, instance_uuid, request_id):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过request_id和instance_uuid为给定的实例获取操作信息；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def action_events_get(self, ctxt, cell_name, action_id):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在cell_name指定的cell上，通过action id获取相关事件信息；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def consoleauth_delete_tokens(self, ctxt, instance_uuid):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在API cell中为指定的实例删除consoleauth令牌；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <strong>def validate_console_port(self, ctxt, instance_uuid, console_port, console_type):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 验证子cell中计算节点的控制台端口；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/messaging.py</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">在这个文件中，有如下些类：</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class _BaseMessage(object):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">cell通信模块的基类，主要定义和实现了消息队列和消息响应相关的处理方法；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">下面的三个实现通信模块的类，分别对应三种cell处理的消息类型：<br>
+</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class _TargetedMessage(_BaseMessage):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px">_BaseMessage</span>，实现通信模块的若干方法，针对于消息处理目标是特定的cell的情况；</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class _BroadcastMessage(_BaseMessage):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_BaseMessage</span></span>，<span style="font-family:KaiTi_GB2312; font-size:18px">实现通信模块的若干方法，针对于消息处理目标是所有的cell的情况；</span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _ResponseMessage(_TargetedMessage):</span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_TargetedMessage，实现通信模块的若干方法，针对于执行操作后返回的响应信息的处理；</span></span></span></span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>class _BaseMessageMethods(base.Base):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">实现所有处理cell方法的基类；</span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">下面三个实现处理消息方法的类，<span style="font-family:KaiTi_GB2312; font-size:18px">分别对应三种cell处理的消息类型：</span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _ResponseMessageMethods(_BaseMessageMethods):</span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_BaseMessageMethods</span></span>，实现了针对处理响应信息方法；</span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px">class _TargetedMessageMethods(_BaseMessageMethods):</span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px">_BaseMessageMethods，实现若干处理cell消息的方法，针对于消息处理目标是特定的cell情况；</span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _BroadcastMessageMethods(_BaseMessageMethods):</span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_BaseMessageMethods</span></span>，实现若干处理cell消息的方法，针对于消息处理目标是所有的cell情况；</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><strong>class MessageRunner(object):</strong></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px">这个类实现了若干方法，分别对应<span style="font-family:KaiTi_GB2312; font-size:18px">CellsManager</span>类（管理cell方法API）中的方法，根据不同的消息类型（特定cell、所有cell和响应消息）进行封装，用于从上述的类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_ResponseMessageMethods</span></span>、<span style="font-family:KaiTi_GB2312; font-size:18px">_TargetedMessageMethods和<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">_BroadcastMessageMethods中调用对应的方法，实现对不同的消息类型的处理。</span></span></span></span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">来看类中具体的方法：</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _BaseMessage(object):</span></span></span></span></strong></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; def _append_hop(self):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 加入跳信息到routing_path；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _at_max_hop_count(self,
+ do_raise=True):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 检测本cell是否处于最大的跳数；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _process_locally(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 方法确定了我们应该在本cell中执行处理这个消息的方法；<br>
+&nbsp;&nbsp;&nbsp; 通过类MessageRunner调用适当的方法用来处理消息；<br>
+&nbsp;&nbsp;&nbsp; 捕获响应或者异常，并把捕获的响应或者异常编码成类Response的实例对象，并返回；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _setup_response_queue(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过类MessageRunner中的方法_setup_response_queue，建立一个响应队列；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _cleanup_response_queue(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 调用类MessageRunner中的方法_cleanup_response_queue来删除一个响应队列；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _wait_for_json_responses(self,
+ num_responses=1):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在允许等待的时间内，获取响应列表responses，并返回；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _send_json_responses(self,
+ json_responses, neighbor_only=False, fanout=False):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 执行发送响应列表到目标cell；<br>
+&nbsp;&nbsp;&nbsp; Targeted型的消息只有一个响应，而Broadcast型的消息可能有多个响应；<br>
+&nbsp;&nbsp;&nbsp; 如果本cell是消息的源，则响应将会从self.process()被返回；&nbsp;&nbsp; <br>
+</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp; &nbsp;<strong>def _send_response(self,
+ response, neighbor_only=False):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp; &nbsp; 发送执行消息处理方法的结果的响应对象到源cell；<br>
+&nbsp;&nbsp;&nbsp; 如果本cell就是源cell，则直接获取这个响应对象；&nbsp; <br>
+</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _send_response_from_exception(self,
+ exc_info):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 从sys.exc_info()返回一个异常，编码成Response类型响应，并发送它；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _to_dict(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 转换消息到字典&#26684;式；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def to_json(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 转换消息到JSON&#26684;式，用于发送到相邻的cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def source_is_us(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 判断本cell是否建立了这个消息，即是否是这个消息的源；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def process(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 执行处理消息的方法；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _TargetedMessage(_BaseMessage):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _get_next_hop(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回本cell的下一跳（hop），如果下一跳（hop）就是当前的cell，则返回none；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def process(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 执行处理针对性的消息的方法，并返回执行方法所获取的结果响应到源cell；<br>
+&nbsp;&nbsp;&nbsp; 如果本cell就是源cell，则还要实现在允许等待的时间内，获取远程执行消息处理方法返回的响应列表；<br>
+&nbsp;&nbsp;&nbsp; 根据所处理消息的类型不同，这个响应列表中的元素可以是一个也可以是多个；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _BroadcastMessage(_BaseMessage):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _get_next_hops(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 设置下一层次的跳（hops），并返回跳（hops）的数目；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _send_to_cells(self,
+ target_cells):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 发送信息到多个cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _send_json_responses(self,
+ json_responses):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 发送信息的响应列表；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def process(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 运行广播消息程序；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _ResponseMessage(_TargetedMessage):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def process(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 执行一个响应消息；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _BaseMessageMethods(base.Base):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def task_log_get_all(self,
+ message, task_name, period_beginning, period_ending, host, state):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 从数据库获取任务日志；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _ResponseMessageMethods(_BaseMessageMethods):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def parse_responses(self,
+ message, orig_message, responses):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 添加响应到响应队列；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _TargetedMessageMethods(_BaseMessageMethods):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def schedule_run_instance(self,
+ message, host_sched_kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 父cell通知本cell来调度新的实例用于建立；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def run_compute_api_method(self,
+ message, method_info):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 运行变量compute_api指定的类中一个指定的方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def update_capabilities(self,
+ message, cell_name, capabilities):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 一个子cell通知我们关于它的capabilities&#20540;；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def update_capacities(self,
+ message, cell_name, capacities):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 一个子cell通知我们关于它的capacity&#20540;；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def announce_capabilities(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 一个父cell通知本cell发送我们的capabilities&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 所以执行发送capabilities&#20540;到父cell的操作，并更新父cell的capabilities&#20540;；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def announce_capacities(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 一个父cell通知本cell发送我们的capacity&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 所以执行发送capabilities&#20540;到父cell的操作，并更新父cell的capacity&#20540;；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_by_compute_host(self,
+ message, host_name):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为计算主机返回服务入口；<br>
+&nbsp;&nbsp;&nbsp; 根据compute host信息获取相关服务；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def proxy_rpc_to_manager(self,
+ message, host_name, rpc_message, topic, timeout):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的compute topic代理PRC；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get(self,
+ message, compute_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过ID&#20540;获取相应的计算节点；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def actions_get(self, message,
+ instance_uuid):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的实例获取所有的实例操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_get_by_request_id(self,
+ message, instance_uuid, request_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过request_id和instance_uuid为给定的实例获取操作信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_events_get(self,
+ message, action_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过action_id获取事件信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def validate_console_port(self,
+ message, instance_uuid, console_port, console_type):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 验证子cell中计算节点的控制台端口；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class _BroadcastMessageMethods(_BaseMessageMethods):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _at_the_top(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 确定是否是API级别的cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_update_at_top(self,
+ message, instance, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如果是top级别的cell，则更新数据库中的实例；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_destroy_at_top(self,
+ message, instance, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如果本cell是一个顶层的cell，则从DB中删除指定的实例；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_delete_everywhere(self,
+ message, instance, delete_type, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在每一个cell中调用compute API的delete()或者soft_delete()方法；<br>
+&nbsp;&nbsp;&nbsp; 这个方法应用于当我们不知道一个实例属于哪个cell，但是还是需要删除或软删除这个实例的情况；<br>
+&nbsp;&nbsp;&nbsp; 所以，我们需要在所有的cell上运行这个方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_fault_create_at_top(self,
+ message, instance_fault, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如果我们是顶层cell，则执行从DB删除一个实例的操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def bw_usage_update_at_top(self,
+ message, bw_update_info, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 更新DB中的带宽使用率信息，如果本cell是一个顶层的cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _sync_instance(self,
+ ctxt, instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 实例数据的同步；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def sync_instances(self,
+ message, project_id, updated_since, deleted, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 实例数据的同步实现；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_all(self,
+ message, filters):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取message和filters所限制的所有的服务；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get_all(self,
+ message, hypervisor_match):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回本cell中的所有计算节点；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_stats(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 从本cell上所有的计算节点获取各个资源参数信息，并求和，即获取本cell上所有计算节点的资源参数分别的总和；<br>
+</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def consoleauth_delete_tokens(self,
+ message, instance_uuid):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在API cell中为指定的实例删除consoleauth令牌；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class MessageRunner(object):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _process_message_locally(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 消息处理进程会调用这个方法，当确定了应该在本cell上处理的时候；（也就是确定了本cell是目标cell）<br>
+&nbsp;&nbsp;&nbsp; 寻找到基于消息类型的合适方法，并调用它；<br>
+&nbsp;&nbsp;&nbsp; 如果需要的话，调用者捕获异常，并返回结果到cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _put_response(self,
+ response_uuid, response):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 添加响应到响应队列；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _setup_response_queue(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 设置一个eventlet队列，用于存储获取的响应；<br>
+&nbsp;&nbsp;&nbsp; 响应是被目标cell以_ResponseMessage的形式发送回源cell的；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _cleanup_response_queue(self,
+ message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 当正在接受响应或者已经时间超时的时候，停止跟踪响应队列；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _create_response_message(self,
+ ctxt, direction, target_cell, response_uuid, response_kwargs, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 建立一个ResponseMessage类的对象；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def message_from_json(self,
+ json_message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 转换一个JSON&#26684;式的消息到一个适当的消息实例；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def ask_children_for_capabilities(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通知子cell发送它们的capabilities&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 并对父cell的capabilities&#20540;相关信息进行更新操作；<br>
+&nbsp;&nbsp;&nbsp; 这个方法将会在nova-cell服务启动时调用；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def ask_children_for_capacities(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通知子cell发送它们的capacities&#20540;；<br>
+&nbsp;&nbsp;&nbsp; 并对父cell的capacities&#20540;相关信息进行更新操作；<br>
+&nbsp;&nbsp;&nbsp; 这个方法将会在nova-cell服务启动时调用；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def tell_parents_our_capabilities(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 发送本cell的capabilities&#20540;到父cell，并对父cell的相关信息进行更新操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def tell_parents_our_capacities(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 发送本cell的capacities&#20540;到父cell，并对父cell的相关信息进行更新操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def schedule_run_instance(self,
+ ctxt, target_cell, host_sched_kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 这个方法被调度器所调用，通知子cell来调度一个新的实例用于建立；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def run_compute_api_method(self,
+ ctxt, cell_name, method_info, call):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在特定的cell中调用一个compute API方法；<br>
+&nbsp;&nbsp;&nbsp; 运行变量compute_api指定的类中一个指定的方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_update_at_top(self,
+ ctxt, instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在top等级的cell上，更新实例；<br>
+&nbsp;&nbsp;&nbsp; 这里实际上执行的是/nova/cell/messaging.py中的类_BroadcastMessageMethods下的方法instance_update_at_top；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_destroy_at_top(self,
+ ctxt, instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在cell树的顶层删除一个实例，这里实际上执行的是/nova/cell/messaging.py中的类_BroadcastMessageMethods下的方法instance_destroy_at_top；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_delete_everywhere(self,
+ ctxt, instance, delete_type):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在每一个cell中调用compute API的delete()或者soft_delete()方法；<br>
+&nbsp;&nbsp;&nbsp; 这个方法应用于当我们不知道一个实例属于哪个cell，但是还是需要删除或软删除这个实例的情况；<br>
+&nbsp;&nbsp;&nbsp; 所以，我们需要在所有的cell上运行这个方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_fault_create_at_top(self,
+ ctxt, instance_fault):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在顶层cell上建立一个实例的断点（？？？）；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def bw_usage_update_at_top(self,
+ ctxt, bw_update_info):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 更新DB中的带宽使用率信息，如果本cell是一个顶层的cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def sync_instances(self,
+ ctxt, project_id, updated_since, deleted):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 强制对所有实例实行同步操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_all(self,
+ ctxt, filters=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取所有的服务；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_by_compute_host(self,
+ ctxt, cell_name, host_name):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在当前的cell中为计算主机返回获取的服务入口，主要执行了以下的步骤：<br>
+&nbsp;&nbsp;&nbsp; 通过host_name获取cell_name的信息；<br>
+&nbsp;&nbsp;&nbsp; 根据compute host信息获取相关服务；<br>
+&nbsp;&nbsp;&nbsp; 把获取的服务和计算节点和cell关联起来；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def proxy_rpc_to_manager(self,
+ ctxt, cell_name, host_name, topic, rpc_message, call, timeout):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的compute topic代理PRC，并获取方法的返回响应；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def task_log_get_all(self,
+ ctxt, cell_name, task_name, period_beginning, period_ending, host=None, state=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 从所有的cell或者特定的一个cell的数据库中获取任务日志；<br>
+&nbsp;&nbsp;&nbsp; 返回响应对象的列表；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get_all(self,
+ ctxt, hypervisor_match=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回本cell的所有子cell的计算节点列表；<br>
+&nbsp;&nbsp;&nbsp; 这里是采用广播的方式，获取每一个cell下的计算节点；<br>
+&nbsp;&nbsp;&nbsp; 而且这里获取的方向是'down'，所以实现的就是获取所有子cell的相关计算节点；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_stats(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 采用广播的方式实现每一个cell计算自己的各个资源参数的总和；<br>
+&nbsp;&nbsp;&nbsp; 而且这里获取的方向是'down'，所以实现的就是获取所有子cell的各个资源参数的总和；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get(self,
+ ctxt, cell_name, compute_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在一个特定的cell上，通过ID&#20540;获取一个计算节点；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; def actions_get(self, ctxt, cell_name,
+ instance_uuid):</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为给定的实例获取所有的实例操作；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_get_by_request_id(self,
+ ctxt, cell_name, instance_uuid, request_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 通过request_id和instance_uuid为给定的实例获取操作信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_events_get(self,
+ ctxt, cell_name, action_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在cell_name指定的cell上，通过action id获取相关事件信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def consoleauth_delete_tokens(self,
+ ctxt, instance_uuid):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在API cell中为指定的实例删除consoleauth令牌；<br>
+&nbsp;&nbsp;&nbsp; 方法在cell树中的执行方向是'up'；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def validate_console_port(self,
+ ctxt, cell_name, instance_uuid, console_port, console_type):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 验证子cell中计算节点的控制台端口；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def get_message_types():</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取处理消息的类型，为指定类型消息、广播类型消息或者响应类型消息；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class Response(object):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">处理cell返回的响应方法类；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def to_json(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def from_json(cls, json_message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def value_or_raise(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/rpc_driver.py</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">cell RPC通信驱动，通过RPC实现cell的通信；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class CellsRPCDriver(driver.BaseCellsDriver):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">BaseCellsDriver，是通过RPC实现cell间通信的驱动类；</span></span></span></span></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">主要用于处理通信中的消费者相关；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _start_consumer(self,
+ dispatcher, topic):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 启动两个RPC消费者，topic类型和fanout类型；<br>
+&nbsp;&nbsp;&nbsp; 建立绿色线程，实现处理所有的队列/消费者信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def start_consumers(self,
+ msg_runner):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为通过RPC来处理cell间的通讯，启动两个RPC消费者，topic类型消费者和fanout类型消费者；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def stop_consumers(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 关闭RPC消费者；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def send_message_to_cell(self,
+ cell_state, message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 调用类IntercellRPCAPI下的方法send_message_to_cell，来实现发送消息到cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class InterCellRPCAPI(rpc_proxy.RpcProxy):</span></span></span></span></p>
+<p><font face="KaiTi_GB2312" size="4"><font face="KaiTi_GB2312" size="4"><font face="KaiTi_GB2312" size="4"><font face="KaiTi_GB2312" size="4">这个类继承自类<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">RpcProxy，主要实现cell间通过<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">RPC</span></span></span></span></span></span></span></span>实现通信的客户端方法；</span></span></span></span></font></font></font></font></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _get_server_params_for_cell(next_hop):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 为rpc的调用获取服务的相关参数；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def send_message_to_cell(self,
+ cell_state, message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 实现发送消息到cell；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class InterCellRPCDispatcher(object):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个类主要实现了RPC的分发程序类，用来处理从其它cell接收的信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def process_message(self,
+ _ctxt, message):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 实现从其它的cell接收消息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/rpcapi.py</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">文件中定义了一个类CellsAPI，即Cell RPC API客户端类，用来通过RPC实现对远程cell处理方法的调用；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class CellsAPI(rpc_proxy.RpcProxy):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">即Cell RPC API客户端类；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def cast_compute_api_method(self,
+ ctxt, cell_name, method, *args, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在一个特定的cell中，以cast的方式发送消息，实现远程节点执行指定的compute
+ API方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def call_compute_api_method(self,
+ ctxt, cell_name, method, *args, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在一个特定的cell中，以call的方式发送消息，实现远程节点执行指定的compute
+ API方法；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def schedule_run_instance(self,
+ ctxt, **kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 调度一个新的实例用于建立；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def nstance_update_at_top(self,
+ ctxt, instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在API的级别更新实例信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_destroy_at_top(self,
+ ctxt, instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在API这个级别销毁要建立的实例；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_delete_everywhere(self,
+ ctxt, instance, delete_type):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在每个cell上都运行删除一个指定实例的操作（因为不知道实例位于哪个cell上）；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_fault_create_at_top(self,
+ ctxt, instance_fault):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在cell树的顶层建立一个实例故障；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def bw_usage_update_at_top(self,
+ ctxt, uuid, mac, start_period, bw_in, bw_out, last_ctr_in, last_ctr_out, last_refreshed=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 广播信息实现节点带宽使用率的更新；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def instance_info_cache_update_at_top(self,
+ ctxt, instance_info_cache):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 广播通知实例缓存信息的改变；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def get_cell_info_for_neighbors(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取本cell相邻的所有cell的信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def sync_instances(self,
+ ctxt, project_id=None, updated_since=None, deleted=False):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 要求所有cell实现实例数据的同步；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_all(self,
+ ctxt, filters=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def service_get_by_compute_host(self,
+ ctxt, host_name):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def proxy_rpc_to_manager(self,
+ ctxt, rpc_message, topic, call=False, timeout=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def task_log_get_all(self,
+ ctxt, task_name, period_beginning, period_ending, host=None, state=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get(self,
+ ctxt, compute_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在指定的cell中获取计算节点；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_get_all(self,
+ ctxt, hypervisor_match=None):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取所有cell中的由hypervisor过滤的计算节点列表；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def compute_node_stats(self,
+ ctxt):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 返回所有cell中计算节点的统计信息；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def actions_get(self, ctxt,
+ instance):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_get_by_request_id(self,
+ ctxt, instance, request_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def action_events_get(self,
+ ctxt, instance, action_id):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def consoleauth_delete_tokens(self,
+ ctxt, instance_uuid):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def validate_console_port(self,
+ ctxt, instance_uuid, console_port, console_type):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<br>
+</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/scheduler.py</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个文件中主要实现了类CellsScheduler，即cell调度器实现类；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">主要针对的就是在cell中建立虚拟机实例方面的应用；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">class CellsScheduler(base.Base):</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个类继承自<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">Base</span></span></span></span>类，即cell调度器实现类；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _create_instances_here(self,
+ ctxt, request_spec):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在本cell上建立虚拟机实例；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _create_action_here(self,
+ ctxt, instance_uuids):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取instance_uuids中各个实例的启动信息；<br>
+&nbsp;&nbsp;&nbsp; 并把这些信息加入到要启动的实例属性中；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _get_possible_cells(self):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 获取所有合适的cell；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def _run_instance(self,
+ message, host_sched_kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 尝试调度实例；<br>
+&nbsp;&nbsp;&nbsp; 如果没有合适的cell使用，则引发异常；</span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp;<strong>def run_instance(self,
+ message, host_sched_kwargs):</strong></span></span></span></span></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 选择一个cell，在它上面我们要建立一个新的实例；</span></span></span></span></p>
+<p><br>
+</p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/state.py</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个文件中主要定义了两个类CellState和CellStateManager，主要实现的时对cell一些状态信息进行处理的操作，方法都比较简单，这里就不进行一一解析了；</span></span></span></span></p>
+<p><strong><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">/nova/cells/utils.py</span></span></span></span></strong></p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">这个文件中主要定义了一些cell实用的操作方法，方法都比较简单，这里就不进行一一解析了；</span></span></span></span></p>
+<p><br>
+</p>
+<p><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">到目前为止，nova-cell服务的源码架构进行了简单的分析，下一篇博客中我将以几个例子对<span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px">nova-cell服务的</span></span></span></span>源码架构和nova-cell服务的具体实现流程进行解析。<br>
+</span></span></span></span></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.11-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="14216977" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/13631401';">上一篇</span><a href="/gaoxingnengjisuan/article/details/13631401" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack Nova-cell服务的介绍和配置</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/14484033';">下一篇</span><a href="/gaoxingnengjisuan/article/details/14484033" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">OpenStack Nova-cell服务的源码解析（2）</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/14484033" title="OpenStack Nova-cell服务的源码解析（2）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-cell服务的源码解析（2）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/ddl007/article/details/8563794" title="OpenStack源码阅读1之nova-api服务启动" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack源码阅读1之nova-api服务启动</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37338505" title="OpenStack Nova-scheduler组件的源码解析（1）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-scheduler组件的源码解析（1）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/15615743" title="OpenStack Nova-scheduler组件的源码解析（1）" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova-scheduler组件的源码解析（1）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gtianqgg/article/details/50524237" title="OpenStack Nova hacking和读书笔记" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Nova hacking和读书笔记</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lilicheung/article/details/37339217" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tantexian/article/details/38062481" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dingdingwolf/article/details/44806007" title="from nova to ironic" strategy="recommend_sim_0" target="_blank" style="width: 290px;">from nova to ironic</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/dingdingwolf/article/details/44903863" title="from nova to ironic(3)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">from nova to ironic(3)</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/14216977",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "14216977",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '14216977';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='OpenStack Nova-cell服务的源码解析（1）';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466778次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

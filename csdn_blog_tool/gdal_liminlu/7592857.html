@@ -1,0 +1,1346 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/liminlu0314/article/details/7592857"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>GDAL源码剖析（九）之GDAL体系架构 - GDAL专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="在GDAL库中包含栅格数据的读写，矢量数据的读写，以及栅格和矢量数据的相关算法。下面主要对GDAL中栅格数据和矢量数据的体系架构做一个简单的说明。本人英文很烂，有些部分写出来的东西自己都看不懂，如果不懂，可以看英文。一、GDAL体系架构&#160; &#160; &#160; 参考GDAL官方文档：http://www.gdal.org/gdal_datamodel.html。&#160; &#160; &#160; GDAL使用抽象数" />
+
+    <meta name="keywords" content="structure,image,dataset" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/liminlu0314/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/nobg.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/liminlu0314">GDAL专栏</a></h2>
+            <h3>Focusing on Remote Sensing Algorithms and Geospatial Applications. 承接各种遥感图像处理算法程序的编写.</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/liminlu0314?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/liminlu0314?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/liminlu0314/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "liminlu0314";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/liminlu0314";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=GDAL%e6%ba%90%e7%a0%81%e5%89%96%e6%9e%90%ef%bc%88%e4%b9%9d%ef%bc%89%e4%b9%8bGDAL%e4%bd%93%e7%b3%bb%e6%9e%b6%e6%9e%84&u=http://blog.csdn.net/liminlu0314/article/details/7592857"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/liminlu0314/article/details/7592857">
+        GDAL源码剖析（九）之GDAL体系架构            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/structure' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">structure</a><a href='http://www.csdn.net/tag/image' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">image</a><a href='http://www.csdn.net/tag/dataset' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">dataset</a><a href='http://www.csdn.net/tag/domain' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">domain</a><a href='http://www.csdn.net/tag/compression' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">compression</a><a href='http://www.csdn.net/tag/tiff' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">tiff</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2012-05-22 22:57</span>
+            <span class="link_view" title="阅读次数">4683人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(10)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('GDAL%e6%ba%90%e7%a0%81%e5%89%96%e6%9e%90%ef%bc%88%e4%b9%9d%ef%bc%89%e4%b9%8bGDAL%e4%bd%93%e7%b3%bb%e6%9e%b6%e6%9e%84','7592857');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(7592857,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('777646','liminlu0314','top','7592857');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">GDAL<em>（119）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/liminlu0314/article/category/777646"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_777646">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; &nbsp;在GDAL库中包含栅&#26684;数据的读写，矢量数据的读写，以及栅&#26684;和矢量数据的相关算法。下面主要对GDAL中栅&#26684;数据和矢量数据的体系架构做一个简单的说明。本人英文很烂，有些部分写出来的东西自己都看不懂，如果不懂，可以看英文。</span></p>
+<p></p>
+<h2><span style="color:#000099">一、GDAL体系架构</span></h2>
+<p></p>
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; 参考GDAL官方文档：<a href="http://www.gdal.org/gdal_datamodel.html">http://www.gdal.org/gdal_datamodel.html</a>。</span></p>
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; GDAL使用抽象数据模型(abstract data model)来解析它所支持的数据&#26684;式，抽象数据模型包括数据集(dataset)，坐标系统（Coordinate System），仿射地理坐标转换(Affine GeoTransform)， 大地控制点(GCPs)， 元数据(Metadata)，子数据集域(Subdatasets Domain)，图像结构域(Image_Structure Domain)，RPC域（RPC
+ Domain），XML域(XML:Domains)，栅&#26684;波段(Raster Band)，颜色表(Color Table)和快视图（Overviews）。</span></p>
+<h3><span style="color:#000099">1、数据集（Dataset）</span></h3>
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; 数据集是由栅&#26684;波段和一些相关的信息共同组成的（具体参考<a href="http://liml/gdal/gdal-web_1.9.0/classGDALDataset.html">GDALDataset</a>类），在一个指定的数据集中所有的波段都具有相同的大小（图像行数和列数）；数据集同时负责对所有的波段定义地理坐标和投影等信息；数据集中还有一些元数据信息，这些信息是由字符串组成的一系列（名称：&#20540;）的字符串列表。</span></p>
+<p><span style="font-size:16px; color:#000099">&nbsp; &nbsp; &nbsp; GDAL数据集是基于OpenGIS网&#26684;数据的说明来实现的。</span></p>
+<h3><span style="color:#000099">2、坐标系统（CoordinateSystem）</span></h3>
+<p><span style="font-size:16px; color:#000099">数据集中的坐标系统是基于OpenGIS的WKT（WellKnown Text）字符串&#26684;式的。里面包含下面内容：</span></p>
+<ul type="disc">
+<li><span style="font-size:16px; color:#000099">坐标系统名称</span> </li><li><span style="font-size:16px; color:#000099">地理坐标系统名称</span> </li><li><span style="font-size:16px; color:#000099">大地水准面</span> </li><li><span style="font-size:16px; color:#000099">托球体名称，长半轴和扁率</span> </li><li><span style="font-size:16px; color:#000099">中央经线名称和与本初子午线的偏移量</span> </li><li><span style="font-size:16px; color:#000099">投影方式（如：横轴墨卡托）</span> </li><li><span style="font-size:16px; color:#000099">投影参数列表（如：中央经线）</span> </li><li><span style="font-size:16px; color:#000099">单位名称和与米或者弧度之间的转换系数</span> </li><li><span style="font-size:16px; color:#000099">名称和坐标轴顺序</span> </li><li><span style="font-size:16px; color:#000099">以上项对应的EPSG代码</span></li></ul>
+<p style="background:white"><span style="font-size:16px; color:#000099">更多关于OpenGIS的WKT坐标定义和相关信息，可以参考文档<a href="http://liml/gdal/gdal-web_1.9.0/ogr/osr_tutorial.html">osr_tutorial</a>。获取坐标系统可以使用函数&nbsp;<a href="http://liml/gdal/gdal-web_1.9.0/classGDALDataset.html#a42537e1062ce254d124b29ff3ebe857" title="Fetch the projection definition string for this dataset."><strong>GDALDataset::GetProjectionRef()</strong></a>，如果该函数的返回&#20540;为&quot;&quot;，说明该图像没有地理坐标系统。</span></p>
+<h4><span style="color:#000099">1、仿射地理坐标转换（Affine GeoTransform）</span></h4>
+<p><span style="font-size:16px; color:#000099">GDAL数据集有两种方式来表示栅&#26684;行列号坐标和地理坐标之间的关系，第一种，也是最常用的，就是使用仿射变换来表示（另外一种是GCP点）。</span></p>
+<p><span style="font-size:16px; color:#000099">仿射变换包含六个参数，可以使用函数&nbsp;<a href="http://liml/gdal/gdal-web_1.9.0/classGDALDataset.html#f9593cc241e7d140f5f3c4798a43a668" title="Fetch the affine transformation coefficients.">GDALDataset::GetGeoTransform()</a>获取，图像行列号和地理空间之间的变换关系如下：</span></p>
+<pre style="background:white"><span style="font-size:16px; color:#000099">&nbsp;&nbsp;&nbsp; Xgeo = GT(0) &#43; Xpixel*GT(1) &#43; Yline*GT(2)</span></pre>
+<pre style="background:white"><span style="font-size:16px; color:#000099">&nbsp;&nbsp;&nbsp; Ygeo = GT(3) &#43; Xpixel*GT(4) &#43; Yline*GT(5)</span></pre>
+<p><span style="font-size:16px; color:#000099">在北方向上的图像中，参数GT(2)和GT(4)的&#20540;是0，GT(1)表示象元宽度，GT(5)表示象元高度。点 (GT(0),GT(3))表示图像左上角的横纵坐标&#20540;。</span></p>
+<p><span style="font-size:16px; color:#000099">&#20540;得注意的是：行列号坐标系统中，图像的（0.0，0.0）坐标在图像的左上角，坐标（象元宽个数,象元高个数）表示图像的右下角坐标。图像的左上角象元的中心点坐标是（0.5,0.5）。</span></p>
+<h4><span style="color:#000099">2、大地控制点（GCPs）</span></h4>
+<p><span style="font-size:16px; color:#000099">数据集中可能会包括一系列的控制点，用来确定图像的地理参考坐标。所有的控制点都是在同一个坐标系统下的（可以使用函数<a href="http://liml/gdal/gdal-web_1.9.0/classGDALDataset.html#35ea63c2f9ea12afd190ca2446d02ddb" title="Get output projection for GCPs.">GDALDataset::GetGCPProjection()</a>来获取该坐标系），每一个GCP（使用<a href="http://liml/gdal/gdal-web_1.9.0/structGDAL__GCP.html" title="Ground Control Point.">GDAL_GCP</a>类来表示）包括下面的内容：</span></p>
+<pre style="background:white"><span style="color:#000099"></span><pre name="code" class="cpp">typedef struct
+{
+    char    *pszId; 
+    char    *pszInfo;
+    double  dfGCPPixel;
+    double  dfGCPLine;
+    double  dfGCPX;
+    double  dfGCPY;
+    double  dfGCPZ;
+} GDAL_GCP;</pre><br></pre>
+<p><span style="font-size:16px; color:#000099">pszId字符串表示一个唯一的字符串，用来藐视在当前数据集中的GCP点中的具体的GCP点（通常情况下，可能是由数字构成，但不是所有的情况下）。pszInfo通常是一个空字符串，但是可以用来存储用户自定义用来描述GCP的文本信息。很可能包含GCP的一些状态信息，如获取时间等。</span></p>
+<p><span style="font-size:16px; color:#000099">坐标（Pixel,Line）表示GCP在图像上的位置，坐标（X,Y,Z）表示在地理参考坐标系中的位置，通常Z&#20540;是0。</span></p>
+<p><span style="font-size:16px; color:#000099">GDAL数据模型中不会都包含GCP点构成的转换方程，这个工作常常在应用程序中处理。通常使用1次到5次多项式进行转换。</span></p>
+<p><span style="font-size:16px; color:#000099">通常数据集包括一个仿射地理坐标变换，GCP点可能会有，有时候这两个都没有。</span></p>
+<h3><span style="color:#000099">3、元数据（Metadata）</span></h3>
+<p><span style="font-size:16px; color:#000099">GDAL元数据是辅助&#26684;式和应用程序指定的数据使用一个名称/&#20540;的点对列表。名称需要能够很好的表示其作用（不含有空&#26684;或者其他特殊字符）。&#20540;可以有任意长度，可以包括任何东西除了空&#20540;（ASCII的0&#20540;）。</span></p>
+<p><span style="font-size:16px; color:#000099">元数据在系统中不能处理太大的数据，如果元数据超过100kb就会导致性能下降。</span></p>
+<p><span style="font-size:16px; color:#000099">一些常用的的&#26684;式的元数据都可以支持，比如在TIFF驱动返回一些了标签信息作为元数据，比如日期/时间的形式如下：</span></p>
+<p><span style="font-size:16px; color:#000099">TIFFTAG_DATETIME=1999:05:11 11:29:56</span></p>
+<p><span style="font-size:16px; color:#000099">元数据可以按照名称组来拆分为不同的域，默认域是没有名称的，如（NULL或者&quot;&quot;）。一些特殊的域用于特殊的目的。</span></p>
+<p><span style="font-size:16px; color:#000099">下面的元数据项目定义在默认的域中：</span></p>
+<ul type="disc">
+<li><span style="font-size:16px; color:#000099">AREA_OR_POINT: 可以是“Area”或者“Point”，默认为Area。表明一个像素&#20540;表示中心像元的像素&#20540;或者像元中心点的采样&#20540;。但这并不影响整个区域的地理参考信息。</span>
+</li><li><span style="font-size:16px; color:#000099">NODATA_VALUES:NODATA&#20540;。这个&#20540;是使用空&#26684;隔开的一系列的像素&#20540;，个数和波段数相同。使用这种方式是为了使所有波段都有一个NODATA&#20540;相匹配。这个元数据没有广泛的用于数据驱动，算法或者工具集中。</span>
+</li><li><span style="font-size:16px; color:#000099">MATRIX_REPRESENTATION:这个&#20540;用来表示极化SAR数据集，包含矩阵表示的数据。矩阵可以用下面的&#20540;来进行表示：</span>
+<ul type="circle">
+<li><span style="font-size:16px; color:#000099">SCATTERING 散射</span> </li><li><span style="font-size:16px; color:#000099">SYMMETRIZED_SCATTERING 对称散射</span>
+</li><li><span style="font-size:16px; color:#000099">COVARIANCE 协方差</span> </li><li><span style="font-size:16px; color:#000099">SYMMETRIZED_COVARIANCE 对称协方差</span>
+</li><li><span style="font-size:16px; color:#000099">COHERENCY 相干</span> </li><li><span style="font-size:16px; color:#000099">SYMMETRIZED_COHERENCY 对称相干</span>
+</li><li><span style="font-size:16px; color:#000099">KENNAUGH</span> </li><li><span style="font-size:16px; color:#000099">SYMMETRIZED_KENNAUGH</span> </li></ul>
+</li><li><span style="font-size:16px; color:#000099">POLARMETRIC_INTERP:这个元数据项用来定义多波段极化SAR数据的栅&#26684;波段。指定的矩阵表示这个波段的数据。数据集就是一个散射矩阵，比如，这个元数据可接受的&#20540;有，HH、HV、VH、VV四个。当数据集是一个协方差矩阵时，这个元数据将分别是Covariance_11、Covariance_22、Covariance_33、Covariance_12、Covariance_13、Covariance_23中的一个(因为这个矩阵本身就是一个Hermitian矩阵，即所有的数据都用来表示这个矩阵)。</span></li></ul>
+<h3><span style="color:#000099">4、子数据集域（Subdatasets Domain）</span></h3>
+<p><span style="font-size:16px; color:#000099">子数据集域中含有一个子数据集的列表。通常用来存储在一个文件的多个文件（如HDF和NITF&#26684;式），例如，一个NITF&#26684;式的文件中获取子数据集的信息如下：</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_1_NAME=NITF_IM:0:multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_1_DESC=Image 1 of multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_2_NAME=NITF_IM:1:multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_2_DESC=Image 2 of multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_3_NAME=NITF_IM:2:multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_3_DESC=Image 3 of multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_4_NAME=NITF_IM:3:multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_4_DESC=Image 4 of multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_5_NAME=NITF_IM:4:multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">SUBDATASET_5_DESC=Image 5 of multi_1b.ntf</span></p>
+<p><span style="font-size:16px; color:#000099">含有_NAME的字符串，可以使用GDALOpen()函数来进行访问子文件。含有_DESC字符串是用来方便的展示给用户选择哪个文件。</span></p>
+<h3><span style="color:#000099">5、图像结构域（Image_Structure Domain）</span></h3>
+<p><span style="font-size:16px; color:#000099">在默认域的元数据用来描述图像的相关信息，这些元数据并没有以特殊的方式保存在磁盘中。意思就是说，当这些元数据信息被复制到一个新的图像中的时候，会以合适的方式存在新的图像中。此外还有一些信息是和图像的&#26684;式紧密关联的。为了防止这些信息在写入新图像的时候被复制，将这些信息存储在一个叫IMAGE_STRUCTURE的特殊域中，通常这里存储的东西不会写入到新的图像中去。</span></p>
+<p><span style="font-size:16px; color:#000099">目标，在IMAGE_STRUCTURE域中定义的项目主要有下面几个。</span></p>
+<ul type="disc">
+<li><span style="font-size:16px; color:#000099">COMPRESSION:压缩方式用来指定数据集或者波段的压缩方式，这个是没有固定的压缩类型名称，但是一个指定的&#26684;式，如果指定压缩方式，那么在创建的时候会使用这种压缩方式进行压缩。</span>
+</li><li><span style="font-size:16px; color:#000099">NBITS:当前波段或者当前数据集的波段中真实的数据存储bit数。通常只有非标准的数据类型才会使用该&#20540;，比如TIFF图像中的1bit数据，在GDAL会使用GDT_Byte来表示。</span>
+</li><li><span style="font-size:16px; color:#000099">INTERLEAVE:这个只能用在数据集中，用来表示一个像元，一行和一个波段之间的间隔，可以用来作为读取数据的一个提示。</span>
+</li><li><span style="font-size:16px; color:#000099">PIXELTYPE:这个&#20540;会出现在一个GDT_Byte类型的波段（或者相应的数据集）中，并且会使用SIGNEDBYTE&#20540;来表示无符号byte&#20540;介于128和255之间&#20540;应该转换为-128到-1之间。</span></li></ul>
+<h3><span style="color:#000099">6、RPC域（RPCDomain） </span></h3>
+<p><span style="font-size:16px; color:#000099">RPC元数据域存储的是有理函数模型的系数，该模型表示从图像行列号与空间参考位置间的变换关系，该模型具体定义如下：</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR_BIAS: 偏移误差，图像上所有的点在水平轴上的偏移的中误差，-1.0表示未知。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR_RAND: 随机误差，图像上所有的点在水平轴上的随机中误差，-1.0表示未知。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LINE_OFF: 行偏移量</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMP_OFF: 列偏移量</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT_OFF: 纬度偏移量</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG_OFF: 经度偏移量</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEIGHT_OFF: 高程偏移量</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LINE_SCALE: 行缩放比例</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMP_SCALE: 列缩放比例</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAT_SCALE: 纬度缩放比例</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LONG_SCALE: 经度缩放比例</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEIGHT_SCALE: 高程缩放比例</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LINE_NUM_COEFF (1-20): 行分子系数，一共20个（使用空&#26684;隔开）</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LINE_DEN_COEFF (1-20): 行分母系数，一共20个（使用空&#26684;隔开）</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMP_NUM_COEFF (1-20): 列分子系数，一共20个（使用空&#26684;隔开）</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMP_DEN_COEFF (1-20): 列分母系数，一共20个（使用空&#26684;隔开）</span></p>
+<p><span style="font-size:16px; color:#000099">这些内容都是来自GeoTIFF的RPC文档(<a href="http://geotiff.maptools.org/rpc_prop.html">http://geotiff.maptools.org/rpc_prop.html</a>)。</span></p>
+<h3><span style="color:#000099">7、XML域（XML:Domains） </span></h3>
+<p><span style="font-size:16px; color:#000099">任何前缀是“xml:”的一个字符串，但不是名称/&#20540;这种类型的，这是一个简单的XML&#26684;式的长字符串。</span></p>
+<h3><span style="color:#000099">8、栅&#26684;波段（Raster Band） </span></h3>
+<p><span style="font-size:16px; color:#000099">一个栅&#26684;波段在GDAL中使用GDALRasterBand类来进行表示。他表示一个栅&#26684;波段、通道或者图层。波段不能完全用来表示整个图像，比如一个24位的RGB图像中就含有三个波段，分别是红波段，绿波段和蓝波段。</span></p>
+<p><span style="font-size:16px; color:#000099">栅&#26684;波段含有下面属性：</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图像的宽和高，这个和数据集里面的定义一样，如果这个波段是全分辨率波段的话。（这里有个说明，GDALRasterBand还可以表示金字塔的波段，如果是金字塔的波段的话，里面的宽高就和图像的宽高不一样）。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据类型(GDALDataType)。应该是Byte、UInt16、Int16、UInt32、Int32、Float32、Float64以及复数类型CInt16、CInt32、CFloat32和CFloat64中的一个。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;块大小。通过块是读取数据最高效的方式，对于分块数据，就是一个分块大小，对于大多数图像来说，一块就是一行。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名称/&#20540;的元数据对，&#26684;式和数据集中的一员，但是包含的信息可能是波段特有的。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一个可选的波段描述字符串。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一个可选的用来描述NODATA&#20540;的像元&#20540;。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一个可选的NODATA&#20540;表示的掩码波段或者在某些时候作为透明通道。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可选的类别名称列表（用于分类图）</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可选的最大&#20540;和最小&#20540;。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可选的偏移量和缩放比例，用来对图像的像素&#20540;进行变换，比如变换高度到米等。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图像单位名称，可选。比如可以用来表示高程数据的海拔。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;波段的颜色信息，是下面&#20540;中的某一个：</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_Undefined:默认&#20540;，未知</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_GrayIndex: 灰度图像</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_PaletteIndex:颜色表图像</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_RedBand: RGBA图像的R部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_GreenBand: RGBA图像的G部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_BlueBand: RGBA图像的B部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_AlphaBand: RGBA图像的Alpha部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_HueBand: HLS图像的色调部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_SaturationBand: HLS图像的饱和度部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_LightnessBand:HLS图像的亮度部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_CyanBand: CMYK图像的青色部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_MagentaBand: CMYK图像的品红部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_YellowBand: CMYK图像的黄色部分</span></p>
+<p><span style="font-size:16px; color:#000099">o&nbsp;&nbsp; GCI_BlackBand: CMYK图像的黑色部。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;颜色表，下面有更详细的说明。</span></p>
+<p><span style="font-size:16px; color:#000099">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果金字塔可用，含有一些关于金字塔的信息。</span></p>
+<h3><span style="color:#000099">9、颜色表（Color Table）</span></h3>
+<p><span style="font-size:16px; color:#000099">颜色表的定义如下，使用C语言的风&#26684;定义：</span></p>
+<p><span style="color:#000099"></span><pre name="code" class="cpp">typedef struct
+{
+    /- gray, red, cyan or hue-/
+    short      c1;
+    /- green, magenta, orlightness -/   
+    short      c2;
+    /- blue, yellow, orsaturation -/
+    short      c3;
+    /- alpha or blackband -/
+    short      c4;     
+} GDALColorEntry;</pre></p>
+<p><span style="font-size:16px; color:#000099">颜色表通常是颜色调色板的一个&#20540;，对于c1/c2/c3/c4 四个&#20540;对应不同的调色板，其表示的含义不同，具体表示见下：</span></p>
+<p><span style="font-size:16px; color:#000099">l&nbsp; GPI_Gray: 使用c1表示灰度&#20540;。</span></p>
+<p><span style="font-size:16px; color:#000099">l&nbsp; GPI_RGB: c1表示红色，c2表示绿色，c3表示蓝色，c4表示alpha通道。</span></p>
+<p><span style="font-size:16px; color:#000099">l&nbsp; GPI_CMYK: c1表示青色，c2表示洋红，c3表示黄色，c4表示黑色。</span></p>
+<p><span style="font-size:16px; color:#000099">l&nbsp; GPI_HLS: c1表示色调，c2表示亮度，c3表示饱和度。</span></p>
+<p><span style="font-size:16px; color:#000099">通过颜色表，将象元&#20540;用颜色表中的颜色来进行表示，颜色表中的&#20540;是从0开始递增。</span></p>
+<h3><span style="color:#000099">10、快视图（Overviews）</span></h3>
+<p><span style="font-size:16px; color:#000099">一个波段中可能没有或者有很多个快视图。每个快视图都是一个GDALRasterBand，略缩图大小将和其下层的栅&#26684;大小不一样，但是快视图表示的区域与整个图像的区域是一致的。</span></p>
+<p><span style="font-size:16px; color:#000099">快视图是用来快速显示图像用的，使用全分辨率图像进行降采样得到。</span></p>
+<p><span style="font-size:16px; color:#000099">波段可以通过函数HasArbitraryOverviews，返回TRUE表示可以快速读取任何分辨率的快视图，这个主要应用在一些如FFT编码的图像（这句有点别扭，自己看英文原文吧）。</span></p>
+<h3><span style="color:#000099">11、GDAL核心类结构设计</span></h3>
+<p><span style="font-size:16px; color:#000099">GDAL的核心类结构设计如图所示：</span></p>
+<p align="center"><img src="http://my.csdn.net/uploads/201205/22/1337698808_7322.jpg" alt="">
+</p>
+<p><span style="font-size:16px; color:#000099">其中的类说明如下：</span></p>
+<p><span style="font-size:16px; color:#000099">GDALMajorObject类：带有元数据的对象。</span></p>
+<p><span style="font-size:16px; color:#000099">GDALDdataset类：通常是从一个栅&#26684;文件中提取的相关联的栅&#26684;波段集合和这些波段的元数据；GDALDdataset也负责所有栅&#26684;波段的地理坐标转换(georeferencingtransform)和坐标系定义。</span></p>
+<p><span style="font-size:16px; color:#000099">GDALDriver类：文件&#26684;式驱动类，GDAL会为每一个所支持的文件&#26684;式创建一个该类的实体，来管理该文件&#26684;式。</span></p>
+<p><span style="font-size:16px; color:#000099">GDALDriverManager类：文件&#26684;式驱动管理类，用来管理GDALDriver类。</span></p>
+<h2><span style="color:#000099">二、OGR体系架构</span></h2>
+<h3><span style="color:#000099">1、OGR体系结构</span></h3>
+<p><span style="font-size:16px; color:#000099">OGR包括如下几部分：</span></p>
+<p><span style="font-size:16px; color:#000099">Geometry：类Geometry (包括OGRGeometry等类)封装了OpenGIS的矢量数据模型，并提供了一些几何操作，WKB(Well Knows Binary)和WKT(Well Known Text)&#26684;式之间的相互转换，以及空间参考系统(投影)。</span></p>
+<p><span style="font-size:16px; color:#000099">Spatial Reference：类OGRSpatialReference封装了投影和基准面的定义。</span></p>
+<p><span style="font-size:16px; color:#000099">Feature：类OGRFeature封装了一个完整feature的定义，一个完整的feature包括一个geometry和geometry的一系列属性。</span></p>
+<p><span style="font-size:16px; color:#000099">Feature Definition：类OGRFeatureDefn里面封装了feature的属性，类型、名称及其默认的空间参考系统等。一个OGRFeatureDefn对象通常与一个层(layer)对应。</span></p>
+<p><span style="font-size:16px; color:#000099">Layer：类OGRLayer是一个抽象基类，表示数据源类OGRDataSource里面的一层要素(feature)。</span></p>
+<p><span style="font-size:16px; color:#000099">Data Source：类OGRDataSource是一个抽象基类，表示含有OGRLayer对象的一个文件或一个数据库。</span></p>
+<p><span style="font-size:16px; color:#000099">Drivers：类OGRSFDriver对应于每一个所支持的矢量文件&#26684;式。类OGRSFDriver由类OGRSFDriverRegistrar来注册和管理。</span></p>
+<h3><span style="color:#000099">2、OGR的Geometry模型</span></h3>
+<p><span style="font-size:16px; color:#000099">OGR的Geometry模型是建立在OpenGIS的简单要素数据模型之上的。如下图所示：</span></p>
+<p align="center"><img src="http://my.csdn.net/uploads/201205/22/1337698846_5412.jpg" alt="">
+</p>
+<p align="center"><span style="font-size:16px; color:#000099">图-OGR的Geometry模型关系图</span></p>
+<p><span style="font-size:16px; color:#000099">OpenGIS的简单要素数据模型，其关系图如下所示：</span></p>
+<p align="center"><img src="http://my.csdn.net/uploads/201205/22/1337698862_6715.jpg" alt="">
+</p>
+<p align="center"><span style="font-size:16px; color:#000099">图-OpenGIS的简单要素数据模型</span></p>
+<p><span style="font-size:16px; color:#000099">由上面两图的对比，可以清楚的看到，OGR的Geometry模型是严&#26684;遵循OpenGIS的简单要素数据规范的。OGR的Geometry模型不仅在继承体系上与OpenGIS的简单要素数据模型一致，在函数接口上也向其靠拢，从基本的获取Geometry对象信息的方法如Dimension ()、GeometryType ()、SRID ()、Envelope()、AsText()、Boundary()等到判定空间未知关系的方法如Equals(anotherGeometry:Geometry)、Disjoint(anotherGeometry:Geometry)、</span></p>
+<p><span style="font-size:16px; color:#000099">Intersects(anotherGeometry:Geometry)、Touches(anotherGeometry:Geometry)等都是符合其标准的。</span></p>
+<p><span style="font-size:16px; color:#000099">对于OGR库后面会专门进行说明，这里简单说明一下就好。</span></p>
+<br>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.11-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="7592857" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/liminlu0314/article/details/7536132';">上一篇</span><a href="/liminlu0314/article/details/7536132" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">如何使用GDAL进行图像镶嵌</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/liminlu0314/article/details/7599900';">下一篇</span><a href="/liminlu0314/article/details/7599900" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">GDAL源码剖析（十）之编写自己的扩展格式</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/taor1/article/details/8271880" title="GDAL体系架构" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL体系架构</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/zhouxuguang236/article/details/7658491" title="GDAL体系架构" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL体系架构</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/langjitianya43/article/details/49851603" title="GDAL体系架构" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL体系架构</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liyulei316686082/article/details/7013180" title="android之wifi体系架构源码流程分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">android之wifi体系架构源码流程分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/andych008/article/details/6734121" title="MeeGo源码全分析:MeeGo体系架构[图文教程]" strategy="recommend_sim_0" target="_blank" style="width: 290px;">MeeGo源码全分析:MeeGo体系架构[图文教程]</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/daizhj/article/details/6386380" title="Mongodb源码分析--Command体系架构" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Mongodb源码分析--Command体系架构</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/zangchaodotcnatgmail/article/details/11099123" title="android之wifi体系架构源码流程分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">android之wifi体系架构源码流程分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/lijiatong1005/article/details/10258303" title="深入理解ARM体系架构（S3C6410）---S3C6410看门狗源码实例" strategy="recommend_sim_0" target="_blank" style="width: 290px;">深入理解ARM体系架构（S3C6410）---S3C6410看门狗源码实例</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（二）之编译说明</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/tszhangjunqiao/article/details/11352939" title="GDAL源码剖析（二）之编译说明" strategy="recommend_sim_0" target="_blank" style="width: 290px;">GDAL源码剖析（二）之编译说明</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+    <div>
+        
+
+        <script type="text/javascript">
+            /*博客内容页下方Banner1-728*90，创建于2016-12-13*/
+            var cpro_id = "u2843949";
+        </script>
+        <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+     </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/liminlu0314/svc/GetSuggestContent/7592857",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "7592857",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                              <script type="text/javascript">
+                                  /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                                  var cpro_id = "u1607657";
+                                            </script>
+                              <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '7592857';
+    var commentscount = 10;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/liminlu0314/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='GDAL源码剖析（九）之GDAL体系架构';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/liminlu0314" target="_blank">
+    <img src="http://avatar.csdn.net/7/0/7/1_liminlu0314.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/liminlu0314" class="user_name" target="_blank">liminlu0314</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=liminlu0314','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>847205次</span></li>
+    <li>积分：<span>10752</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：10752 </div>
+        </span>  </li>
+    <li>排名：<span>第1371名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>148篇</span></li>
+    <li>转载：<span>10篇</span></li>
+    <li>译文：<span>7篇</span></li>
+    <li>评论：<span>2263条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_22424352" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=9&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=2259303643&amp;verifier=cd1db22b&amp;dpc=1"></iframe>
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174948192" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/gdal.html" target="_blank">GDAL交流</a>
+    <p>文章：121篇</p>
+    <span>阅读：654841</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:这种情况是不是你处理的时候分块的问题？你用gdalwarp测试了吗
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+@liminlu0314:感谢李老师的回复，传递参数的顺序，我根据6参数，传递200 1 0 -10...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@qq_21472607:代码都是一样的，你注意你传递的参数顺序是不是对的？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我修改了最新的gdal202版本的GDALRPCTransform()函数，代码贴上了，...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+李老师您好，我试着修改了最新的gdal202版本的alg文件夹里面的gdal_rpc.cpp中的GD...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/24810593#comments">修改GDAL库支持RPC像方改正模型</a>
+    <p style="margin:0px;"><a href="/qq_21472607" class="user_name">qq_21472607</a>:
+RPCTransformPoint( psTransform, padfX, padfY,     ...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/liminlu0314" class="user_name">liminlu0314</a>:
+@sunnyloves:文件大小和平台没关系，和磁盘格式有关系，现在都是NTFS的磁盘，肯定支持大于...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/liminlu0314/article/details/7753377#comments">使用GDAL打开裸数据（RAW）</a>
+    <p style="margin:0px;"><a href="/sunnyloves" class="user_name">sunnyloves</a>:
+@liminlu0314:多谢！是不规则的，矩形区域里只有一部分有高程数据，其他没高程的是不是要填入...
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/liminlu0314/article/month/2017/03">2017年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2017/02">2017年02月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2017/01">2017年01月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2016/12">2016年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/08">2016年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2016/04">2016年04月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2016/03">2016年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/12">2015年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/11">2015年11月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/09">2015年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2015/07">2015年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2015/03">2015年03月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2015/01">2015年01月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2014/11">2014年11月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2014/10">2014年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/09">2014年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/07">2014年07月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/05">2014年05月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/03">2014年03月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2014/02">2014年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2014/01">2014年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/12">2013年12月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2013/11">2013年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/10">2013年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/09">2013年09月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/05">2013年05月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/04">2013年04月</a><span>(11)</span></li><li><a href="/liminlu0314/article/month/2013/03">2013年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2013/02">2013年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2013/01">2013年01月</a><span>(14)</span></li><li><a href="/liminlu0314/article/month/2012/12">2012年12月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/11">2012年11月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/10">2012年10月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/09">2012年09月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/08">2012年08月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2012/07">2012年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2012/06">2012年06月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/05">2012年05月</a><span>(7)</span></li><li><a href="/liminlu0314/article/month/2012/04">2012年04月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/03">2012年03月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2012/02">2012年02月</a><span>(3)</span></li><li><a href="/liminlu0314/article/month/2012/01">2012年01月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/11">2011年11月</a><span>(4)</span></li><li><a href="/liminlu0314/article/month/2011/10">2011年10月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2011/07">2011年07月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/03">2011年03月</a><span>(2)</span></li><li><a href="/liminlu0314/article/month/2011/02">2011年02月</a><span>(5)</span></li><li><a href="/liminlu0314/article/month/2011/01">2011年01月</a><span>(9)</span></li><li><a href="/liminlu0314/article/month/2010/12">2010年12月</a><span>(1)</span></li><li><a href="/liminlu0314/article/month/2010/11">2010年11月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(165)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(158)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(99)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(95)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/17400075" title="QGIS编译">QGIS编译</a><span>(79)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(72)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7753377" title="使用GDAL打开裸数据（RAW）">使用GDAL打开裸数据（RAW）</a><span>(65)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(63)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6144833" title="编写PhotoShop支持遥感图像数据">编写PhotoShop支持遥感图像数据</a><span>(60)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7613894" title="使用RasterIO快速显示图像">使用RasterIO快速显示图像</a><span>(60)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/liminlu0314/article/details/7072224" title="GDAL源码剖析（七）之GDAL RasterIO使用说明">GDAL源码剖析（七）之GDAL RasterIO使用说明</a><span>(30953)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6937194" title="GDAL源码剖析（二）之编译说明">GDAL源码剖析（二）之编译说明</a><span>(28591)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6933772" title="GDAL源码剖析（一）">GDAL源码剖析（一）</a><span>(26303)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/8553926" title="关于已知两点经纬度求球面最短距离的公式推导">关于已知两点经纬度求球面最短距离的公式推导</a><span>(24703)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/7072007" title="GDAL源码剖析（六）之GDAL开发及其调试">GDAL源码剖析（六）之GDAL开发及其调试</a><span>(16084)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6945452" title="GDAL源码剖析（三）之Swig编译和帮助文档生成">GDAL源码剖析（三）之Swig编译和帮助文档生成</a><span>(15080)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6130064" title="如何使用GDAL重采样图像">如何使用GDAL重采样图像</a><span>(14962)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6127755" title="使用GDAL创建Erdas格式的金字塔">使用GDAL创建Erdas格式的金字塔</a><span>(14651)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6978589" title="GDAL源码剖析（四）之命令行程序说明一">GDAL源码剖析（四）之命令行程序说明一</a><span>(12728)</span>
+</li>
+<li>
+<a href="/liminlu0314/article/details/6136512" title="如何使用GDAL进行AOI裁剪">如何使用GDAL进行AOI裁剪</a><span>(12230)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=581090"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

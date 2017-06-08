@@ -1,0 +1,1276 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+
+            <link rel="canonical" href="http://blog.csdn.net/gaoxingnengjisuan/article/details/9623529"/> 
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+       
+    <title>NOVA源码分析——NOVA中的RabbitMQ解析 - 溜溜小哥
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="本篇文章是对本人阅读NOVA源码过程中的心得、RabbitMQ的官方文档以及网上的一些资料整理总结而成的，也为了方便以后对这部分内容的复习。&#160;&#160;&#160; NOVA是OpenStack系统的核心模块，主要负责虚拟机实例的生命周期管理、网络管理（前几个版本）、存储卷管理（前几个版本）、用户管理以及其他相关云平台管理功能，在能力上类似于Amazon EC2和Rackspace Cloud Server" />
+
+    <meta name="keywords" content="OpenStack,源代码,nova" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+                      <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/light_blue/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/gaoxingnengjisuan/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/blue_green.css" />
+ 
+
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+     <script src="http://c.csdnimg.cn/rabbit/tracking-ad/fuckadblock.js" type="text/javascript" charset="utf-8"></script>
+         <script src="http://c.csdnimg.cn/rabbit/tracking-ad/block.js?v=20170531.001" type="text/javascript" charset="utf-8"></script>
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+       
+
+
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/gaoxingnengjisuan">溜溜小哥</a></h2>
+            <h3>没想到我在深圳的最后一夜竟然是这么度过，咀嚼此刻的心情，竟然没有波澜，唯一值得留恋的只有几个好朋友，这两年经历也许已经磨去我内心的敏感~~~~各位好朋友，来日方长，大家珍重！再见，深圳！</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/gaoxingnengjisuan?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/gaoxingnengjisuan/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "gaoxingnengjisuan";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/gaoxingnengjisuan";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://bss.csdn.net/m/topic/community_IoT/index">
+<font color=red><strong>【CSDN 技术主题月】物联网全栈开发</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+<a href=" http://blog.csdn.net/broadview2006/article/details/72901572">
+<font color=blue><strong>【评论送书】每周荐书：JVM、Nginx、小程序</strong></font></a>
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/72903038">
+<font color=red><strong>CSDN日报20170607 ——《别混淆你想要什么和能否实现》</strong></font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=NOVA%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90%e2%80%94%e2%80%94NOVA%e4%b8%ad%e7%9a%84RabbitMQ%e8%a7%a3%e6%9e%90&u=http://blog.csdn.net/gaoxingnengjisuan/article/details/9623529"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/gaoxingnengjisuan/article/details/9623529">
+        NOVA源码分析——NOVA中的RabbitMQ解析            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/OpenStack' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">OpenStack</a><a href='http://www.csdn.net/tag/%e6%ba%90%e4%bb%a3%e7%a0%81' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">源代码</a><a href='http://www.csdn.net/tag/nova' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">nova</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2013-07-30 10:04</span>
+            <span class="link_view" title="阅读次数">11533人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(2)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('NOVA%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90%e2%80%94%e2%80%94NOVA%e4%b8%ad%e7%9a%84RabbitMQ%e8%a7%a3%e6%9e%90','9623529');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(9623529,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[{&quot;name&quot;:&quot;OpenStack知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/33?source=blogtop&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1481875458834_834.jpg&quot;}]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('1461395','gaoxingnengjisuan','top','9623529');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">OpenStack源码分析-NOVA<em>（35）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/gaoxingnengjisuan/article/category/1461395"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_1461395">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF">感谢朋友支持本博客，欢迎共同探讨交流，由于能力和时间有限，错误之处在所难免，欢迎指正！<br>
+如果转载，请保留作者信息。<br>
+博客地址：http://blog.csdn.net/gaoxingnengjisuan<br>
+邮箱地址：dong.liu@siat.ac.cn</span></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 本篇文章是由本人阅读NOVA源码过程中的心得、RabbitMQ的官方文档以及网上的一些资料整理总结而成的，也为了方便以后对这部分内容的复习。</span></p>
+<p align="left"></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; NOVA是OpenStack系统的核心模块，主要负责虚拟机实例的生命周期管理、网络管理（前几个版本）、存储卷管理（前几个版本）、用户管理以及其他相关云平台管理功能，在能力上类&#20284;于Amazon EC2和Rackspace Cloud Servers。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:blue"><strong><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>消息队列（Queue</span></strong></span><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:#3366FF">）与数据库（Database）</span></strong>作为Nova总体架构中的两个重要组成部分，二者通过系统内消息传递和信息共享的方式实现任务之间、模块之间、接口之间的异步部署，在系统层面大大简化了复杂任务的调度流程与模式，是整个OpenStack
+ Nova系统的核心功能模块。终端用户（DevOps、Developers和其他OpenStack组件）主要通过Nova API实现与OpenStack系统的互动，同时Nova守护进程之间通过消息队列和数据库来交换信息以执行API请求，完成终端用户的云服务请求。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; Nova采用无共享、基于消息的灵活架构，意味着Nova的组件有多种安装方式，可以将每个Nova-Service模块单独安装在一台服务器上，同时也可以根据业务需求将多个模块组合安装在多台服务器上。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"><strong>1.RabbitMQ</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; OpenStack Nova系统目前主要采用RabbitMQ作为信息交换中枢。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; RabbitMQ是一种处理消息验证、消息转换和消息路由的架构模式，它协调应用程序之间的信息通信，并使得应用程序或者软件模块之间的相互意识最小化，有效实现解耦。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; RabbitMQ适合部署在一个拓扑灵活易扩展的规模化系统环境中，有效保证不同模块、不同节点、不同进程之间消息通信的时效性；而且，RabbitMQ特有的集群HA安全保障能力可以实现信息枢纽中心的系统级备份，同时单节点具备消息恢复能力，当系统进程崩溃或者节点宕机时，RabbitMQ正在处理的消息队列不会丢失，待节点重启之后可根据消息队列的状态数据以及信息数据及时恢复通信。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; RabbitMQ在功能性、时效性、安全可靠性以及SLA方面的出色能力可有效支持OpenStack云平台系统的规模化部署、弹性扩展、灵活架构以及信息安全的需求。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"><strong>2.AMQP</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; AMQP是应用层协议的一个开放标准，为面向消息的中间件而设计，其中RabbitMQ是AMQP协议的一个开源实现，OpenStack Nova各软件模块通过AMQP协议实现信息通信。AMQP协议的设计理念与数据通信网络中的路由协议非常类&#20284;，可归纳为基于状态的面向无连接通信系统模式。不同的是，数据通信网络是基于通信链路的状态决定客户端与服务端之间的链接，而AMQP是基于消息队列的状态决定消息生产者与消息消费者之间的链接。对于AMQP来讲，消息队列的状态信息决定通信系统的转发路径，链接两端之间的链路并不是专用且永久的，而是根据消息队列的状态与属性实现信息在RabbitMQ服务器上的存储与转发，正如数据通信网络的IP数据包转发机制，所有的路由器是基于通信链路的状态而形成路由表，IP数据包根据路由表实现报文的本地存储与逐级转发，二者在实现机制上具有异曲同工之妙。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; AMQP的目标是实现端到端的信息通信，那么必然涉及两个基本的概念：AMQP实现通信的因素是什么以及AMQP实现通信的实体以及机制是什么。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; AMQP是面向消息的一种应用程序之间的通信方法，也就是说，“消息”是AMQP实现通信的基本因素。AMQP有两个核心要素——交换器（Exchange）与队列（Queue）通过消息的绑定与转发机制实现信息通信。其中，交换器是由消费者应用程序创建，并且可与其他应用程序实现共享服务，其功能与数据通信网络中的路由器非常相&#20284;，即接收消息之后通过路由表将消息准确且安全的转发至相应的消息队列。一台RabbitMQ服务器或者由多台RabbitMQ服务器组成的集群可以存在多个交换器，每个交换器通过唯一的Exchange
+ ID进行识别。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 交换器根据不同的应用程序的需求，在生命周期方面也是灵活可变的，主要分为三种：持久交换器、临时交换器与自动删除交换器。持久交换器是在RabbitMQ服务器中长久存在的，并不会因为系统重启或者应用程序终止而消除，其相关数据长期驻留在硬盘之上；临时交换器驻留在内存中，随着系统的关闭而消失；自动删除交换器随着宿主应用程序的中止而自动消亡，可有效释放服务器资源。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 队列也是由消费者应用程序创建，主要用于实现存储与转发交换器发送来的消息，队列同时也具备灵活的生命周期属性配置，可实现队列的持久保存、临时驻留与自动删除。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 由以上可以看出，消息、队列和交换器是构成AMQP的三个关键组件，任何一个组件的实效都会导致信息通信的中断，因此鉴于三个关键组件的重要性，系统在创建三个组件的同时会打上“Durable”标签，表明在系统重启之后立即恢复业务功能。</span></p>
+<div align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 以上主要介绍构成AMQP的三个关键要素，那么它们之间是如何工作的呢？</span></div>
+<p align="center"><img src="http://img.blog.csdn.net/20130730094523171?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></p>
+<p align="center"></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 由图中可以看出，交换器接收发送端应用程序的消息，通过设定的路由转发表与绑定规则将消息转发至相匹配的消息队列，消息队列继而将接收到的消息转发至对应的接收端应用程序。数据通信网络通过IP地址形成的路由表实现IP报文的转发，在AMQP环境中的通信机制也非常类&#20284;，交换器通过AMQP消息头（Header）中的路由选择关键字（Routing Key）而形成的绑定规则（Binding）来实现消息的转发，也就是说，“绑定”即连接交换机与消息队列的路由表。消息生产者发送的消息中所带有的Routing
+ Key是交换器转发的判断因素，也就是AMQP中的“IP地址”，交换器获取消息之后提取Routing Key触发路由，通过绑定规则将消息转发至相应队列，消息消费者最后从队列中获取消息。AMQP定义三种不同类型的交换器：广播式交换器（Fanout Exchange）、直接式交换器（Direct Exchange）和主题式交换器（Topic Exchange），三种交换器实现的绑定规则也有所不同。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"><strong>3.Nova中的RabbitMQ应用</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"><strong>3.1RabbitMQ在Nova中的实现</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; RabbitMQ是OpenStackNova系统的信息中枢，目前Nova中的各个模块通过RabbitMQ服务器以RPC（远程过程调用）的方式实现通信，而且各模块之间形成松耦合关联关系，在扩展性、安全性以及性能方面均体现优势。由前文可知，AMQP的交换器有三种类型：Direct、Fanout和Topic，而且消息队列是由消息消费者根据自身的功能与业务需求而生成。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 首先说说三个比较重要的概念：</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>交换器：</span></span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 接受消息并且将消息转发给队列。在每个寻你主机的内部，交换器有唯一对应的名字。应用程序在他的权限范围之内可以创建、删除、使用 和共享交换器实例。交换器可以是持久的，临时的或者自动删除的。持久的交换器会一直存在于Server端直到他被显示的删除；临时交换器在服务器关闭时停 止工作；自动删除的交换器在没有应用程序使用它的时候被服务器删除。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>队列：</span></span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; “消息队列”，它是一个具名缓冲区，它代表一组消费者应用程序保存消息。这些应用程序在它们的权限范围内可以创建、使用、共享消息队列。类&#20284;于交换器，消息队列也可以是持久的，临时的或者自动删除的。临时消息队列在服务器被关闭时停止工作；自动删除队列在没有应用程序使用它的时候被服务器自动删 除。消息队列将消息保存在内存、硬盘或两者的组合之中。消息队列保存消息，并将消息发给一个或多个客户端，特别的消息队列会跟踪消息的获取情况，消息要出对就必须被获取，这样可以阻止多个客户端同时消费同一条消息的情况发生，同时也可以被用来做单个队列多个消费者之间的负载均衡。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>绑定：</span></span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 可以理解为交换器和消息队列之间的一种关系，绑定之后交换器会知道应该把消息发给那个队列，绑定的关键字称为binding_key。在程序中我们这样使用：</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; channel.queue_bind(exchange='direct_logs',queue=queue_name,routing_key=binding_key)</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; Exchange和Queue的绑定可以是多对多的关系，每个发送给Exchange的消息都会有一个叫做routing_key的关键字，交换器要想把消息发送给某个特定的队列，那么该队列与交换器的binding_key必须和消息的routing_key相匹配才OK。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue">&nbsp;</span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 介绍一下RabbitMQ的三种类型的交换器：</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>广播式交换器类型（fanout</span></span><span style="color:#3366FF">）</span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 该类交换器不分析所接收到消息中的Routing Key，默认将消息转发到所有与该交换器绑定的队列中去。广播式交换器转发效率最高，但是安全性较低，消费者应用程序可获取本不属于自己的消息。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 广播交换器是最简单的一种类型，就像我们从字面上理解到的一样，它把所有接受到的消息广播到所有它所知道的队列中去，不论消息的关键字是什么，消息都会被路由到和该交换器绑定的队列中去。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 它的工作方式如下图所示：</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730094737000?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<p align="center"></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 在程序中申明一个广播式交换器的代码如下：</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; channel.exchange_declare(exchange='fanout',type='fanout')</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>直接式交换器类型（direct</span></span><span style="color:#3366FF">）</span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 该类交换器需要精确匹配Routing Key与BindingKey，如消息的Routing Key = Cloud，那么该条消息只能被转发至Binding Key = Cloud的消息队列中去。直接式交换器的转发效率较高，安全性较好，但是缺乏灵活性，系统配置量较大。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 相对广播交换器来说，直接交换器可以给我们带来更多的灵活性。直接交换器的路由算法很简单——一个消息的routing_key完全匹配一个队列的 binding_key，就将这个消息路由到该队列。绑定的关键字将队列和交换器绑定到一起。当消息的routing_key和多个绑定关键字匹配时消息 可能会被发送到多个队列中。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 我们通过下图来说明直接交换器的工作方式：</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730094846484?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span>
+<div align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 如图：Q1，Q2两个队列绑定到了直接交换器X上，Q1的binding_key是“orange”，Q2有两个绑定，一个binding_key是black，另一个binding_key是green。在这样的关系下，一个带有 “orange” routing_key的消息发送到X交换器之后将会被X路由到队列Q1，一个带有 “black” 或者 “green” &nbsp;routing_key的消息发送到X交换器之后将会被路由到Q2。而所有其他消息将会被丢失掉。</span></div>
+</div>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>主题式交换器（Topic Exchange</span></span><span style="color:#3366FF">）</span></strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 该类交换器通过消息的Routing Key与Binding Key的模式匹配，将消息转发至所有符合绑定规则的队列中。Binding Key支持通配符，其中“*”匹配一个词组，“#”匹配多个词组（包括零个）。例如，Binding Key=“*.Cloud.#”可转发Routing Key=“OpenStack.Cloud.GD.GZ”、“OpenStack.Cloud.Beijing”以及“OpenStack.Cloud”的消息，但是对于Routing
+ Key=“Cloud.GZ”的消息是无法匹配的。</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730094953453?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<p align="center"></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 这里的routing_key可以使用一种类&#20284;正则表达式的形式，但是特殊字符只能是“*”和“#”，“*”代表一个单词，“#”代表0个或是多个单词。这样发送过来的消息如果符合某个queue的routing_key定义的规则，那么就会转发给这个queue。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px"><strong><span style="color:blue"><span style="color:#3366FF"><span style="color:blue">&nbsp;&nbsp;&nbsp;</span>在Nova</span></span><span style="color:#3366FF">中主要实现Direct和Topic两种交换器的应用</span></strong><span style="color:#3366FF">，</span>在系统初始化的过程中，各个模块基于Direct交换器针对每一条系统消息自动生成多个队列注入RabbitMQ服务器中，依据Direct交换器的特性要求，Binding
+ Key=“MSG-ID”的消息队列只会存储与转发Routing Key=“MSG-ID”的消息。同时，各个模块作为消息消费者基于Topic交换器自动生成两个队列注入RabbitMQ服务器中。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; Nova各个模块之间基于AMQP消息实现通信，但是真正实现消息调用的应用流程主要是<span style="color:#3366FF"><strong>RPC机制</strong></span>。Nova基于RabbitMQ实现<span style="color:#3366FF"><strong>两种RPC调用：RPC.CALL和RPC.CAST，其中RPC.CALL基于请求与响应方式，RPC.CAST只是提供单向请求，</strong></span>两种RPC调用方式在Nova中均有不同的应用场景。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; Nova的各个模块在逻辑功能是可以划分为两种：<span style="color:#3366FF"><strong>Invoker和Worker</strong></span>，其中<span style="color:#3366FF"><strong>Invoker模块主要功能是向消息队列中发送系统请求消息，如Nova-API和Nova-Scheduler；Worker模块则从消息队列中获取Invoker模块发送的系统请求消息以及向Invoker模块回复系统响应消息，如Nova-Compute、Nova-Volume和Nova-Network。</strong></span>Invoker通过RPC.CALL和RPC.CAST两个进程发送系统请求消息；Worker从消息队列中接收消息，并对RPC.CALL做出响应。Invoker、Worker与RabbitMQ中不同类型的交换器和队列之间的通信关系如图所示。</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730095109406?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<p align="center"></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; Nova根据Invoker和Worker之间的通信关系可逻辑划分为两个交换域：<span style="color:#3366FF"><strong>Topic交换域与Direct交换域，</strong></span>两个交换域之间并不是严&#26684;割裂，在信息通信的流程上是深度嵌入的关系。Topic交换域中的Topic消息生产者（Nova-API或者Nova-Scheduler）与Topic交换器生成逻辑连接，通过PRC.CALL或者RPC.CAST进程将系统请求消息发往Topic交换器。Topic交换器根据系统请求消息的Routing
+ Key分别送入不同的消息队列进行转发，如果消息的Routing Key=“NODE-TYPE.NODE-ID”，则将被转发至点对点消息队列；如果消息的Routing Key=“NODE-TYPE”，则将被转发至共享消息队列。Topic消息消费者探测到新消息已进入响应队列，立即从队列中接收消息并调用执行系统消息所请求的应用程序。每一个Worker都具有两个Topic消息消费者程序，对应点对点消息队列和共享消息队列，链接点对点消息队列的Topic消息消费者应用程序接收RPC.CALL的远程调用请求，并在执行相关计算任务之后将结果以系统响应消息的方式通过Direct交换器反馈给Direct消息消费者；同时链接共享消息队列的Topic消息消费者应用程序只是接收RPC.CAST的远程调用请求来执行相关的计算任务，并没有响应消息反馈。因此，Direct交换域并不是独立运作，而是受限于Topic交换域中RPC.CALL的远程调用流程与结果，每一个RPC.CALL激活一次Direct消息交换的运作，针对每一条系统响应消息会生成一组相应的消息队列与交换器组合。因此，对于规模化的OpenStack云平台系统来讲，Direct交换域会因大量的消息处理而形成整个系统的性能瓶颈点。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px; color:#3366FF"><strong>3.2Nova系统RPC.CALL以及RPC.CAST调用流程</strong></span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 由前文可以看出，RPC.CALL是一种双向通信流程，即Worker程序接收消息生产者生成的系统请求消息，消息消费者经过处理之后将系统相应结果反馈给Invoker程序。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; 例如，一个用户通过外部系统将“启动虚拟机”的需求发送给NOVA-API，此时NOVA-API作为消息生产者，将该消息包装为AMQP信息以RPC.CALL方式通过Topic交换器转发至点对点消息队列，此时，Nova-Compute作为消息消费者，接收该信息并通过底层虚拟化软件执行相应虚拟机的启动进程；待用户虚拟机成功启动之后，Nova-Compute作为消息生产者通过Direct交换器和响应的消息队列将“虚拟机启动成功”响应消息反馈给Nova-API，此时Nova-API作为消息消费者接收该消息并通知用户虚拟机启动成功，一次完整的虚拟机启动的RPC.CALL调用流程结束。其具体流程如图所示：</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730095232062?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span>
+<div align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; （1）Invoker端生成一个Topic消息生产者和一个Direct消息消费者。其中，Topic消息生产者发送系统请求消息到Topic交换器；Direct消息消费者等待响应消息。</span><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></div>
+<div align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; （2）Topic交换器根据消息的Routing Key转发消息，Topic消费者从相应的消息队列中接收消息，并传递给负责执行相关任务的Worker。</span></div>
+</div>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; （3）Worker根据请求消息执行完任务之后，分配一个Direct消息生产者，Direct消息生产者将响应消息发送到Direct交换器。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; （4）Direct交换器根据响应消息的Routing Key转发至相应的消息队列，Direct消费者接收并把它传递给Invoker。</span></p>
+<p align="left"><span style="font-family:KaiTi_GB2312; font-size:18px">&nbsp;&nbsp;&nbsp; RPC.CAST的远程调用流程与RPC.CALL类&#20284;，只是缺少了系统消息响应流程。一个Topic消息生产者发送系统请求消息到Topic交换器，Topic交换器根据消息的Routing Key将消息转发至共享消息队列，与共享消息队列相连的所有Topic消费者接收该系统请求消息，并把它传递给响应的Worker进行处理，其调用流程如图所示：</span></p>
+<div align="center"><img src="http://img.blog.csdn.net/20130730095334859?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2FveGluZ25lbmdqaXN1YW4=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+    
+<!--172.16.140.13-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="9623529" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>1</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/gaoxingnengjisuan/article/details/9374919';">上一篇</span><a href="/gaoxingnengjisuan/article/details/9374919" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">OpenStack Swift源码分析（5）----swift-ring-builder源代码解析之二</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/gaoxingnengjisuan/article/details/9674315';">下一篇</span><a href="/gaoxingnengjisuan/article/details/9674315" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">Libvirt学习总结</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:195px;">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/jincm13/article/details/38705719" title="openstack分析——NOVA中的RabbitMQ解析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">openstack分析——NOVA中的RabbitMQ解析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Tomstrong_369/article/details/51314279" title="OpenStack Kolla 源码分析 --Ansible" strategy="recommend_sim_0" target="_blank" style="width: 290px;">OpenStack Kolla 源码分析 --Ansible</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/gtianqgg/article/details/46369115" title="Nova 建立一个虚机的流程" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Nova 建立一个虚机的流程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/English0523/article/details/50477377" title="Fuel部署OpenStack架构分析" strategy="recommend_sim_0" target="_blank" style="width: 290px;">Fuel部署OpenStack架构分析</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/WoogeYu/article/details/50773310" title="别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/weixin_33724844/article/details/52206977" title="别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/ztsinghua/article/details/49444373" title="别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/hejin_some/article/details/56833275" title="openstack 逻辑构架真相" strategy="recommend_sim_0" target="_blank" style="width: 290px;">openstack 逻辑构架真相</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/popsuper1982/article/details/40790609" title="别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)" strategy="recommend_sim_0" target="_blank" style="width: 290px;">别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点(2)</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u010305706/article/details/52206175" title="别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点" strategy="recommend_sim_0" target="_blank" style="width: 290px;">别以为真懂Openstack: 虚拟机创建的50个步骤和100个知识点</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/gaoxingnengjisuan/svc/GetSuggestContent/9623529",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ 
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl tracking-ad" id="res-relatived" data-mod="popu_84"  > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+    
+    <div id="adCollege"> 
+    </div>  
+
+    
+
+     <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+     <script type="text/javascript">
+         csdn.position.showEdu({
+             sourceType: "blog",
+             searchType: "detail",
+             searchKey: "9623529",
+                username: "",
+                recordcount: "10",
+                containerId: "adCollege" //容器DIV的id。 
+            });  
+        </script> 
+   
+</dl>
+
+
+
+
+
+    <div id="ad_cen">        
+                <div>
+                                    <div class="tracking-ad" data-view="true" data-mod="ad_popu_199" data-mtp="43" data-order="114" data-con="ad_content_1843" style="width: 960px; height: 90px;">
+                                             <script type="text/javascript">
+                                                 /*博客内容页下方Banner2-960*90，创建于,2016-11-28*/
+                                                 var cpro_id = "u2831143";
+                                            </script>
+                                            <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+                                   </div>
+                    </div>
+    </div>  
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+<div class="tracking-ad" data-view="true" data-mod="ad_popu_72" data-mtp="62" data-order="40" data-con="ad_content_2072">
+                 <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+            <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	            <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+            <script>  document.getElementById("popuLayer_js_q").onload=function(){      var styObjd=styObj={width:"300px","height":parseInt(250)+28};window.CSDN.Layer.PopuLayer("#layerd",{storageName:"layerd",styleObj:styObjd,total:50,expoire:1000*60});  }</script><!-- 投放代码 --><script type="text/javascript">                /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: "u2895327"      });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+</div>
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '9623529';
+    var commentscount = 2;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/gaoxingnengjisuan/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='NOVA源码分析——NOVA中的RabbitMQ解析';
+
+</script>
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/gaoxingnengjisuan" target="_blank">
+    <img src="http://avatar.csdn.net/C/8/A/1_gaoxingnengjisuan.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/gaoxingnengjisuan" class="user_name" target="_blank">gaoxingnengjisuan</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=gaoxingnengjisuan','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>466740次</span></li>
+    <li>积分：<span>5534</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：5534 </div>
+        </span>  </li>
+    <li>排名：<span>第4406名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>104篇</span></li>
+    <li>转载：<span>4篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>119条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_38359929" class="panel">
+<ul class="panel_head"><span>今日说说</span></ul>
+<ul class="panel_body">
+陈文茜是一个充满智慧和魅力的女性，让人着迷！她和李敖不一样，李敖对事物的观点里充满了狡黠和诡异的东西，而陈文茜的见解独到，但是听过她细腻而渊博的解析之后，又让人不得不从心底信服，甚至会马上推翻自己原有的观点！
+</ul>
+</div>
+
+<div id="custom_column_36697559" class="panel">
+<ul class="panel_head"><span>当日研究动态</span></ul>
+<ul class="panel_body">
+利用业余时间，按照openstack子项目的架构，写了一个独立的项目，实现虚拟机层次的资源动态负载均衡，功能类似于Vmware的DRS，写这个项目的目的有两个，第一，为后续项目的开发写一个demo，第二，从看懂源码到实际开发，这是一个质变的过程！
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank"><img src="http://img.blog.csdn.net/20151123175528333" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/liudong.html" target="_blank">OpenStack源码分析</a>
+    <p>文章：102篇</p>
+    <span>阅读：388142</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1461395" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-NOVA</a><span>(36)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1494765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-SWIFT</a><span>(30)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1853287" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CINDER</a><span>(26)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2748301" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack源码分析-CEILOMETER</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/2092167" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">OpenStack实践记录</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/gaoxingnengjisuan/article/category/1614503" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">HDFS源码分析</a><span>(2)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/gaoxingnengjisuan/article/month/2015/07">2015年07月</a><span>(1)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/12">2014年12月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/11">2014年11月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/07">2014年07月</a><span>(25)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/04">2014年04月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/03">2014年03月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/02">2014年02月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2014/01">2014年01月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/12">2013年12月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/11">2013年11月</a><span>(4)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/10">2013年10月</a><span>(10)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/09">2013年09月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/08">2013年08月</a><span>(7)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/07">2013年07月</a><span>(6)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/06">2013年06月</a><span>(9)</span></li><li><a href="/gaoxingnengjisuan/article/month/2013/05">2013年05月</a><span>(1)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(33055)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9130213" title="OpenStack建立实例完整过程源码详细分析（1）">OpenStack建立实例完整过程源码详细分析（1）</a><span>(19343)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(13133)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(12375)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9623529" title="NOVA源码分析——NOVA中的RabbitMQ解析">NOVA源码分析——NOVA中的RabbitMQ解析</a><span>(11532)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9959477" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（1）</a><span>(10237)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11051493" title="HDFS源码分析（1）----HDFS概述">HDFS源码分析（1）----HDFS概述</a><span>(8265)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/12913275" title="Openstack Eventlet分析(1)">Openstack Eventlet分析(1)</a><span>(8081)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/17722991" title="OpenStack Cinder源码分析之一">OpenStack Cinder源码分析之一</a><span>(7417)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(7384)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/gaoxingnengjisuan/article/details/15734437" title="OpenStack Nova-scheduler组件的源码解析（2）">OpenStack Nova-scheduler组件的源码解析（2）</a><span>(12)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9674315" title="Libvirt学习总结">Libvirt学习总结</a><span>(8)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10233043" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/13002021" title="OpenStack文件注入相关分析（1）">OpenStack文件注入相关分析（1）</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10408187" title="OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机动态迁移源码分析</a><span>(6)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10893163" title="OpenStack Nova源码结构（1）">OpenStack Nova源码结构（1）</a><span>(5)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/41859339" title="Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动">Ceilometer项目源码分析----ceilometer-collector服务的初始化和启动</a><span>(4)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/10234371" title="为OpenStack制作UBUNTU 12.04系统镜像">为OpenStack制作UBUNTU 12.04系统镜像</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/11030565" title="OpenStack建立实例完整过程源码详细分析（11）">OpenStack建立实例完整过程源码详细分析（11）</a><span>(3)</span>
+</li>
+<li>
+<a href="/gaoxingnengjisuan/article/details/9285031" title="OpenStack Swift源码分析（1）----swift服务启动源码分析之一">OpenStack Swift源码分析（1）----swift服务启动源码分析之一</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/turingbooks/article/details/72416875" target="_blank">* 5月书讯：流畅的Python，终于等到你！</a></li>
+<li><a href="http://blog.csdn.net/kimmking/article/details/72886230" 
+target="_blank">* JSON最佳实践</a></li>
+<li><a href="http://blog.csdn.net/swingwang/article/details/72887367"target="_blank">* InfiniBand技术和协议架构分析</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/72675977" 
+target="_blank">* Android 中解决破解签名验证之后导致的登录授权失效问题</a></li>
+<li><a href="http://blog.csdn.net/poem_qianmo/article/details/72857602" 
+target="_blank">* 《Real-Time Rendering 3rd》 提炼总结——图形渲染与视觉外观</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/72903038" 
+target="_blank">* CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/9674315#comments">Libvirt学习总结</a>
+    <p style="margin:0px;"><a href="/u010251009" class="user_name">u010251009</a>:
+请问如何获取虚拟机磁盘信息。查了很久没有查到 ，看了libvirt-domain.h  没看懂
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/23789533#comments">Openstack Cinder中建立volume过程的源码解析（8）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38088841#comments">Swift源码分析----swift-object-auditor(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+感谢分享，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/10233043#comments">OpenStack基于Libvirt的虚拟化平台调度实现----Nova虚拟机启动源码实现（4）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜你，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38094541#comments">Swift源码分析----swift-object-updater</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38093025#comments">Swift源码分析----swift-account-replicator(1)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/22518045#comments">Openstack Cinder中建立volume过程的源码解析（1）</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38099821#comments">Swift源码分析----swift-proxy与swift-container</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/38095911#comments">Swift源码分析----swift-object-replicator(2)</a>
+    <p style="margin:0px;"><a href="/DJY1992" class="user_name">DJY1992</a>:
+恭喜您，文章已被推荐收录
+    </p>
+    </li>
+    <li>
+   
+         <a href="/gaoxingnengjisuan/article/details/13010271#comments">OpenStack文件注入相关分析（2）</a>
+    <p style="margin:0px;"><a href="/Mr_Banban" class="user_name">Mr_Banban</a>:
+赞一个
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 -->                    <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true"  data-mtp="63" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;">
+                         <div id="nav_show_top_stop" style="width: 200px;height: 200px;z-index:1000"><div id="cpro_u2734128"></div></div>
+                   </div>
+    <script type="text/javascript">    
+        setTimeout(function () {
+            var naviga_offsetTop = 0;
+            function naviga_stay_top() { var scrollTop = jQuery(document).scrollTop(); if (scrollTop > naviga_offsetTop) { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": "0px" }); } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); } }
+            function onload_function() { naviga_offsetTop = jQuery("#nav_show_top_stop").position().top; jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top); jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top); } jQuery(document).ready(onload_function);
+               
+        }, 200);    
+    </script>
+<script type="text/javascript">(window.cproArray = window.cproArray || []).push({ id: "u2734128" });  </script> 
+                    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script> 
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+        <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170606001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1231990"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+           
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            $(".toc a[target='_blank']").attr("target", "");
+
+        </script>
+
+</body>
+</html>   
+ 

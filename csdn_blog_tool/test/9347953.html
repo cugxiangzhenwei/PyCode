@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="keywords" content="CSDN,博客,IT,技术,移动开发,Web前端,企业架构,编程语言,互联网,数据库,系统运维,云计算,研发管理,技术博客,blog,专家" />
+    <meta name="description" content="CSDN深度IT技术博客，移动开发博客,Web前端博客,企业架构博客,编程语言博客,互联网博客,数据库博客,系统运维博客,云计算博客,研发管理博客,IT blog" />
+
+   <script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/tracking.js" charset="utf-8"></script>  
+   <script type="text/javascript">
+             var protocol = window.location.protocol;
+             document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script>
+
+    <script src="http://csdnimg.cn/public/common/libs/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link rel="stylesheet" href="http://static.csdn.net/public/common/toolbar/css/index.css">
+    <link rel="stylesheet" href="http://csdnimg.cn/public/common/libs/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="http://csdnimg.cn/public/static/css/avatar.css">
+    <link rel="stylesheet" href="http://static.blog.csdn.net/static/css/common_index.css">
+    <!-- [if IE 7]-->
+    <link rel="stylesheet" href="http://static.blog.csdn.net/static/css/font-awesome.min.css">
+    <!-- [endif]-->
+   
+    <!-- [if lt IE 9]-->
+    <script src="http://static.blog.csdn.net/static/js/libs/html5shiv.min.js"></script>
+    <!-- [endif]-->
+    <title>博客频道 - CSDN.NET</title>
+
+    <!-- ad begin -->
+         <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/tracking.js"></script>
+    <!-- ad end-->
+       <script src="//csdnimg.cn/rabbit/tracking-ad/main.js"></script>
+
+  </head>
+  <body>
+
+         <!-- 广告位开始 -->
+        <ins data-revive-zoneid="149" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+        <!-- 广告位结束 -->
+            
+      <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+
+      
+<div role="banner" class="blog-nav">
+	    <div class="container">
+		    <div role="navigation" class="navbar-collapse">
+			    <ul class="navbar-nav">
+				    <li class=active><a href="/" title="CSDN博客频道首页">首页</a></li>
+				    <li > <a href="/column.html">博客专栏</a></li>
+                 
+				    <li ><a href="/experts.html" >博客专家</a></li>
+				   
+                     <li ><a href="/wemedia.html" >行家</a></li>
+                      <li ><a href="/PK.html" >观点</a></li>
+				    <li ><a href="/ranking.html">排行榜</a></li>
+			      
+                  
+                    <li><a href="http://write.blog.csdn.net" class="rss"  target="_blank">我的博客</a></li>
+			    </ul>
+                <a href="/home/help.html" class="float-r"><i class="fa fa-question-circle"></i>帮助</a>
+                <a href="/rss.html?type=Home&channel=" class="rss float-r"><i class="fa fa-rss"></i>订阅</a>
+                <a href="/import/Apply.html" class="move float-r"><img src="http://static.blog.csdn.net/static/images/blog_move.png" alt="img" class="fa">博客搬家</a>
+		    </div>
+	    </div>
+</div>
+
+<!--
+<div style="margin:0 0 10px 0;">
+<iframe id="frm_ad_top2" frameborder="0" scrolling="no" style="width:100%;height:0px;"></iframe>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#frm_ad_top2').attr('src', "http://static.blog.csdn.net/ads/home_top2.html").load(function () {
+            this.style.height = '92px';
+        });
+    });
+</script>
+-->      
+
+      
+ <link rel="stylesheet" href="http://static.blog.csdn.net/static/css/blog_index.css">     
+
+     <div class="blog_ad clearfix">
+      <div class="blog_ad_l fl">
+          <!-- 广告位开始 -->
+            <ins data-revive-zoneid="65" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+            <!-- 广告位结束 -->
+      </div>
+      <div class="blog_ad_r fr">
+          <!-- 广告位开始 -->
+            <ins data-revive-zoneid="179" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+            <!-- 广告位结束 -->
+      </div>
+    </div>
+
+
+    <div class="blog_home_main clearfix">
+      <div class="blog_l fl">     
+        <!--推荐博文-->
+        
+<div class="choose_blog clearfix">
+
+         <div class="choose_b_l choose_b fl" >
+            <div class="recommend_thumb tracking-ad" data-mod="popu_251"><a href="http://blog.csdn.net/javazejian/article/details/72828483" class="recom_a"><img src="http://img.blog.csdn.net/20170607194420816" alt="img" class="entry_thumb"></a></div>
+            <div class="recommend_c tracking-ad" data-mod="popu_251">
+                <a href="http://blog.csdn.net/javazejian/article/details/72828483" target="_blank"  class="recom_url">
+                  <div class="recom_c"><a href="http://blog.csdn.net/javazejian/article/details/72828483" target="_blank"  style="font-size:20px;">深入理解 Java 并发之 synchronized 实现原理</a>
+                    <div class="recom_b"><a href="http://blog.csdn.net/javazejian/article/details/72828483"><img src="http://avatar.csdn.net/0/0/8/3_javazejian.jpg" alt="img"></a><a href="http://blog.csdn.net/javazejian/article/details/72828483">zejian</a></div>
+                  </div>
+                </a>
+            </div>
+          </div>
+  
+         <div class="choose_b_r choose_b" >
+            <div class="recommend_thumb tracking-ad" data-mod="popu_252"><a href="http://blog.csdn.net/foruok/article/details/72895865" class="recom_a"><img src="http://img.blog.csdn.net/20170607194635751" alt="img" class="entry_thumb"></a></div>
+            <div class="recommend_c tracking-ad" data-mod="popu_252">
+                  <a href="http://blog.csdn.net/foruok/article/details/72895865" target="_blank" class="recom_url">
+                      <div class="recom_c"><a href="http://blog.csdn.net/foruok/article/details/72895865" target="_blank"  style="font-size:20px;">别混淆你想要什么和能否实现</a>
+                        <div class="recom_b"><a href="http://blog.csdn.net/foruok/article/details/72895865"><img src="http://avatar.csdn.net/E/B/1/3_foruok.jpg" alt="img"></a><a href="http://blog.csdn.net/foruok/article/details/72895865">安晓辉</a></div>
+                      </div>
+                 </a>
+            </div>
+          </div>
+                 
+
+</div>
+
+        <!--推荐博文-->
+
+        <!--自定义标签-->
+        
+
+ <div class="user_defined tracking-ad" data-mod="popu_265" >
+            <a href="http://edu.csdn.net/huiyiCourse/detail/382" class="user_defined_item red"  target="_blank"><i class="fa fa-angle-double-right"></i><span>【在线直播】高通骁龙移动平台在AR技术中的案例解析</span></a>
+                <a href="http://edu.csdn.net/huiyiCourse/series_detail/41?ref=blog&amp;loc=r0" class="user_defined_item" target="_blank"><i class="fa fa-angle-double-right"></i><span>【在线峰会】如何高效高质进行Android技术开发</span></a>
+</div>
+
+                  
+        <!--列表-->
+       
+      <div id="" class="blog_list_wrap">   
+  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/iEearth"><img src="http://avatar.csdn.net/D/4/8/3_ieearth.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/iEearth" class="nickname">iEearth</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/ieearth/article/details/72910204"  target="_blank">python逆向入门</a></h3>
+                      <div class="blog_list_c">1、开发环境我们在Windows 10上开始python逆向之旅，首先开始搭建开发环境，python解释器使用最新的3.6.1，IDE使用PyCharm社区版2017.1.3，下载地址如下所示，下载完...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/15104.html" target="_blank">Python来了</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>15分钟前</label><span><i class="fa fa-eye"></i><em>117</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/wzy0623"><img src="http://avatar.csdn.net/8/3/7/3_wzy0623.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/wzy0623" class="nickname">wzy0623</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/wzy0623/article/details/72926983"  target="_blank">HAWQ取代传统数仓实践（十六）——事实表技术之迟到的事实</a></h3>
+                      <div class="blog_list_c">一、迟到的事实简介&#160; &#160; &#160; &#160; 数据仓库通常建立于一种理想的假设情况下，这就是数据仓库的度量（事实记录）与度量的环境（维度记录）同时出现在数据仓库中。当同时拥有事实记录和正确的当前维度行时，就能够从...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/database/newarticle.html"  target="_blank">数据库</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>15分钟前</label><span><i class="fa fa-eye"></i><em>29</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/tangxiaoyin"><img src="http://avatar.csdn.net/5/0/E/3_tangxiaoyin.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/tangxiaoyin" class="nickname">tangxiaoyin</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/tangxiaoyin/article/details/72921033"  target="_blank">从端到云——工业物联网项目全栈快速开发实践</a></h3>
+                      <div class="blog_list_c">时至今日，随着国内外大公司的介入，物联网越来越热。本文作者将结合工控领域的特色及当前物联网领域的一些新技术新趋势，分享工业物联网和民用物联网的特色及异同，并从自身实际应用开发的角度，解读从端到云，工业...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/www/newarticle.html"  target="_blank">互联网</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>17分钟前</label><span><i class="fa fa-eye"></i><em>24</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/Bluechalk"><img src="http://avatar.csdn.net/C/1/6/3_bluechalk.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/Bluechalk" class="nickname">Bluechalk</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/bluechalk/article/details/72794010"  target="_blank">Kotlin~基本语法</a></h3>
+                      <div class="blog_list_c">今年谷歌IO大会，谷歌宣布Kotlin作为安卓开发一级语言。Kotlin 1.0版发布是在2016年2月，首次出现是在2011年。Kotlin本身有很多特性优点(ITeye、InfoQ），网上评价An...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>25分钟前</label><span><i class="fa fa-eye"></i><em>102</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/Bluechalk"><img src="http://avatar.csdn.net/C/1/6/3_bluechalk.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/Bluechalk" class="nickname">Bluechalk</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/bluechalk/article/details/72633351"  target="_blank">Kotlin: Java 6 废土中的一线希望</a></h3>
+                      <div class="blog_list_c">去年，Java8 发布了，增加了很多新特性和提升，比如lambda，stream。Java 9 的标准也已经在制定了。但是超过半数的 Android 设备仍在运行着 Java 6，我们要怎么才能用上新...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>25分钟前</label><span><i class="fa fa-eye"></i><em>223</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>     </div>
+     <!--专栏-->
+
+<div class="column clearfix">
+          <div class="column_icon">专栏</div>
+          <div class="column_wrap tracking-ad" data-mod="popu_255">
+                    <div class="column_list">
+                        
+                        <div style="background-image:url(http://img.blog.csdn.net/20170518101810792);" class="blog_column_bg" ></div>  
+                             <a href="http://blog.csdn.net/column/details/13719.html" class="column_list_link" target="_blank" >                        
+                                    <div class="column_c">
+                                      <p class="column_list_p">Kotlin开发Android</p>
+                                      <div class="column_list_b">
+                                        <div class="column_list_b_l fl"><i class="fa fa-file-text-o"></i><span>6</span></div>
+                                        <div class="column_list_b_r fr"><i class="fa fa-eye"></i><span>11444</span></div>
+                                      </div>
+                                </div>
+                            </a>                        
+                    </div> 
+                    <div class="column_list">
+                        
+                        <div style="background-image:url(http://img.blog.csdn.net/20170505163238984);" class="blog_column_bg" ></div>  
+                             <a href="http://blog.csdn.net/column/details/15386.html" class="column_list_link" target="_blank" >                        
+                                    <div class="column_c">
+                                      <p class="column_list_p">TensorFlow</p>
+                                      <div class="column_list_b">
+                                        <div class="column_list_b_l fl"><i class="fa fa-file-text-o"></i><span>15</span></div>
+                                        <div class="column_list_b_r fr"><i class="fa fa-eye"></i><span>22238</span></div>
+                                      </div>
+                                </div>
+                            </a>                        
+                    </div> 
+                    <div class="column_list">
+                        
+                        <div style="background-image:url(http://img.blog.csdn.net/20170328155540979);" class="blog_column_bg" ></div>  
+                             <a href="http://blog.csdn.net/column/details/diaosichengxuyuan.html" class="column_list_link" target="_blank" >                        
+                                    <div class="column_c">
+                                      <p class="column_list_p">一个屌丝程序猿的人生</p>
+                                      <div class="column_list_b">
+                                        <div class="column_list_b_l fl"><i class="fa fa-file-text-o"></i><span>68</span></div>
+                                        <div class="column_list_b_r fr"><i class="fa fa-eye"></i><span>160057</span></div>
+                                      </div>
+                                </div>
+                            </a>                        
+                    </div> 
+          </div>
+        </div>     <!--下部列表-->
+     <div id="listBot" class="blog_list_wrap">
+  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/xllily_11"><img src="http://avatar.csdn.net/2/4/7/3_xllily_11.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/xllily_11" class="nickname">xllily_11</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/xllily_11/article/details/72896646"  target="_blank">程序员 挣钱比健康重要</a></h3>
+                      <div class="blog_list_c">今天说点关于健康的&#160;这些天一直没更新， 前些天去了一趟医院， 平时身体很好， 基本和医院 医生无缘， 这次我心灵的窗户出问题了！我生“病”了迎风流泪、不迎风也流泪、眼睛酸疼浑浊、甚至看不清代码和蚂蚁。...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/web/newarticle.html"  target="_blank">Web前端</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/jser.html" target="_blank">JavaScript基础入门</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/webstudy.html" target="_blank">Web前端怎么学</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>1小时前</label><span><i class="fa fa-eye"></i><em>105</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/xllily_11"><img src="http://avatar.csdn.net/2/4/7/3_xllily_11.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/xllily_11" class="nickname">xllily_11</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/xllily_11/article/details/72417006"  target="_blank">哪种公司能干 哪种不能</a></h3>
+                      <div class="blog_list_c">公司选择问题&#160;好多朋友在后台给我留言说：怎么最近一周没见你装逼发文了，出啥事儿了？谢谢各位关心，其实事儿到没出大事就是身体偶感小恙，虽不是大事但耽误了很多私人时间，也没更文，所以大家工作至于一定要注意...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/web/newarticle.html"  target="_blank">Web前端</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/webstudy.html" target="_blank">Web前端怎么学</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/jser.html" target="_blank">JavaScript基础入门</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>1小时前</label><span><i class="fa fa-eye"></i><em>610</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/blogdevteam"><img src="http://avatar.csdn.net/8/C/E/3_blogdevteam.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/blogdevteam" class="nickname">blogdevteam</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/blogdevteam/article/details/72917467"  target="_blank">征文 | 从高考到程序员</a></h3>
+                      <div class="blog_list_c">每年的这几天，空气中总会弥漫着紧张的味道，2017 全国统一高考如期而至~</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/other/newarticle.html"  target="_blank">综合</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>2小时前</label><span><i class="fa fa-eye"></i><em>141</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/yzzst"><img src="http://avatar.csdn.net/E/9/1/3_yzzst.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/yzzst" class="nickname">yzzst</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/yzzst/article/details/72912038"  target="_blank">准备起航，了解Kotlin</a></h3>
+                      <div class="blog_list_c">“近一百多年来，总有一些公司很幸运地、有意识或无意识地站在技术革命的浪尖之上。一旦出在了那个位置，即使不做任何事，也可以随着波浪顺顺当当地向前飘个十年甚至更长时间。在这十几年间，它们代表着科技的浪潮，...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/mobile/newarticle.html"  target="_blank">移动开发</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>2小时前</label><span><i class="fa fa-eye"></i><em>184</em></span>
+                        </div>
+                      </div>
+
+                               <div class="blog_list_b_b">
+                          
+
+                                         <a href="http://blog.csdn.net/u012903898" target="_blank"><img src="http://avatar.csdn.net/7/4/9/4_u012903898.jpg" alt="u012903898"></a>                               
+                                   <span><em>1</em>人推荐</span>
+                              </div>
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/b735098742"><img src="http://avatar.csdn.net/0/E/7/3_b735098742.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/b735098742" class="nickname">b735098742</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/b735098742/article/details/72911890"  target="_blank">小米手环iOS开发实战(一)：iOS蓝牙框架CoreBluetooth</a></h3>
+                      <div class="blog_list_c">小米手环iOS开发实战(一)：iOS蓝牙框架CoreBluetooth本项目为对小米手环进行二次开发，利用了小米手环蓝牙连接并不安全的特性，连接后可以获取手环数据，并可修改数据。 
+本实例使用Swif...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/mobile/newarticle.html"  target="_blank">移动开发</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>2小时前</label><span><i class="fa fa-eye"></i><em>180</em></span>
+                        </div>
+                      </div>
+
+                               <div class="blog_list_b_b">
+                          
+
+                                         <a href="http://blog.csdn.net/u012903898" target="_blank"><img src="http://avatar.csdn.net/7/4/9/4_u012903898.jpg" alt="u012903898"></a>                               
+                                   <span><em>1</em>人推荐</span>
+                              </div>
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/54powerman"><img src="http://avatar.csdn.net/8/D/E/3_54powerman.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/54powerman" class="nickname">54powerman</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/54powerman/article/details/72921022"  target="_blank">lambda方法引用总结——烧脑吃透</a></h3>
+                      <div class="blog_list_c">lambda是java8的新特性，基本使用比较容易理解，但有一个环节遇到了坎儿，那就是方法引用，尤其是类的实例方法引用，烧脑之后总结一下。在需要函数参数的方法中，我们可以把另一个同类型的方法直接传入，...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>2小时前</label><span><i class="fa fa-eye"></i><em>195</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/tangxiaoyin"><img src="http://avatar.csdn.net/5/0/E/3_tangxiaoyin.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/tangxiaoyin" class="nickname">tangxiaoyin</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/tangxiaoyin/article/details/72920095"  target="_blank">LoRa vs NB-IoT：12个角度看哪个物联网标准更具优势？</a></h3>
+                      <div class="blog_list_c">近期全球低功耗广域网（LPWAN）市场的激增可归因于多个因素。机器学习和 M2M 通信标准的快速发展发挥了重要作用，加之全球对物联网服务的需求不断增长、低价的 LPWAN 工具和节能机会的增多。</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/www/newarticle.html"  target="_blank">互联网</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>3小时前</label><span><i class="fa fa-eye"></i><em>147</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>    </div>
+    <div id="listBot2" class="blog_list_wrap"  style="display:none;border-top: solid 1px #e7ecef" >
+
+  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/baimafujinji"><img src="http://avatar.csdn.net/D/4/E/3_baimafujinji.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/baimafujinji" class="nickname">baimafujinji</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/baimafujinji/article/details/72863106"  target="_blank">自然抠图算法：以经典的贝叶斯抠图为例（Bayesian Matting）</a></h3>
+                      <div class="blog_list_c">图像抠图技术（Image Matting）在现代影视技术中有重要应用，例如在摄影棚的蓝幕或者绿幕下拍摄好的镜头再通过电脑后期制作换成不同的宏大场景就利用了图像处理中的抠图技术。现在，先进的抠图算法不仅...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/math-imageprocess.html" target="_blank">图像处理中的数学原理详解</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>3小时前</label><span><i class="fa fa-eye"></i><em>498</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/hjimce"><img src="http://avatar.csdn.net/E/E/E/3_hjimce.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/hjimce" class="nickname">hjimce</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/hjimce/article/details/72904764"  target="_blank">深度学习（六十三）空间变换网络</a></h3>
+                      <div class="blog_list_c">卷积神经网络每一层都有其强大的功能，然而它对于输入数据的空间不变性却还有很大的缺陷，可能max pooling层，具有平移不变性，然而因为max pooling是一个局部操作，在CNN中对于大尺度的空...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/deeplearning.html" target="_blank">深度学习</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>3小时前</label><span><i class="fa fa-eye"></i><em>508</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/duan_zhihua"><img src="http://avatar.csdn.net/3/8/F/3_duan_zhihua.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/duan_zhihua" class="nickname">duan_zhihua</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/duan_zhihua/article/details/72909528"  target="_blank">SparkShuffle调优原理和最佳实践</a></h3>
+                      <div class="blog_list_c">第10章&#160;&#160; SparkShuffle调优原理和最佳实践1.1&#160;&#160;&#160;&#160;&#160; Shuffle对性能消耗的原理详解 在分布式系统中，数据分布在不同的节点上，每一个节点计算一部份数据，如果不对各个节点上独立的...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/software/newarticle.html"  target="_blank">研发管理</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>7小时前</label><span><i class="fa fa-eye"></i><em>324</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/junzia"><img src="http://avatar.csdn.net/C/2/C/3_junzia.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/junzia" class="nickname">junzia</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/junzia/article/details/72853159"  target="_blank">类似FaceU贴纸功能的快速实现：AiyaEffects项目</a></h3>
+                      <div class="blog_list_c">自去年Faceu火爆朋友圈，QQ在拍照、视频聊天中加入了动态贴纸的功能之后，妹子们拍照已经不满足于仅仅瘦脸、磨皮、大眼等对图片的处理。于是一个不能加猫耳朵卖萌的手机相机软件，都不好意思说自己是个相机了...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/mobile/newarticle.html"  target="_blank">移动开发</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>7小时前</label><span><i class="fa fa-eye"></i><em>517</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/carson_ho"><img src="http://avatar.csdn.net/C/8/C/3_carson_ho.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/carson_ho" class="nickname">carson_ho</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/carson_ho/article/details/72909894"  target="_blank">Android 属性动画：这是一篇很详细的 属性动画 总结&amp;攻略</a></h3>
+                      <div class="blog_list_c">前言
+动画的使用 是 Android 开发中常用的知识
+本文将详细介绍 Android 动画中 属性动画的原理 &amp; 使用  相关文章阅读： 
+    1. Android 动画系列 
+  Androi...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/mobile/newarticle.html"  target="_blank">移动开发</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>8小时前</label><span><i class="fa fa-eye"></i><em>446</em></span>
+                        </div>
+                      </div>
+
+                               <div class="blog_list_b_b">
+                          
+
+                                         <a href="http://blog.csdn.net/Trent1985" target="_blank"><img src="http://avatar.csdn.net/3/3/7/4_trent1985.jpg" alt="Trent1985"></a>                               
+                                   <span><em>1</em>人推荐</span>
+                              </div>
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/blogdevteam"><img src="http://avatar.csdn.net/8/C/E/3_blogdevteam.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/blogdevteam" class="nickname">blogdevteam</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/blogdevteam/article/details/72903038"  target="_blank">CSDN日报20170607 ——《别混淆你想要什么和能否实现》</a></h3>
+                      <div class="blog_list_c">你肯定想过这个问题：我想要什么。这个问题可能出现在各种情境中，比如工作上，我想要什么，比如家庭中，我想要什么，比如未来，我想要什么，比如我这辈子，到底想要什么……</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/other/newarticle.html"  target="_blank">综合</a></span>
+                                <span><img src="http://static.blog.csdn.net/static/images/cloumn.png" alt="img"><a href="/column/details/14549.html" target="_blank">CSDN日报</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>昨天 19:52</label><span><i class="fa fa-eye"></i><em>1949</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/tiandd12"><img src="http://avatar.csdn.net/9/F/1/3_tiandd12.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/tiandd12" class="nickname">tiandd12</a>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/tiandd12/article/details/72898316"  target="_blank">基于DBSCAN聚类算法的通用论坛正文提取</a></h3>
+                      <div class="blog_list_c">通用论坛正文爬取
+这是今年和队友一起参加第五届泰迪杯的赛题论文，虽然最终只获得了一个三等奖。但是在这个过程中和队友也一起学到了不少东西，特此记录。
+1、&#160; 简单介绍
+赛题的目的，是让参赛者对于任意 B...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>昨天 18:59</label><span><i class="fa fa-eye"></i><em>641</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>  
+ <dl class="blog_list clearfix" >
+                    <dt><a href="http://blog.csdn.net/sujun10"><img src="http://avatar.csdn.net/8/A/C/3_sujun10.jpg" class="head"></a>
+                        <a href="http://blog.csdn.net/sujun10" class="nickname">sujun10</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img" class="export"/>
+                    </dt>
+                    <dd>
+                      <h3  class="tracking-ad" data-mod="popu_254"><a href="http://blog.csdn.net/sujun10/article/details/72887692"  target="_blank">Tinify API批处理压缩PNG和JPG(Java版本)</a></h3>
+                      <div class="blog_list_c">因为工作的需要，所以用Tinify的Java API写了一个批处理小程序，主要是用来自动压缩UI和美术工具生成的新图片。在这里就分享出来，如果只是单纯的开发，其实真的是很简单，官方给的教程就很清晰了。...</div>
+                      <div class="blog_list_b clearfix">
+                        <div class="blog_list_b_l fl">
+
+                                <span><i class="fa fa-list-ul"></i><a href="/code/newarticle.html"  target="_blank">编程语言</a></span>
+                        </div>
+                        <div class="blog_list_b_r fr">                         
+                          <label>昨天 18:54</label><span><i class="fa fa-eye"></i><em>684</em></span>
+                        </div>
+                      </div>
+
+                    </dd>
+</dl>    </div>
+    <div class="loadMore">加载更多...</div>
+
+<div class="loadMore_icon"><i class="fa fa-spinner"></i></div>
+  <style>
+                .page_nav {
+	                    TEXT-ALIGN: center;
+	                    PADDING-BOTTOM: 15px;
+	                    PADDING-LEFT: 0px;
+	                    PADDING-RIGHT: 0px;
+	                    FONT: 12px/24px Arial;
+	                    COLOR: #666;
+	                    CLEAR: both;
+	                    PADDING-TOP: 15px;
+                        display:none;
+                    }
+                .page_nav A {
+	                BORDER-BOTTOM: #dbe5ee 1px solid; BORDER-LEFT: #dbe5ee 1px solid; PADDING-BOTTOM: 0px; MARGIN: 0px 2px; PADDING-LEFT: 8px; PADDING-RIGHT: 8px; DISPLAY: inline-block; FONT: 12px/22px Arial, Helvetica, sans-serif; BACKGROUND: #fff; HEIGHT: 22px; COLOR: #333; BORDER-TOP: #dbe5ee 1px solid; CURSOR: pointer; BORDER-RIGHT: #dbe5ee 1px solid; PADDING-TOP: 0px; border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; -khtml-border-radius: 2px
+                }
+                .page_nav STRONG {
+	                BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; PADDING-BOTTOM: 0px; LINE-HEIGHT: 24px; MARGIN: 0px 3px; PADDING-LEFT: 8px; PADDING-RIGHT: 8px; DISPLAY: inline-block; BACKGROUND: #c00; HEIGHT: 24px; COLOR: #fff; BORDER-TOP: medium none; FONT-WEIGHT: normal; BORDER-RIGHT: medium none; TEXT-DECORATION: none; PADDING-TOP: 0px; border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; -khtml-border-radius: 2px
+                }
+                .page_nav A:hover {
+	                BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; LINE-HEIGHT: 24px; MARGIN: 0px 3px; BACKGROUND: #c00; HEIGHT: 24px; COLOR: #fff; BORDER-TOP: medium none; BORDER-RIGHT: medium none; TEXT-DECORATION: none
+                }
+                .page_nav A.select {
+	                CURSOR: default
+                }                
+</style>
+
+<div class="page_nav">
+    <span> 7595条  共380页</span><strong>1</strong> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=2">2</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=3">3</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=4">4</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=5">5</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=6">...</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=2">下一页</a> <a href="/?aspxerrorpath=/gaoxingnengjisuan/article/details/9347953&page=380">尾页</a> 
+</div>
+
+ 
+<!--分页-->
+  <!-- page 开始-->
+   <!--
+<div class="csdn-pagination hide-set"><span class="page-nav"><span class="text"><em>共18565条数据</em><em>共60页</em></span><a href="#" class="btn btn-xs btn-default active">1</a><a href="#" class="btn btn-xs btn-default">2</a><a href="#" class="btn btn-xs btn-default">3</a><a href="#" class="btn btn-xs btn-default">4</a><a href="#" class="btn btn-xs btn-default">5</a>......<a href="#" class="btn btn-xs btn-default nextPage">下一页</a><a href="#" class="btn btn-xs btn-default nextPage">尾页</a></span></div>
+          -->
+        <!-- page 结束-->
+        <!--加载更多-->
+
+      </div>
+      <div class="blog_r fr">
+        <!--博客专家推荐-->
+      
+          <div class="expert">
+          <div class="expert_title">Programmer<img src="http://static.blog.csdn.net/static/images/triangle_right.png" alt="img" class="triangle"></div>
+          <dl class="expert_c">
+            <dt class="tracking-ad" data-mod="popu_253"><a href="http://blog.csdn.net/javazejian" target="_blank"><img src="http://img.blog.csdn.net/20170525175811542" class="head_expert"></a>
+              <h4 class="expert_name"><a href="http://blog.csdn.net/javazejian"  target="_blank">吴泽坚</a></h4>
+              <p class="author">签约作者</p>
+            </dt>
+            <dd><img src="http://static.blog.csdn.net/static/images/icon_l.png" alt="img" class="icon_l"><img src="http://static.blog.csdn.net/static/images/icon_r.png" alt="img" class="icon_r">
+              <div class="expert_c_b">主研方向 Android 和 JavaWeb，马不停蹄，追求卓越，钻研技术，热爱科技。</div>
+            </dd>
+          </dl>
+        </div>      
+
+
+
+          <!--观点-->
+          
+
+<!--观点模块-->
+        <div class="categ">
+          <div class="viewpoint_latest">
+                    <div style="background:url(http://img.blog.csdn.net/20170608171418568) no-repeat center;" class="viewpoint_latest_t">
+                      <div class="view_latest_mask"><img src="http://static.blog.csdn.net/static/images/mod_viewpoint.png" alt="img">
+                        <div class="view_latest_c">物联网与大数据将助推工业应用的崛起，你认同么？</div>
+                      </div>
+                    </div>
+                    <div class="view_latest_b">
+                          <div class="view_latest_b_l"><span>认同</span><em>100%</em></div>
+                          <div class="view_latest_b_c"><a href="/pk.html?id=8933" class="vote" target="_blank" >投票参与</a></div>
+                          <div class="view_latest_b_r"><span>不认同</span><em>0%</em></div>
+                    </div>
+                    <ul class="view_latest_list">                        
+                      <li><a href="/pk.html?id=8536"  target="_blank"><i class="fa fa-caret-right"></i><span>Android 新推出的官方语言 Kotlin 会取代 Java 么？</span></a></li>
+                      <li><a href="/pk.html?id=8376" target="_blank" ><i class="fa fa-caret-right"></i><span>未来物联网全栈开发 —— JavaScript OR Python？</span></a></li>
+                    </ul>
+          </div>
+        </div>
+
+        <!--博文分类-->
+          <div class="categ">
+                
+
+ 
+          <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label><a href="/newarticle.html" name="all">博文分类</a></label>
+            </h4>
+          </div>
+          <div class="blog_category">
+            <ul class="category_list tracking-ad" data-mod="popu_257">
+                        <li>
+                           <a href="/mobile/newarticle.html" class="mobile"  target="_blank">移动开发</a><a href="/web/newarticle.html" class="web" target="_blank">Web前端</a>                        </li>          
+                        <li>
+                           <a href="/enterprise/newarticle.html" class="enterprise"  target="_blank">架构设计</a><a href="/code/newarticle.html" class="code" target="_blank">编程语言</a>                        </li>          
+                        <li>
+                           <a href="/www/newarticle.html" class="www"  target="_blank">互联网</a><a href="/database/newarticle.html" class="database" target="_blank">数据库</a>                        </li>          
+                        <li>
+                           <a href="/system/newarticle.html" class="system"  target="_blank">系统运维</a><a href="/cloud/newarticle.html" class="cloud" target="_blank">云计算</a>                        </li>          
+                        <li>
+                           <a href="/software/newarticle.html" class="software"  target="_blank">研发管理</a><a href="/other/newarticle.html" class="other" target="_blank">综合</a>                        </li>          
+            </ul>
+          </div>
+
+          </div>
+        <!--广告-->       
+              <div class="categ">
+        <!-- 广告位开始 -->
+<ins data-revive-zoneid="180" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+<!-- 广告位结束 -->
+
+    </div>
+
+  
+
+           <!--写博客，博客搬家按钮-->
+        <div class="categ">
+          <div class="write_blog_wrap"><a href="http://write.blog.csdn.net/postedit" class="write_blog_btn">写博客</a><a href="/import/Apply.html" class="blog_move_btn">博客搬家</a></div>
+        </div>
+
+        <!--专家公开课-->
+        
+
+
+
+
+<div class="categ">
+        <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>专家公开课</label>
+            </h4>
+          </div>
+          <div class="expert_course">
+            <div class="expert_c tracking-ad" data-mod="popu_258">
+              <div class="notice">预告</div>
+                <a href="http://edu.csdn.net/huiyiCourse/series_detail/37" class="notice_img"   target="_blank"><img src="http://img.blog.csdn.net/20170512142515656" alt="img" ></a>
+                <a href="http://edu.csdn.net/huiyiCourse/series_detail/37" class="course_name"target="_blank">Python自动化运维实战教程</a>
+              <div class="course_b"><span><em>讲师：</em><b>韦玮</b></span>
+                <label>2017-05-24 20:00:00</label>
+              </div>
+            </div>
+          </div>        
+
+          
+ </div>
+        <!--专家图书推荐-->
+        
+
+
+
+
+<div class="categ">
+    <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>专家图书推荐</label>
+            </h4>
+          </div>
+          <div class="expert_recommend">
+                    <dl class="expert_book clearfix tracking-ad" data-mod="popu_259">
+                      <dt><a href="https://item.jd.com/12186192.html"  target="_blank"><img src="http://img.blog.csdn.net/20170518150806984" alt="img"></a></dt>
+                      <dd><a href="https://item.jd.com/12186192.html" class="book_name" target="_blank" >流畅的Python</a>
+                        <p class="book_c"><a href="https://item.jd.com/12186192.html"  target="_blank">安道，吴珂</a>
+                        </p>
+                      </dd>
+                    </dl>                   
+                    <dl class="expert_book clearfix tracking-ad" data-mod="popu_259">
+                      <dt><a href="https://item.jd.com/12185360.html"  target="_blank"><img src="http://img.blog.csdn.net/20170505175247164" alt="img"></a></dt>
+                      <dd><a href="https://item.jd.com/12185360.html" class="book_name" target="_blank" >Tomcat内核设计剖析</a>
+                        <p class="book_c"><a href="https://item.jd.com/12185360.html"  target="_blank">汪建</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img"/>
+                        </p>
+                      </dd>
+                    </dl>                   
+                    <dl class="expert_book clearfix tracking-ad" data-mod="popu_259">
+                      <dt><a href="https://item.jd.com/11447036.html?cu=true&amp;utm_source=book.douban.com&amp;utm_medium=tuiguang&amp;utm_campaign=t_15055_&amp;utm_term=52eb327e4170454cb49ccb1046cc7031"  target="_blank"><img src="http://img.blog.csdn.net/20170503175043580" alt="img"></a></dt>
+                      <dd><a href="https://item.jd.com/11447036.html?cu=true&amp;utm_source=book.douban.com&amp;utm_medium=tuiguang&amp;utm_campaign=t_15055_&amp;utm_term=52eb327e4170454cb49ccb1046cc7031" class="book_name" target="_blank" >机器学习实践指南：案例应用解析</a>
+                        <p class="book_c"><a href="https://item.jd.com/11447036.html?cu=true&amp;utm_source=book.douban.com&amp;utm_medium=tuiguang&amp;utm_campaign=t_15055_&amp;utm_term=52eb327e4170454cb49ccb1046cc7031"  target="_blank">刘漫豪</a>
+                            <img src="http://static.blog.csdn.net/static/images/export.png" alt="img"/>
+                        </p>
+                      </dd>
+                    </dl>                   
+               </div>      
+ </div>
+          <!--广告-->
+              <div class="categ">
+
+         <!-- 广告位开始 -->
+<ins data-revive-zoneid="181" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+<!-- 广告位结束 -->
+     </div>
+
+  
+        <!--最新专家-->
+        
+<div class="categ">
+          <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>最新专家</label><a href="http://blog.csdn.net/experts/rule.html" class="expert_apply"  target="_blank">专家申请</a>
+            </h4>
+          </div>
+          <div class="expert_wrap tracking-ad" data-mod="popu_260">
+                        <dl class="expert_list" >
+                          <dt><a href="http://blog.csdn.net/blogdevteam"  target="_blank"><img src="http://avatar.csdn.net/8/C/E/2_blogdevteam.jpg" alt="img"></a></dt>
+                          <dd><a href="http://blog.csdn.net/blogdevteam" target="_blank" class="expert_t"></a>
+                            <p class="expert_intro"  title=""></p>
+                          </dd>
+                        </dl> 
+                        <dl class="expert_list" >
+                          <dt><a href="http://blog.csdn.net/Kevin_zhai"  target="_blank"><img src="http://avatar.csdn.net/8/4/5/2_kevin_zhai.jpg" alt="img"></a></dt>
+                          <dd><a href="http://blog.csdn.net/Kevin_zhai" target="_blank" class="expert_t">翟继忠</a>
+                            <p class="expert_intro"  title="研究生就读于北京邮电大学，毕业一年多，目前就职于神州租车，专注于Java后台开发，喜欢钻研技术和源代码。">研究生就读于北京邮电大学，毕业一年多，目前就职于神州租车，专注于Java后台开发，喜欢钻研...</p>
+                          </dd>
+                        </dl> 
+                        <dl class="expert_list" >
+                          <dt><a href="http://blog.csdn.net/junzia"  target="_blank"><img src="http://avatar.csdn.net/C/2/C/2_junzia.jpg" alt="img"></a></dt>
+                          <dd><a href="http://blog.csdn.net/junzia" target="_blank" class="expert_t">马君</a>
+                            <p class="expert_intro"  title="2014年毕业于江西理工大学，2014-2015年从事嵌入式开发，2015年之后从事Android开发">2014年毕业于江西理工大学，2014-2015年从事嵌入式开发，2015年之后从事And...</p>
+                          </dd>
+                        </dl> 
+          </div>
+</div>
+
+
+        <!--知识库-->
+            
+<div id="libkeywordjson" style="display:none">
+    {&quot;status&quot;:true,&quot;bases&quot;:[{&quot;id&quot;:15,&quot;name&quot;:&quot;Android知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/android&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1455589744328_328.jpg&quot;,&quot;subCount&quot;:&quot;34724&quot;,&quot;conCount&quot;:3135},{&quot;id&quot;:24,&quot;name&quot;:&quot;React知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/react&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1465887837340_340.jpg&quot;,&quot;subCount&quot;:&quot;2659&quot;,&quot;conCount&quot;:393},{&quot;id&quot;:69,&quot;name&quot;:&quot;人工智能基础知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/ai&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1479972981201_201.jpg&quot;,&quot;subCount&quot;:&quot;13656&quot;,&quot;conCount&quot;:206},{&quot;id&quot;:13,&quot;name&quot;:&quot;Java 知识库&quot;,&quot;url&quot;:&quot;http://lib.csdn.net/base/java&quot;,&quot;logo&quot;:&quot;http://img.knowledge.csdn.net/upload/base/1453701371636_636.jpg&quot;,&quot;subCount&quot;:&quot;27754&quot;,&quot;conCount&quot;:3746}]}
+</div>
+
+        <!--推荐知识库-->
+        <div class="categ">
+          <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>推荐知识库</label> <a href="http://lib.csdn.net" class="expert_apply" target="_blank">更多</a>
+            </h4>             
+          </div>
+          
+            <div class="expert_wrap recommend_lib" id="">            
+            </div>
+
+        </div>
+
+
+<script  type="text/javascript">
+    $(function () {
+        try{
+            var lib = eval("(" + $("#libkeywordjson").html() + ")");
+            var html = "";
+            if (lib.status) {
+                $.each(lib.bases, function (i) {
+                    var obj = lib.bases[i];  
+                    html += '<dl class="expert_list">';
+                    html += '      <dt><a href="' + obj.url + '" target="_blank"><img src="' + obj.logo + '" alt=""></a></dt>';
+                    html += '      <dd>';
+                    html += '          <a href="' + obj.url + '" class="recommend_t" target="_blank">' + obj.name.replace("知识库", "") + '</a>';
+                    html += '         <div class="recomend_c"> ';              
+                    html += '           <label>收录数：<span>' + obj.conCount + '</span></label>   <label>关注数：<span>' + obj.subCount + '</span></label> ';
+                    html += '          </div>';
+                    html += '      </dd>';
+                    html += '</dl>';
+                });
+                if (html != "") {
+                    setTimeout(function () {
+                        $(".expert_wrap.recommend_lib").append(html);
+                    }, 100);
+                }
+            }
+        } catch (ex) { }
+    });
+</script>
+
+
+        
+        <!--热文排行榜-->
+        
+<div class="categ">
+          <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>热文排行榜</label>
+              <div id="List" class="List"><span class="list_cur">日榜</span></div>
+            </h4>
+          </div>
+          <ul class="hot_wrap tracking-ad" data-mod="popu_261" id="hot_wrap">
+                <li><a href="http://blog.csdn.net/tangxiaoyin/article/details/72920095" target="_blank" title="LoRa vs NB-IoT：12个角度看哪个物联网标准更具优势？"><i class="fa fa-caret-right"></i><span  title="LoRa vs NB-IoT：12个角度..">LoRa vs NB-IoT：12个角度..</span></a></li>
+                <li><a href="http://blog.csdn.net/54powerman/article/details/72921022" target="_blank" title="lambda方法引用总结——烧脑吃透"><i class="fa fa-caret-right"></i><span  title="lambda方法引用总结——烧脑吃透">lambda方法引用总结——烧脑吃透</span></a></li>
+                <li><a href="http://blog.csdn.net/blogdevteam/article/details/72917467" target="_blank" title="征文 | 从高考到程序员"><i class="fa fa-caret-right"></i><span  title="征文 | 从高考到程序员">征文 | 从高考到程序员</span></a></li>
+                <li><a href="http://blog.csdn.net/xuezhe__/article/details/72910489" target="_blank" title="Android Binder Java"><i class="fa fa-caret-right"></i><span  title="Android Binder Java">Android Binder Java</span></a></li>
+                <li><a href="http://blog.csdn.net/hekaiyou/article/details/72921061" target="_blank" title="Flutter实战一Flutter聊天应用（五）"><i class="fa fa-caret-right"></i><span  title="Flutter实战一Flutter聊天应..">Flutter实战一Flutter聊天应..</span></a></li>
+          </ul>
+ </div>
+        <!--联系我们-->
+        <div class="categ">
+          <div class="mod_title">
+            <div class="border_b"></div>
+            <h4 class="mod_title_t">
+              <label>联系我们</label>
+            </h4>
+          </div>
+          <div class="contact">
+             <p class="email"><a href="mailto:admin@csdn.net" target="_blank" class="qq">首页投稿</a></p>   
+            <p class="weibo"><a href="http://blog.csdn.net/blogdevteam" target="_blank">官方博客</a></p>
+            <p class="email">联系客服：webmaster@csdn.net</p>
+             <p class="email">CSDN博客QQ群号：374041348</p>            
+                        
+          </div>
+        </div>
+        <!--广告-->
+              <div class="categ">
+         <!-- 广告位开始 -->
+<ins data-revive-zoneid="182" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+<!-- 广告位结束 -->
+     </div>
+
+  
+      </div>
+    </div>
+
+    <div class="blog_r_nav">
+      <div class="write_blog"><img src="http://static.blog.csdn.net/static/images/blog_move_big.png" alt="img"><a href="/import/Apply.html" class="move_blog">博客搬家</a></div>
+      <div class="write_blog"><img src="http://static.blog.csdn.net/static/images/write_blog.png" alt="img"><a href="http://write.blog.csdn.net/postedit">撰写博客</a></div>
+      <div class="write_blog"><img src="http://static.blog.csdn.net/static/images/expert_apply.png" alt="img"><a href="http://blog.csdn.net/experts/rule.html">专家申请</a></div>
+      <div class="write_blog"><img src="http://static.blog.csdn.net/static/images/opinion.png" alt="img"><a href="http://bbs.csdn.net/topics/391959736" target="_blank">意见反馈</a></div>
+      <div id="backTop" class="write_blog"><img src="http://static.blog.csdn.net/static/images/back_top.png" alt="img"><a href="javascript:;">返回顶部</a></div>
+</div>
+    <script type="text/javascript" src="http://static.blog.csdn.net/static/js/apps/blog_index.js"></script>
+    <!--script( type="text/javascript" src="http://csdnimg.cn/pubfooter/js/publib_footer.js" )-->
+    <!--script( type="text/javascript" src="http://static.csdn.net/public/common/toolbar/js/toolbar.js" )-->
+
+
+
+
+
+
+
+
+
+      <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/async_new.js"></script>
+
+       <script id="noticeScript" type="text/javascript" charset="utf-8" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" src="http://c.csdnimg.cn/public/common/toolbar/js/notify.js"></script>  
+    <!--script( type="text/javascript" src="http://csdnimg.cn/pubfooter/js/publib_footer.js" )-->
+    <!--script( type="text/javascript" src="http://static.csdn.net/public/common/toolbar/js/toolbar.js" )-->
+    <script id="csdn-toolbar-id" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" type="text/javascript" src="http://c.csdnimg.cn/public/common/toolbar/js/toolbar.js"></script>
+       <style  type="text/css">
+          .pub_fo {
+          position:static;
+          }
+      </style>   
+
+      
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/cnick.js"></script>
+
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=25 border=0 width=0 height=0>");</script>
+<script type="text/javascript">
+    document.write('<script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/publib_footer.js?' + Math.floor(new Date() / 120000).toString(36) + '="></' + 'script>');
+</script>
+
+
+
+      
+ </body>
+</html>
