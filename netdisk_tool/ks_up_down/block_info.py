@@ -10,7 +10,7 @@ class ks_block_info(object):
         self.m = json.loads('{}')
 
 class ks_file_block_info(object):
-    def __int__(self):
+    def __init__(self):
         self.file_version = 0
-        self.xid = o
+        self.xid = 0
         self.ks_block_list = []

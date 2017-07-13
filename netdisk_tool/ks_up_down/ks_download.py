@@ -14,17 +14,17 @@ class ks_download(object):
         self.m_fileVer = fileVer
         self.m_blockCount = 0
 
-    def perform():
-        code,result_blocks = download_prepare()
-        if code!=0
+    def perform(self):
+        code,result_blocks = self.download_prepare()
+        if code!=0:
             print 'download_prepare error!'
             return code
-        code = download_blocks(result_blocks)
+        code = self.download_blocks(result_blocks)
         return code
 
-    def download_prepare():
-        url = net_disk_global.common_url + "/v3/xfile/file/download/prepare"
-        js_data  = {'xid':xid,'token':token,'fileVer':fileVer}
+    def download_prepare(self):
+        url = net_disk_global.common_url + "/api/v3/xfile/file/download/prepare"
+        js_data  = {'xid':self.xid,'token':self.token,'fileVer':self.m_fileVer}
         post_data = json.dumps(js_data)
         recv = json_request(url,post_data)
         js_rev = json.loads(recv)
@@ -46,11 +46,11 @@ class ks_download(object):
            blf.md5 = b['w']
            blf.sha1 = b['s']
            blf.m = b['m']
-           result_blocks.append(blf)
+           result_blocks.ks_block_list.append(blf)
 
-        return code,result_blocks
+        return js_rev['code'],result_blocks
         
     
-    def download_blocks(result_blocks):
-        print 'download_blocks called,input block count=%d'%len(result_blocks)
+    def download_blocks(self,result_blocks):
+        print 'download_blocks called,input block count=%d'%len(result_blocks.ks_block_list)
         return 0
