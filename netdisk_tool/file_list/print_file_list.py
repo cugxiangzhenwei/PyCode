@@ -7,5 +7,7 @@ def print_file_list(list_arry):
         print '%-50s %-20d'%(i['name'],i['xid']),
         if 'role' in i:
             print '角色:%-8d'%(i['role']),
+        if 'xsize' in i:
+            print '大小:%-8d'%(i['xsize']),
         ta = time.localtime(i['ctime'])
         print time.strftime('%Y-%m-%d %H:%M:%S',ta)

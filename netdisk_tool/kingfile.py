@@ -42,11 +42,14 @@ def test_filelist():
     get_priave_home_list()
 
 if __name__=='__main__':
-    url = 'http://192.168.140.110/api/v2/server/info'
+    url = 'https://pan.ksyun.com/api/v2/server/info'
+    #url = 'http://192.168.140.110/api/v2/server/info'
     get_server_info(url)
-    login(0,'zzy','123456','ceshi001')
+    login(0,'xiangzhenwei','ACFGkp1017','kingfile')
+   #login(0,'zzy','123456','ceshi001')
     get_user_info(net_disk_global.token)
-#    test_filelist()
-    test_download(25770001893,'test.docx')
+   # test_filelist()
+    test_download(605590409744,'DingDan.txt')
+    #test_download(25770001893,'test.docx')
 
 
