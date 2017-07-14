@@ -16,6 +16,7 @@ class ks_download(object):
         self.m_fileVer = fileVer
         self.m_blockCount = 0
         self.m_save_path = ''
+        self.m_block_index_start = 0
 
     def perform(self,save_file_path):
         self.m_save_path = save_file_path
@@ -24,6 +25,21 @@ class ks_download(object):
             print 'download_prepare error!'
             return code
         code = self.__download_blocks(result_blocks)
+        if not (code==0):
+            return code
+
+        while True: # loop diff blocks then download them
+            sy = self.m_blockCount - self.m_block_index_start
+            blk_count  = 16
+            if sy < 16:
+                blk_count = sy
+            if blk_count ==0:
+                break #all finish
+            code,result_blocks = self.__download_diff(self.m_block_index_start,blk_count)
+            if code ==0:
+                code = self.__download_blocks(result_blocks)
+            else:
+                return code
         return code
 
     def __pro_bundle_info(self,recv):
@@ -34,9 +50,9 @@ class ks_download(object):
         result_blocks = ks_file_block_info()
         data = js_rev['data']
         block_max = data['block_max']
-        m_blockCount = block_max + 1
+        self.m_blockCount = block_max + 1
         file_version = data['file_version']
-        m_fileVer = file_version
+        self.m_fileVer = file_version
         bundle  = data['bundle']
         for b in bundle:
            blf = ks_block_info()
@@ -80,6 +96,7 @@ class ks_download(object):
             iRev = self.__merge_block(blk_save_path)
             if not (iRev==0): 
                 return iRev
+            self.m_block_index_start +=1
         return 0
 
     def __download_block(self,blf,blk_save_path):
