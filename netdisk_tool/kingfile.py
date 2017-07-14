@@ -24,9 +24,13 @@ def get_share_home_list():
     print_file_list(list_arry)
     return list_arry
     
-def test_download():
-    download = ks_download(605590388808,net_disk_global.token,-1)
-    download.perform()
+def test_download(xid,filename):
+    download = ks_download(xid,net_disk_global.token,-1)
+    save_dir = os.environ['HOME'] + '/kingfile/download/'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    save_file = save_dir + filename
+    download.perform(save_file)
 
 def test_filelist():
     list_arry = get_share_home_list()
@@ -38,9 +42,11 @@ def test_filelist():
     get_priave_home_list()
 
 if __name__=='__main__':
-    get_server_info()
-    login(0,'xiangzhenwei','ACFGkp1017','kingfile')
+    url = 'http://192.168.140.110/api/v2/server/info'
+    get_server_info(url)
+    login(0,'zzy','123456','ceshi001')
     get_user_info(net_disk_global.token)
-    test_download()
+#    test_filelist()
+    test_download(25770001893,'test.docx')
 
 

@@ -6,18 +6,19 @@ import sys
 sys.path.append("..")
 from http.json_request import json_request
 
-def get_server_info():
-    url = 'https://pan.ksyun.com:443/api/v2/server/info'
+def get_server_info(url):
     srvInfo = json_request(url,'{}')
     jsonInfo = json.loads(srvInfo)
     blockInfo = jsonInfo['data']['block']
     upload_host = blockInfo['upload']['host']
     upload_port = blockInfo['upload']['port']
-    print ('upload host = %s,port =%d'% (upload_host,upload_port))
+    upload_api_path = blockInfo['upload']['path']
+    print ('upload host = %s,port =%d,path=%s'% (upload_host,upload_port,upload_api_path))
 
     download_host = blockInfo['download']['host']
     download_port = blockInfo['download']['port']
-    print ('download host = %s,port =%d'% (download_host,download_port))
+    download_api_path = blockInfo['download']['path']
+    print ('download host = %s,port =%d,path=%s'% (download_host,download_port,download_api_path))
 
     common_host = jsonInfo['data']['common']['host']
     common_port = jsonInfo['data']['common']['port']
@@ -28,12 +29,14 @@ def get_server_info():
     net_disk_global.download_port = download_port
     net_disk_global.common_host = common_host
     net_disk_global.common_port = common_port
-    net_disk_global.upload_url = upload_host + ':' + str(upload_port)
-    net_disk_global.download_url = download_host + ':' + str(download_port)
+    net_disk_global.crypto = jsonInfo['data']['crypto']
+    net_disk_global.upload_url = upload_host + ':' + str(upload_port) + upload_api_path
+    net_disk_global.download_url = download_host + ':' + str(download_port) + download_api_path
     net_disk_global.common_url = common_host + ':' + str(common_port)
     print 'upload_url= %s'%(net_disk_global.upload_url)
     print 'download_url= %s'%(net_disk_global.download_url)
     print 'common_url= %s'%(net_disk_global.common_url)
+    print 'crypto state=%d'%(net_disk_global.crypto)
 
 if __name__ == '__main__':
     get_server_info()

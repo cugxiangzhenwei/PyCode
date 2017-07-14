@@ -32,7 +32,7 @@ def get_share_file_list(xid,token,sortBy,order):
     while True:
         recv =  get_file_list(xid,token,sortBy,order,pageMax,pageIdx,True)
         js_data = json.loads(recv)
-        if (js_data['code']!=0 or len(js_data['data'])==0):
+        if (js_data['code']!=0 or len(js_data['data']) < pageMax):
             break
         for i in js_data['data']:
             list_result['data'].append(i)
@@ -48,7 +48,7 @@ def get_private_file_list(xid,token,sortBy,order):
     while True:
         recv =  get_file_list(xid,token,sortBy,order,pageMax,pageIdx,False)
         js_data = json.loads(recv)
-        if (js_data['code']!=0 or len(js_data['data'])==0):
+        if (js_data['code']!=0 or len(js_data['data']) < pageMax):
             break
         for i in js_data['data']:
             list_result['data'].append(i)
