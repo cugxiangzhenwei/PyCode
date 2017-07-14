@@ -14,6 +14,7 @@ class _Global_Data(object):
         self.token = ''
         self.share_home = 0
         self.cage_home = 0
+        self.domain_id = 0
         self.domain_ident = ''
         self.domain_name = ''
         self.user_xid = 0

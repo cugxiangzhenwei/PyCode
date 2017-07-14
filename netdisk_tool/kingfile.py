@@ -11,6 +11,7 @@ from file_list.share_root_list import get_share_root_list
 from file_list.page_list import *
 from file_list.print_file_list import print_file_list
 from ks_up_down.ks_download import *
+from ks_up_down.encrypt_key import *
 
 def get_priave_home_list():
        recv_sub =  get_private_file_list(net_disk_global.cage_home,net_disk_global.token,1,1)
@@ -48,6 +49,7 @@ if __name__=='__main__':
     login(0,'xiangzhenwei','ACFGkp1017','kingfile')
    #login(0,'zzy','123456','ceshi001')
     get_user_info(net_disk_global.token)
+    get_encrypt_key_info()
    # test_filelist()
     test_download(605590409744,'DingDan.txt')
     #test_download(25770001893,'test.docx')

@@ -19,6 +19,7 @@ def get_user_info(token):
     net_disk_global.user_email = js_rev['data']['email']
     net_disk_global.staff_name = js_rev['data']['staff_name']
     net_disk_global.domain_name = js_rev['data']['domain_name']
+    net_disk_global.domain_id = js_rev['data']['domain_id']
     net_disk_global.super_type = js_rev['data']['super_type']
 
 if __name__ == "__main__":
